@@ -3,43 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#ffffff">
-<title>메시지 — 프로토타입</title>
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>메시지</title>
 
 <style>
 :root{
   --blue:#0a84ff;
-  --blue2:#007aff;
   --green:#30d158;
   --red:#ff453a;
   --orange:#ff9f0a;
   --purple:#bf5af2;
 
-  --bg:#ffffff;
-  --group:#f2f2f7;
-  --card:#ffffff;
-  --text:#000000;
-  --secondary:#8e8e93;
-  --separator:rgba(60,60,67,.20);
-  --overlay:rgba(0,0,0,.25);
-
-  --nav-blur:rgba(255,255,255,.78);
-  --sheet:rgba(255,255,255,.92);
-  --input:#f2f2f7;
+  --bg:#000;
+  --card:#1c1c1e;
+  --card2:#2c2c2e;
+  --input:#1c1c1e;
+  --text:#fff;
+  --secondary:#98989f;
+  --tertiary:#636366;
+  --separator:rgba(84,84,88,.65);
+  --nav:rgba(0,0,0,.88);
+  --sheet:rgba(28,28,30,.96);
+  --overlay:rgba(0,0,0,.58);
 }
 
-@media (prefers-color-scheme:dark){
+@media(prefers-color-scheme:light){
   :root{
-    --bg:#000000;
-    --group:#1c1c1e;
-    --card:#1c1c1e;
-    --text:#ffffff;
-    --secondary:#98989f;
-    --separator:rgba(84,84,88,.65);
-    --overlay:rgba(0,0,0,.55);
-    --nav-blur:rgba(0,0,0,.72);
-    --sheet:rgba(28,28,30,.94);
-    --input:#1c1c1e;
+    --bg:#fff;
+    --card:#f2f2f7;
+    --card2:#e5e5ea;
+    --input:#f2f2f7;
+    --text:#000;
+    --secondary:#8e8e93;
+    --tertiary:#aeaeb2;
+    --separator:rgba(60,60,67,.18);
+    --nav:rgba(255,255,255,.9);
+    --sheet:rgba(248,248,250,.97);
+    --overlay:rgba(0,0,0,.25);
   }
 }
 
@@ -48,7 +50,8 @@
   -webkit-tap-highlight-color:transparent;
 }
 
-html,body{
+html,
+body{
   width:100%;
   height:100%;
   margin:0;
@@ -57,26 +60,45 @@ html,body{
 
 body{
   background:#000;
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",
-    "Apple SD Gothic Neo","Noto Sans KR",Arial,sans-serif;
   color:var(--text);
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "SF Pro Text",
+    "Apple SD Gothic Neo",
+    "Noto Sans KR",
+    Arial,
+    sans-serif;
 }
 
-button,input,textarea{
+button,
+input,
+textarea{
   font:inherit;
 }
 
 button{
+  border:0;
   -webkit-appearance:none;
   appearance:none;
+}
+
+button:active{
+  opacity:.55;
+}
+
+input,
+textarea{
+  outline:none;
 }
 
 .app{
   position:relative;
   width:100%;
   max-width:430px;
-  height:100vh;
   height:100dvh;
+  min-height:100vh;
   margin:0 auto;
   overflow:hidden;
   background:var(--bg);
@@ -91,7 +113,9 @@ button{
   background:var(--bg);
   overflow:hidden;
   transform:translateX(0);
-  transition:transform .34s cubic-bezier(.32,.72,0,1);
+  transition:
+    transform .34s cubic-bezier(.32,.72,0,1),
+    opacity .25s;
   z-index:1;
 }
 
@@ -101,20 +125,18 @@ button{
 
 .screen.left{
   transform:translateX(-18%);
-  filter:brightness(.82);
+  filter:brightness(.7);
 }
 
 .hidden{
   display:none!important;
 }
 
-/* ---------- common ---------- */
-
 .scroll{
   flex:1;
+  min-height:0;
   overflow-y:auto;
   -webkit-overflow-scrolling:touch;
-  overscroll-behavior:contain;
 }
 
 ::-webkit-scrollbar{
@@ -122,525 +144,728 @@ button{
   height:0;
 }
 
-.ios-btn{
-  border:0;
-  background:none;
-  color:var(--blue);
-  cursor:pointer;
-  padding:7px 4px;
-  font-size:17px;
-}
+/* =========================================================
+   STATUS / TOP
+========================================================= */
 
-.ios-btn:active{
-  opacity:.55;
-}
-
-.icon-btn{
-  width:34px;
-  height:34px;
-  border:0;
-  background:none;
-  color:var(--blue);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  border-radius:50%;
-  padding:0;
-}
-
-.icon-btn:active{
-  background:rgba(120,120,128,.12);
-}
-
-.icon-btn svg{
-  width:22px;
-  height:22px;
-}
-
-.separator{
-  height:.5px;
-  background:var(--separator);
+.top-safe{
+  height:env(safe-area-inset-top,0px);
   flex-shrink:0;
 }
 
-.empty{
-  color:var(--secondary);
-  text-align:center;
-  padding:60px 25px;
-  line-height:1.55;
-  font-size:15px;
-}
+/* =========================================================
+   LIST HEADER
+========================================================= */
 
-.avatar{
-  border-radius:50%;
-  flex-shrink:0;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#fff;
-  font-weight:700;
-  background:linear-gradient(135deg,#5e5ce6,#bf5af2);
-}
-
-.avatar img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
-
-/* ---------- list ---------- */
-
-.list-nav{
+.list-header{
   flex-shrink:0;
   padding:
-    calc(env(safe-area-inset-top,0px) + 6px)
-    16px
+    calc(env(safe-area-inset-top,0px) + 8px)
+    17px
     0;
-  background:var(--bg);
 }
 
-.list-nav-row{
-  height:38px;
+.list-header-row{
+  height:58px;
   display:flex;
   align-items:center;
   justify-content:space-between;
 }
 
-.list-actions{
+.header-pill{
+  min-width:92px;
+  height:50px;
+  padding:0 17px;
+  border-radius:27px;
+  border:1px solid rgba(120,120,128,.28);
+  background:rgba(35,35,37,.82);
+  color:#fff;
+  font-size:18px;
+  font-weight:500;
   display:flex;
   align-items:center;
-  gap:10px;
-}
-
-.list-title{
-  font-size:34px;
-  line-height:1.1;
-  font-weight:800;
-  letter-spacing:-1.1px;
-  padding:8px 0 13px;
-}
-
-.profile-row{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:9px 16px 13px;
+  justify-content:center;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 1px 3px rgba(0,0,0,.2);
+  backdrop-filter:blur(25px);
+  -webkit-backdrop-filter:blur(25px);
   cursor:pointer;
 }
 
-.profile-avatar{
-  width:52px;
-  height:52px;
-  font-size:18px;
+@media(prefers-color-scheme:light){
+  .header-pill{
+    background:rgba(242,242,247,.9);
+    color:#000;
+  }
 }
 
-.profile-copy{
-  min-width:0;
+.header-pill.icon{
+  min-width:58px;
+  width:58px;
+  padding:0;
+}
+
+.header-pill svg{
+  width:30px;
+  height:30px;
+}
+
+.list-title{
+  margin-top:18px;
+  padding-bottom:18px;
+  font-size:48px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:-2.4px;
+}
+
+/* =========================================================
+   PROFILE CARD
+========================================================= */
+
+.profile-card{
+  flex-shrink:0;
+  margin:0 16px 12px;
+  min-height:112px;
+  padding:15px 18px;
+  border-radius:58px;
+  background:#1c1c1e;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  cursor:pointer;
+}
+
+@media(prefers-color-scheme:light){
+  .profile-card{
+    background:#f2f2f7;
+  }
+}
+
+.profile-avatar{
+  width:76px;
+  height:76px;
+  border-radius:50%;
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  background:linear-gradient(135deg,#5e5ce6,#bf5af2);
+  color:#fff;
+  font-size:24px;
+  font-weight:700;
+}
+
+.profile-avatar img,
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.profile-info{
   flex:1;
+  min-width:0;
 }
 
 .profile-name{
-  font-size:17px;
+  font-size:22px;
   font-weight:700;
+  letter-spacing:-.5px;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
 
 .profile-status{
-  font-size:14px;
-  color:var(--secondary);
-  margin-top:2px;
+  margin-top:3px;
+  color:#8e8e93;
+  font-size:17px;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
 
-.chevron{
-  color:var(--secondary);
-  font-size:28px;
-  font-weight:300;
+.profile-arrow{
+  color:#8e8e93;
+  font-size:39px;
+  font-weight:200;
+  line-height:1;
 }
 
-.conv-list{
+/* =========================================================
+   CONVERSATIONS
+========================================================= */
+
+.conversation-list{
   flex:1;
+  min-height:0;
   overflow-y:auto;
+  padding:
+    2px
+    0
+    calc(env(safe-area-inset-bottom,0px) + 110px);
   -webkit-overflow-scrolling:touch;
-  padding-bottom:105px;
 }
 
-.section-label{
-  padding:14px 16px 7px;
-  font-size:13px;
-  color:var(--secondary);
-  font-weight:600;
-}
-
-.conv-row{
+.conversation-row{
+  position:relative;
+  min-height:100px;
   display:flex;
   align-items:center;
-  min-height:72px;
-  padding:7px 16px 7px 10px;
-  gap:11px;
+  padding:7px 17px 7px 27px;
+  gap:15px;
   cursor:pointer;
-  position:relative;
 }
 
-.conv-row:active{
-  background:var(--group);
+.conversation-row:active{
+  background:rgba(120,120,128,.09);
 }
 
-.select-circle{
-  width:28px;
-  height:28px;
-  flex:0 0 28px;
-  border:2px solid #c7c7cc;
+.conversation-avatar{
+  width:58px;
+  height:58px;
+  flex:0 0 58px;
   border-radius:50%;
-  margin-left:1px;
+  overflow:hidden;
   display:flex;
   align-items:center;
   justify-content:center;
-  transition:.18s;
-}
-
-.select-circle.selected{
-  border-color:var(--blue);
-  background:var(--blue);
+  background:linear-gradient(135deg,#514d68,#302d42);
   color:#fff;
-}
-
-.select-circle svg{
-  width:15px;
-  height:15px;
-}
-
-.conv-avatar{
-  width:52px;
-  height:52px;
   font-size:18px;
+  font-weight:700;
 }
 
-.conv-content{
+.conversation-main{
   flex:1;
   min-width:0;
-  align-self:stretch;
+  height:86px;
+  padding:11px 0 10px;
   border-bottom:.5px solid var(--separator);
-  padding:8px 0 8px;
-}
-
-.conv-row:last-child .conv-content{
-  border-bottom:0;
-}
-
-.conv-top{
   display:flex;
-  gap:7px;
-  align-items:center;
+  flex-direction:column;
+  justify-content:center;
 }
 
-.conv-name{
-  min-width:0;
+.conversation-top{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.conversation-name{
   flex:1;
-  font-size:17px;
+  min-width:0;
+  font-size:20px;
   font-weight:600;
+  line-height:1.15;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
 
-.conv-name.unread{
+.conversation-name.unread{
   font-weight:800;
 }
 
-.pin{
-  color:var(--secondary);
-  font-size:13px;
-  transform:rotate(-35deg);
-}
-
-.conv-time{
+.conversation-time{
   flex-shrink:0;
   color:var(--secondary);
-  font-size:14px;
+  font-size:17px;
+  white-space:nowrap;
 }
 
-.conv-bottom{
+.conversation-bottom{
   display:flex;
   align-items:center;
   gap:7px;
-  margin-top:2px;
+  margin-top:5px;
+  min-width:0;
 }
 
 .unread-dot{
-  width:9px;
-  height:9px;
+  width:10px;
+  height:10px;
+  flex:0 0 10px;
   border-radius:50%;
   background:var(--blue);
-  flex-shrink:0;
 }
 
-.conv-preview{
-  flex:1;
+.conversation-preview{
   min-width:0;
-  font-size:15px;
-  color:var(--secondary);
+  flex:1;
+  color:#98989f;
+  font-size:17px;
+  line-height:1.25;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
 
-.compose-fab{
-  position:absolute;
-  right:17px;
-  bottom:calc(env(safe-area-inset-bottom,0px) + 15px);
-  width:54px;
-  height:54px;
-  border-radius:50%;
-  border:1px solid rgba(120,120,128,.18);
-  background:rgba(242,242,247,.94);
-  color:var(--blue);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  box-shadow:0 5px 18px rgba(0,0,0,.14);
-  cursor:pointer;
-  z-index:5;
+.conversation-chevron{
+  color:#636366;
+  font-size:35px;
+  line-height:1;
+  font-weight:200;
 }
 
-@media (prefers-color-scheme:dark){
-  .compose-fab{
-    background:rgba(44,44,46,.94);
+.pin-icon{
+  color:#98989f;
+  font-size:14px;
+}
+
+.empty{
+  padding:70px 25px;
+  text-align:center;
+  color:var(--secondary);
+  font-size:16px;
+  line-height:1.5;
+}
+
+/* =========================================================
+   BOTTOM SEARCH
+========================================================= */
+
+.bottom-bar{
+  position:absolute;
+  z-index:20;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:
+    0
+    14px
+    calc(env(safe-area-inset-bottom,0px) + 15px);
+  display:flex;
+  align-items:center;
+  gap:13px;
+  pointer-events:none;
+}
+
+.search-bar{
+  flex:1;
+  height:62px;
+  border-radius:32px;
+  background:rgba(29,29,31,.96);
+  border:1px solid rgba(120,120,128,.2);
+  box-shadow:0 4px 18px rgba(0,0,0,.28);
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:0 17px;
+  color:#98989f;
+  backdrop-filter:blur(28px);
+  -webkit-backdrop-filter:blur(28px);
+  pointer-events:auto;
+}
+
+@media(prefers-color-scheme:light){
+  .search-bar{
+    background:rgba(242,242,247,.95);
   }
 }
 
-.compose-fab svg{
-  width:25px;
-  height:25px;
+.search-icon{
+  width:27px;
+  height:27px;
+  flex:0 0 27px;
 }
 
-.list-filter-popover{
-  position:absolute;
-  top:calc(env(safe-area-inset-top,0px) + 51px);
-  right:12px;
-  width:262px;
-  border-radius:19px;
-  background:var(--sheet);
-  border:.5px solid rgba(120,120,128,.18);
-  box-shadow:0 12px 40px rgba(0,0,0,.20);
-  backdrop-filter:blur(28px) saturate(170%);
-  -webkit-backdrop-filter:blur(28px) saturate(170%);
-  overflow:hidden;
-  z-index:100;
-  transform-origin:top right;
-  animation:pop .18s ease;
+.search-label{
+  font-size:20px;
+  color:#98989f;
 }
 
-@keyframes pop{
-  from{opacity:0;transform:scale(.94) translateY(-4px)}
-  to{opacity:1;transform:scale(1)}
+.compose-button{
+  width:62px;
+  height:62px;
+  flex:0 0 62px;
+  border-radius:50%;
+  background:rgba(29,29,31,.97);
+  border:1px solid rgba(120,120,128,.22);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 4px 18px rgba(0,0,0,.28);
+  pointer-events:auto;
+  cursor:pointer;
 }
 
-.pop-row{
-  width:100%;
-  min-height:47px;
-  padding:0 16px;
-  border:0;
+@media(prefers-color-scheme:light){
+  .compose-button{
+    background:rgba(242,242,247,.97);
+    color:#000;
+  }
+}
+
+.compose-button svg{
+  width:30px;
+  height:30px;
+}
+
+/* =========================================================
+   EDIT MODE
+========================================================= */
+
+.edit-header{
+  flex-shrink:0;
+  padding:
+    calc(env(safe-area-inset-top,0px) + 8px)
+    17px
+    0;
+}
+
+.edit-header-row{
+  height:55px;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+}
+
+.edit-header-left{
+  justify-self:start;
+}
+
+.edit-header-center{
+  font-size:17px;
+  font-weight:700;
+}
+
+.edit-header-right{
+  justify-self:end;
+}
+
+.edit-text{
+  color:var(--blue);
   background:none;
-  color:var(--text);
+  font-size:17px;
+  padding:8px 3px;
+  cursor:pointer;
+}
+
+.edit-selection-count{
+  text-align:center;
+  color:var(--secondary);
+  font-size:13px;
+  padding:3px 0 14px;
+}
+
+.selection-circle{
+  width:29px;
+  height:29px;
+  flex:0 0 29px;
+  border-radius:50%;
+  border:2px solid #77777c;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.selection-circle.selected{
+  background:var(--blue);
+  border-color:var(--blue);
+  color:#fff;
+}
+
+.selection-circle svg{
+  width:17px;
+  height:17px;
+}
+
+/* =========================================================
+   FILTER POPOVER
+========================================================= */
+
+.filter-backdrop{
+  position:absolute;
+  inset:0;
+  z-index:80;
+}
+
+.filter-popover{
+  position:absolute;
+  top:calc(env(safe-area-inset-top,0px) + 76px);
+  right:14px;
+  width:275px;
+  z-index:100;
+  padding:7px;
+  border-radius:22px;
+  background:rgba(45,45,48,.94);
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow:
+    0 18px 50px rgba(0,0,0,.45),
+    inset 0 1px rgba(255,255,255,.04);
+  backdrop-filter:blur(30px) saturate(170%);
+  -webkit-backdrop-filter:blur(30px) saturate(170%);
+  animation:popoverIn .18s ease-out;
+}
+
+@media(prefers-color-scheme:light){
+  .filter-popover{
+    background:rgba(248,248,250,.96);
+    border-color:rgba(60,60,67,.12);
+  }
+}
+
+@keyframes popoverIn{
+  from{
+    opacity:0;
+    transform:scale(.92) translateY(-5px);
+  }
+  to{
+    opacity:1;
+    transform:scale(1);
+  }
+}
+
+.filter-item{
+  min-height:48px;
+  width:100%;
+  border-radius:14px;
+  background:none;
+  color:#fff;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  text-align:left;
+  padding:0 13px;
   font-size:16px;
   cursor:pointer;
 }
 
-.pop-row:active{
-  background:rgba(120,120,128,.12);
+@media(prefers-color-scheme:light){
+  .filter-item{
+    color:#000;
+  }
 }
 
-.pop-section{
-  padding:13px 16px 6px;
-  color:var(--secondary);
-  font-size:13px;
-  font-weight:600;
+.filter-item:active{
+  background:rgba(120,120,128,.15);
 }
 
-.pop-divider{
+.filter-divider{
   height:.5px;
-  background:var(--separator);
-  margin:3px 0;
+  background:rgba(120,120,128,.3);
+  margin:4px 8px;
 }
 
-.radio-dot{
-  width:18px;
-  height:18px;
-  border:1.5px solid var(--secondary);
+.filter-heading{
+  padding:10px 13px 4px;
+  color:#98989f;
+  font-size:13px;
+}
+
+.filter-check{
+  color:var(--blue);
+  font-size:21px;
+  font-weight:700;
+}
+
+.filter-radio{
+  width:19px;
+  height:19px;
   border-radius:50%;
+  border:1.5px solid #98989f;
 }
 
-.radio-dot.active{
+.filter-radio.active{
   border:5px solid var(--blue);
 }
 
-.pop-check{
-  color:var(--blue);
-  font-size:20px;
-  font-weight:700;
-}
+/* =========================================================
+   EDIT BOTTOM ACTIONS
+========================================================= */
 
-.tap-cover{
+.edit-actions{
   position:absolute;
-  inset:0;
-  z-index:90;
-}
-
-/* ---------- edit mode ---------- */
-
-.edit-nav-title{
-  font-size:17px;
-  font-weight:700;
-  position:absolute;
-  left:50%;
-  transform:translateX(-50%);
-}
-
-.edit-toolbar{
-  flex-shrink:0;
-  border-top:.5px solid var(--separator);
-  min-height:55px;
+  z-index:30;
+  left:0;
+  right:0;
+  bottom:0;
   padding:
-    8px 14px
-    calc(env(safe-area-inset-bottom,0px) + 8px);
-  display:flex;
-  justify-content:space-between;
-  gap:7px;
-  background:var(--nav-blur);
-  backdrop-filter:blur(22px);
-  -webkit-backdrop-filter:blur(22px);
+    10px 10px
+    calc(env(safe-area-inset-bottom,0px) + 10px);
+  background:var(--nav);
+  border-top:.5px solid var(--separator);
+  backdrop-filter:blur(25px);
+  -webkit-backdrop-filter:blur(25px);
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
 }
 
 .edit-action{
-  flex:1;
-  border:0;
-  background:none;
+  min-height:45px;
   color:var(--blue);
-  font-size:13px;
+  background:none;
+  font-size:12px;
   cursor:pointer;
-  padding:5px 2px;
-}
-
-.edit-action:disabled{
-  opacity:.35;
 }
 
 .edit-action.danger{
   color:var(--red);
 }
 
-/* ---------- chat ---------- */
+.edit-action:disabled{
+  opacity:.3;
+}
+
+/* =========================================================
+   STANDARD NAV
+========================================================= */
+
+.standard-nav{
+  flex-shrink:0;
+  min-height:calc(env(safe-area-inset-top,0px) + 56px);
+  padding:
+    env(safe-area-inset-top,0px)
+    14px
+    0;
+  display:grid;
+  grid-template-columns:90px 1fr 90px;
+  align-items:center;
+  background:var(--nav);
+  border-bottom:.5px solid var(--separator);
+  backdrop-filter:blur(25px);
+  -webkit-backdrop-filter:blur(25px);
+}
+
+.standard-title{
+  text-align:center;
+  font-size:17px;
+  font-weight:700;
+}
+
+.nav-button{
+  background:none;
+  color:var(--blue);
+  font-size:17px;
+  padding:8px 0;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:3px;
+}
+
+.nav-right{
+  justify-self:end;
+}
+
+/* =========================================================
+   CHAT
+========================================================= */
 
 .chat-nav{
   flex-shrink:0;
   padding:
     calc(env(safe-area-inset-top,0px) + 4px)
-    12px
+    10px
     4px;
-  background:var(--nav-blur);
-  backdrop-filter:blur(22px) saturate(170%);
-  -webkit-backdrop-filter:blur(22px) saturate(170%);
+  background:var(--nav);
   border-bottom:.5px solid var(--separator);
-  position:relative;
-  z-index:2;
+  backdrop-filter:blur(25px);
+  -webkit-backdrop-filter:blur(25px);
+  z-index:10;
 }
 
 .chat-nav-row{
-  min-height:51px;
+  height:58px;
   display:grid;
-  grid-template-columns:78px 1fr 42px;
+  grid-template-columns:90px 1fr 45px;
   align-items:center;
 }
 
-.back-chat{
+.chat-back{
   display:flex;
   align-items:center;
-  gap:1px;
-  padding:6px 0;
-  font-size:17px;
   color:var(--blue);
-  border:0;
   background:none;
+  font-size:17px;
   cursor:pointer;
 }
 
-.back-chat svg{
-  width:12px;
+.chat-back svg{
+  width:11px;
   height:20px;
 }
 
 .chat-contact{
-  min-width:0;
   display:flex;
   flex-direction:column;
   align-items:center;
+  min-width:0;
   cursor:pointer;
 }
 
-.chat-contact-avatar{
-  width:31px;
-  height:31px;
+.chat-avatar{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  color:#fff;
   font-size:11px;
+  font-weight:700;
 }
 
-.chat-contact-name{
-  margin-top:1px;
-  max-width:160px;
+.chat-name{
+  max-width:170px;
+  margin-top:2px;
+  display:flex;
+  align-items:center;
+  gap:3px;
+  font-size:12px;
+  font-weight:700;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
-  font-size:12px;
-  font-weight:700;
+}
+
+.chat-name-arrow{
+  color:var(--secondary);
+  font-size:10px;
+}
+
+.info-button{
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  color:var(--blue);
+  background:none;
+  justify-self:end;
   display:flex;
   align-items:center;
-  gap:2px;
-}
-
-.chat-contact-name span{
-  font-size:9px;
-  color:var(--secondary);
-}
-
-.chat-info{
-  justify-self:end;
+  justify-content:center;
+  cursor:pointer;
 }
 
 .messages{
   flex:1;
+  min-height:0;
   overflow-y:auto;
+  padding:8px 12px 14px;
   -webkit-overflow-scrolling:touch;
-  padding:9px 12px 12px;
   display:flex;
   flex-direction:column;
 }
 
 .date-divider{
+  color:var(--secondary);
   text-align:center;
   font-size:12px;
-  color:var(--secondary);
-  margin:12px 0 10px;
   font-weight:500;
+  margin:13px 0 9px;
 }
 
 .message-time{
-  text-align:center;
   color:var(--secondary);
+  text-align:center;
   font-size:11px;
-  margin:8px 0 3px;
+  margin:7px 0 3px;
 }
 
 .bubble-row{
@@ -657,15 +882,14 @@ button{
 }
 
 .bubble{
-  max-width:76%;
+  max-width:78%;
   padding:8px 13px;
-  font-size:16.5px;
+  color:#fff;
+  font-size:17px;
   line-height:1.28;
   white-space:pre-wrap;
   word-break:break-word;
-  color:#fff;
-  border-radius:19px;
-  transition:background .15s;
+  border-radius:20px;
 }
 
 .bubble.me{
@@ -679,27 +903,17 @@ button{
 
 .bubble-row.same.me .bubble{
   border-top-right-radius:5px;
-  border-bottom-right-radius:5px;
 }
 
 .bubble-row.same.them .bubble{
   border-top-left-radius:5px;
-  border-bottom-left-radius:5px;
-}
-
-.bubble-row.last-in-group.me .bubble{
-  border-bottom-right-radius:5px;
-}
-
-.bubble-row.last-in-group.them .bubble{
-  border-bottom-left-radius:5px;
 }
 
 .read-receipt{
-  text-align:right;
   color:var(--secondary);
+  text-align:right;
   font-size:11px;
-  margin:3px 6px 1px;
+  margin:3px 7px;
 }
 
 .input-area{
@@ -707,71 +921,69 @@ button{
   display:flex;
   align-items:flex-end;
   gap:8px;
-  padding:8px 10px calc(env(safe-area-inset-bottom,0px) + 8px);
-  background:var(--nav-blur);
-  backdrop-filter:blur(22px);
-  -webkit-backdrop-filter:blur(22px);
+  padding:
+    8px 10px
+    calc(env(safe-area-inset-bottom,0px) + 8px);
+  background:var(--nav);
   border-top:.5px solid var(--separator);
+  backdrop-filter:blur(25px);
+  -webkit-backdrop-filter:blur(25px);
 }
 
 .plus-button{
-  width:31px;
-  height:31px;
-  flex-shrink:0;
+  width:34px;
+  height:34px;
+  flex:0 0 34px;
   border:1.5px solid var(--secondary);
   border-radius:50%;
   color:var(--secondary);
   background:none;
-  font-size:23px;
+  font-size:25px;
   line-height:1;
   cursor:pointer;
 }
 
-.input-wrap{
+.message-input-wrap{
   flex:1;
   min-width:0;
-  min-height:35px;
+  min-height:36px;
+  border-radius:20px;
+  background:var(--input);
+  border:1px solid var(--separator);
   display:flex;
   align-items:flex-end;
-  border:1px solid var(--separator);
-  border-radius:19px;
-  background:var(--input);
 }
 
-.chat-input{
-  flex:1;
-  min-width:0;
-  min-height:33px;
-  max-height:110px;
-  padding:7px 11px;
+.message-input{
+  width:100%;
+  min-height:34px;
+  max-height:120px;
   resize:none;
   border:0;
-  outline:0;
   background:none;
   color:var(--text);
+  padding:7px 12px;
   font-size:16px;
   line-height:1.3;
 }
 
-.chat-input::placeholder{
+.message-input::placeholder{
   color:var(--secondary);
 }
 
 .send-button{
-  width:31px;
-  height:31px;
-  flex-shrink:0;
-  border:0;
+  width:34px;
+  height:34px;
+  flex:0 0 34px;
   border-radius:50%;
   background:var(--blue);
   color:#fff;
+  opacity:.25;
+  pointer-events:none;
   display:flex;
   align-items:center;
   justify-content:center;
-  opacity:.28;
-  pointer-events:none;
   cursor:pointer;
-  transition:.16s;
 }
 
 .send-button.ready{
@@ -780,115 +992,84 @@ button{
 }
 
 .send-button svg{
-  width:15px;
-  height:15px;
-  transform:translateX(1px);
+  width:16px;
+  height:16px;
 }
 
-/* ---------- standard nav ---------- */
-
-.standard-nav{
-  flex-shrink:0;
-  height:calc(env(safe-area-inset-top,0px) + 54px);
-  padding:
-    env(safe-area-inset-top,0px)
-    12px
-    0;
-  display:grid;
-  grid-template-columns:90px 1fr 90px;
-  align-items:center;
-  border-bottom:.5px solid var(--separator);
-  background:var(--nav-blur);
-  backdrop-filter:blur(22px);
-  -webkit-backdrop-filter:blur(22px);
-}
-
-.standard-title{
-  text-align:center;
-  font-size:17px;
-  font-weight:700;
-}
-
-.standard-right{
-  display:flex;
-  justify-content:flex-end;
-}
-
-/* ---------- grouped settings ---------- */
+/* =========================================================
+   GROUPED SETTINGS
+========================================================= */
 
 .group-page{
   flex:1;
+  min-height:0;
   overflow-y:auto;
-  background:var(--group);
-  padding:17px 0 calc(env(safe-area-inset-bottom,0px) + 24px);
+  background:var(--card);
+  padding:
+    20px
+    0
+    calc(env(safe-area-inset-bottom,0px) + 25px);
 }
 
-.page-section-title{
+.settings-section-title{
   padding:0 17px 7px;
   color:var(--secondary);
   font-size:13px;
 }
 
-.group-card{
-  background:var(--card);
-  margin-bottom:22px;
+.settings-card{
+  margin-bottom:24px;
+  background:var(--card2);
   border-top:.5px solid var(--separator);
   border-bottom:.5px solid var(--separator);
 }
 
-.setting-row{
+.settings-row{
+  min-height:55px;
   width:100%;
-  min-height:53px;
   padding:0 17px;
   display:flex;
   align-items:center;
   gap:12px;
-  border:0;
-  border-bottom:.5px solid var(--separator);
   background:none;
   color:var(--text);
+  border-bottom:.5px solid var(--separator);
   text-align:left;
   cursor:pointer;
 }
 
-.setting-row:last-child{
+.settings-row:last-child{
   border-bottom:0;
 }
 
-.setting-row:active{
-  background:var(--group);
-}
-
-.setting-main{
+.settings-main{
   flex:1;
   min-width:0;
 }
 
-.setting-title{
+.settings-title{
   font-size:16px;
 }
 
-.setting-sub{
+.settings-sub{
   color:var(--secondary);
   font-size:13px;
   margin-top:2px;
 }
 
-.setting-chev{
-  color:#c7c7cc;
-  font-size:25px;
-  font-weight:300;
+.settings-chevron{
+  color:#636366;
+  font-size:26px;
 }
 
 .ios-switch{
   width:51px;
   height:31px;
-  border-radius:16px;
-  border:0;
-  background:#787880;
   padding:2px;
-  flex-shrink:0;
+  border-radius:16px;
+  background:#787880;
   cursor:pointer;
+  flex:0 0 51px;
   transition:.2s;
 }
 
@@ -898,7 +1079,7 @@ button{
   height:27px;
   border-radius:50%;
   background:#fff;
-  box-shadow:0 1px 3px rgba(0,0,0,.25);
+  box-shadow:0 1px 3px rgba(0,0,0,.3);
   transition:.2s;
 }
 
@@ -910,32 +1091,43 @@ button{
   transform:translateX(20px);
 }
 
-/* ---------- profile / character detail ---------- */
+/* =========================================================
+   PROFILE / CHARACTER DETAIL
+========================================================= */
 
 .detail-page{
   flex:1;
+  min-height:0;
   overflow-y:auto;
-  background:var(--group);
-  padding:20px 0 calc(env(safe-area-inset-bottom,0px) + 24px);
+  background:var(--card);
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 30px);
 }
 
 .detail-hero{
-  background:var(--bg);
+  padding:25px 20px 28px;
   text-align:center;
-  padding:12px 20px 25px;
+  background:var(--bg);
 }
 
 .big-avatar{
-  width:104px;
-  height:104px;
+  width:108px;
+  height:108px;
   margin:0 auto;
-  font-size:35px;
+  border-radius:50%;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#5e5ce6,#bf5af2);
+  color:#fff;
+  font-size:34px;
+  font-weight:700;
 }
 
 .detail-name{
-  font-size:23px;
-  font-weight:700;
   margin-top:12px;
+  font-size:24px;
+  font-weight:700;
 }
 
 .detail-sub{
@@ -945,49 +1137,129 @@ button{
 }
 
 .photo-button{
+  margin-top:10px;
   color:var(--blue);
-  border:0;
   background:none;
   font-size:16px;
   font-weight:600;
-  margin-top:9px;
   cursor:pointer;
 }
 
 .text-field{
   width:100%;
   border:0;
-  outline:0;
-  background:transparent;
+  background:none;
   color:var(--text);
   font-size:16px;
   padding:0;
 }
 
-.color-picker-row{
+.color-row{
   padding:15px 17px;
   display:flex;
   align-items:center;
-  gap:10px;
-}
-
-.color-picker-row input[type=color]{
-  width:52px;
-  height:36px;
-  border:0;
-  padding:0;
-  background:none;
-  border-radius:10px;
-  overflow:hidden;
-  cursor:pointer;
+  gap:12px;
 }
 
 .color-preview{
-  width:34px;
-  height:34px;
+  width:38px;
+  height:38px;
   border-radius:50%;
-  border:3px solid rgba(255,255,255,.7);
-  box-shadow:0 1px 4px rgba(0,0,0,.2);
+  border:2px solid rgba(255,255,255,.7);
+}
+
+.color-row input[type=color]{
+  width:50px;
+  height:36px;
+  border:0;
+  background:none;
+}
+
+/* =========================================================
+   NEW MESSAGE
+========================================================= */
+
+.search-input-row{
+  margin:10px 16px;
+  height:39px;
+  border-radius:10px;
+  background:var(--card2);
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:0 11px;
+  color:var(--secondary);
+}
+
+.search-input-row input{
+  flex:1;
+  min-width:0;
+  border:0;
+  background:none;
+  color:var(--text);
+  font-size:16px;
+}
+
+.character-row{
+  width:100%;
+  min-height:70px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:8px 17px;
+  background:none;
+  color:var(--text);
+  text-align:left;
+  cursor:pointer;
+}
+
+.character-row:active{
+  background:var(--card2);
+}
+
+.character-avatar-small{
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-size:16px;
+  font-weight:700;
+}
+
+.character-row-name{
+  font-size:17px;
+  font-weight:600;
+}
+
+.character-row-phone{
+  color:var(--secondary);
+  font-size:13px;
+  margin-top:2px;
+}
+
+/* =========================================================
+   ADMIN
+========================================================= */
+
+.admin-character-row{
+  min-height:66px;
+}
+
+.admin-character-avatar{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-size:14px;
+  font-weight:700;
 }
 
 .admin-note{
@@ -997,103 +1269,101 @@ button{
   line-height:1.45;
 }
 
-.action-card{
-  margin-top:21px;
+.primary{
+  background:var(--blue);
+  color:#fff;
+  border-radius:10px;
+  padding:9px 15px;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
 }
 
-.delete-character{
-  color:var(--red);
-}
-
-/* ---------- admin thread ---------- */
+/* =========================================================
+   ADMIN CONVERSATION
+========================================================= */
 
 .admin-thread{
-  padding:0 12px 15px;
+  padding:10px 12px 20px;
 }
 
 .admin-message{
-  background:var(--card);
+  background:var(--card2);
   border-bottom:.5px solid var(--separator);
-  padding:11px 12px;
+  padding:11px;
   display:flex;
   gap:9px;
-  align-items:flex-start;
 }
 
-.admin-message-who{
+.admin-who{
   width:50px;
-  flex-shrink:0;
-  font-size:12px;
+  flex:0 0 50px;
   color:var(--secondary);
-  padding-top:2px;
+  font-size:12px;
 }
 
-.admin-message-text{
+.admin-text{
   flex:1;
   min-width:0;
-  font-size:14px;
-  line-height:1.35;
   white-space:pre-wrap;
   word-break:break-word;
+  font-size:14px;
+  line-height:1.35;
 }
 
-.admin-message-time{
+.admin-time{
+  margin-top:3px;
   color:var(--secondary);
   font-size:11px;
-  margin-top:3px;
 }
 
-.admin-message-delete{
-  border:0;
+.admin-delete{
   background:none;
   color:var(--secondary);
+  font-size:19px;
   cursor:pointer;
-  font-size:18px;
-  padding:0;
 }
 
 .admin-composer{
-  background:var(--card);
   margin:0 12px;
-  border-radius:14px;
+  border-radius:15px;
   overflow:hidden;
+  background:var(--card2);
   border:.5px solid var(--separator);
 }
 
 .admin-textarea{
   display:block;
   width:100%;
-  min-height:94px;
-  border:0;
-  outline:0;
-  resize:none;
-  background:transparent;
-  color:var(--text);
+  min-height:100px;
   padding:12px;
+  resize:none;
+  border:0;
+  background:none;
+  color:var(--text);
   font-size:16px;
 }
 
 .admin-date-row{
   display:grid;
   grid-template-columns:1fr 1fr auto;
-  gap:8px;
-  padding:10px;
+  gap:7px;
+  padding:9px;
   border-top:.5px solid var(--separator);
 }
 
 .admin-date-row input{
-  width:100%;
   min-width:0;
   height:35px;
   border:0;
   border-radius:8px;
   background:var(--input);
   color:var(--text);
-  padding:0 8px;
+  padding:0 7px;
   font-size:13px;
 }
 
-.small-now{
+.now-button{
   border:0;
   border-radius:8px;
   background:var(--input);
@@ -1103,10 +1373,10 @@ button{
 }
 
 .admin-send-row{
+  padding:9px;
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  padding:10px;
+  justify-content:space-between;
   border-top:.5px solid var(--separator);
 }
 
@@ -1115,58 +1385,50 @@ button{
   font-size:11px;
 }
 
-.primary-button{
-  border:0;
-  border-radius:10px;
-  background:var(--blue);
-  color:#fff;
-  padding:9px 15px;
-  font-size:14px;
-  font-weight:600;
-  cursor:pointer;
-}
-
-/* ---------- contact ---------- */
+/* =========================================================
+   CONTACT
+========================================================= */
 
 .contact-page{
   flex:1;
+  min-height:0;
   overflow-y:auto;
-  padding:15px 20px calc(env(safe-area-inset-bottom,0px) + 30px);
+  padding:25px 20px;
   text-align:center;
+  background:var(--card);
 }
 
 .contact-name{
-  font-size:24px;
+  margin-top:13px;
+  font-size:25px;
   font-weight:700;
-  margin-top:12px;
 }
 
 .contact-phone{
   color:var(--secondary);
   font-size:14px;
-  margin-top:4px;
+  margin-top:3px;
 }
 
 .contact-actions{
+  margin-top:25px;
   display:flex;
   justify-content:center;
-  gap:28px;
-  margin-top:25px;
+  gap:27px;
 }
 
 .contact-action{
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:6px;
+  gap:7px;
 }
 
 .contact-action button{
   width:55px;
   height:55px;
-  border:0;
   border-radius:50%;
-  background:var(--group);
+  background:var(--card2);
   color:var(--blue);
   display:flex;
   align-items:center;
@@ -1174,110 +1436,50 @@ button{
   cursor:pointer;
 }
 
-.contact-action svg{
-  width:23px;
-  height:23px;
-}
-
 .contact-action span{
+  color:var(--secondary);
   font-size:12px;
-  color:var(--secondary);
 }
 
-/* ---------- new message ---------- */
-
-.new-search{
-  margin:10px 16px 8px;
-  height:38px;
-  border-radius:10px;
-  background:var(--input);
-  display:flex;
-  align-items:center;
-  gap:7px;
-  padding:0 11px;
-  color:var(--secondary);
-}
-
-.new-search input{
-  flex:1;
-  border:0;
-  outline:0;
-  background:none;
-  color:var(--text);
-  font-size:16px;
-}
-
-.character-picker-row{
-  width:100%;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  border:0;
-  background:none;
-  color:var(--text);
-  padding:9px 16px;
-  text-align:left;
-  cursor:pointer;
-}
-
-.character-picker-row:active{
-  background:var(--group);
-}
-
-.character-picker-avatar{
-  width:48px;
-  height:48px;
-  font-size:16px;
-}
-
-.character-picker-name{
-  font-size:17px;
-  font-weight:600;
-}
-
-.character-picker-phone{
-  font-size:13px;
-  color:var(--secondary);
-  margin-top:2px;
-}
-
-/* ---------- recently deleted ---------- */
+/* =========================================================
+   DELETED
+========================================================= */
 
 .deleted-info{
+  padding:15px 17px 5px;
   color:var(--secondary);
   font-size:13px;
-  padding:0 17px 12px;
   line-height:1.45;
 }
 
-.deleted-actions{
+.deleted-row-actions{
   display:flex;
-  gap:8px;
-  margin-left:auto;
+  gap:5px;
 }
 
-.inline-action{
-  border:0;
+.inline-button{
   background:none;
   color:var(--blue);
+  padding:5px;
   font-size:13px;
   cursor:pointer;
-  padding:5px;
 }
 
-.inline-action.red{
+.inline-button.red{
   color:var(--red);
 }
 
-/* ---------- sheet ---------- */
+/* =========================================================
+   SHEET
+========================================================= */
 
 .sheet-cover{
   position:absolute;
   inset:0;
-  z-index:300;
-  background:var(--overlay);
+  z-index:500;
   display:flex;
   align-items:flex-end;
+  background:var(--overlay);
   opacity:0;
   pointer-events:none;
   transition:.22s;
@@ -1290,15 +1492,17 @@ button{
 
 .bottom-sheet{
   width:100%;
-  max-height:86%;
+  max-height:88%;
   overflow-y:auto;
+  padding:
+    8px 15px
+    calc(env(safe-area-inset-bottom,0px) + 18px);
+  border-radius:25px 25px 0 0;
   background:var(--sheet);
-  border-radius:24px 24px 0 0;
-  padding:8px 16px calc(env(safe-area-inset-bottom,0px) + 20px);
-  transform:translateY(100%);
-  transition:transform .32s cubic-bezier(.32,.72,0,1);
   backdrop-filter:blur(30px);
   -webkit-backdrop-filter:blur(30px);
+  transform:translateY(100%);
+  transition:transform .32s cubic-bezier(.32,.72,0,1);
 }
 
 .sheet-cover.open .bottom-sheet{
@@ -1308,23 +1512,22 @@ button{
 .grabber{
   width:38px;
   height:5px;
+  margin:3px auto 15px;
   border-radius:5px;
   background:#8e8e93;
-  opacity:.5;
-  margin:3px auto 15px;
+  opacity:.55;
 }
 
 .sheet-title{
+  margin-bottom:12px;
   text-align:center;
   font-size:20px;
   font-weight:700;
-  margin-bottom:16px;
 }
 
 .sheet-button{
   width:100%;
-  min-height:49px;
-  border:0;
+  min-height:50px;
   border-bottom:.5px solid var(--separator);
   background:none;
   color:var(--blue);
@@ -1337,35 +1540,36 @@ button{
 }
 
 .sheet-cancel{
+  width:100%;
+  height:52px;
   margin-top:12px;
-  border-radius:14px;
-  background:var(--group);
-  border:0;
+  border-radius:15px;
+  background:var(--card2);
   color:var(--blue);
   font-size:17px;
   font-weight:600;
-  width:100%;
-  height:52px;
   cursor:pointer;
 }
 
-/* ---------- alerts ---------- */
+/* =========================================================
+   TOAST
+========================================================= */
 
 .toast{
   position:absolute;
+  z-index:700;
   left:50%;
-  bottom:calc(env(safe-area-inset-bottom,0px) + 24px);
+  bottom:calc(env(safe-area-inset-bottom,0px) + 95px);
   transform:translate(-50%,20px);
-  padding:11px 15px;
-  border-radius:15px;
-  background:rgba(40,40,42,.90);
-  color:#fff;
-  font-size:14px;
-  z-index:500;
   opacity:0;
   pointer-events:none;
-  transition:.2s;
+  padding:11px 16px;
+  border-radius:16px;
+  background:rgba(42,42,44,.92);
+  color:#fff;
+  font-size:14px;
   white-space:nowrap;
+  transition:.2s;
   backdrop-filter:blur(20px);
 }
 
@@ -1374,474 +1578,1118 @@ button{
   transform:translate(-50%,0);
 }
 
-@media (min-width:431px){
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(min-width:431px){
   .app{
-    box-shadow:0 0 40px rgba(0,0,0,.35);
+    box-shadow:0 0 45px rgba(0,0,0,.4);
+  }
+}
+
+@media(max-width:370px){
+  .list-title{
+    font-size:42px;
+  }
+
+  .conversation-row{
+    padding-left:20px;
+  }
+
+  .conversation-avatar{
+    width:53px;
+    height:53px;
+    flex-basis:53px;
+  }
+
+  .conversation-name{
+    font-size:18px;
+  }
+
+  .conversation-preview{
+    font-size:15px;
   }
 }
 </style>
 </head>
 
 <body>
+
 <div class="app" id="app">
 
-  <!-- ==================== MESSAGE LIST ==================== -->
-  <section class="screen" id="screenList">
+<!-- ======================================================
+     MESSAGE LIST
+====================================================== -->
 
-    <header class="list-nav" id="listNav">
-      <div class="list-nav-row">
-        <button class="ios-btn" id="editButton">편집</button>
+<section class="screen" id="screenList">
 
-        <div class="list-actions">
-          <button class="icon-btn" id="filterButton" aria-label="필터">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M4 7h16M7 12h10M10 17h4" stroke-linecap="round"/>
-            </svg>
-          </button>
+  <header class="list-header" id="listHeader">
 
-          <button class="icon-btn" id="newMessageButton" aria-label="새 메시지">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14.5 4.5l5 5L9 20H4v-5L14.5 4.5z"/>
-              <path d="M12.5 6.5l5 5"/>
-            </svg>
-          </button>
-        </div>
-      </div>
+    <div class="list-header-row">
 
-      <div class="list-title" id="listTitle">메시지</div>
-    </header>
+      <button
+        class="header-pill"
+        id="editButton">
+        편집
+      </button>
 
-    <div class="profile-row" id="profileRow">
-      <div class="avatar profile-avatar" id="profileAvatar"></div>
+      <button
+        class="header-pill icon"
+        id="filterButton"
+        aria-label="필터">
 
-      <div class="profile-copy">
-        <div class="profile-name" id="profileName"></div>
-        <div class="profile-status" id="profileStatus"></div>
-      </div>
+        <svg
+          viewBox="0 0 32 32"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.4"
+          stroke-linecap="round">
 
-      <div class="chevron">›</div>
+          <path d="M5 9h22"/>
+          <path d="M9 16h14"/>
+          <path d="M13 23h6"/>
+
+        </svg>
+
+      </button>
+
     </div>
 
-    <div class="separator"></div>
-
-    <div class="conv-list" id="conversationList"></div>
-
-    <button class="compose-fab" id="composeFab" aria-label="새 메시지">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M14.5 4.5l5 5L9 20H4v-5L14.5 4.5z"/>
-        <path d="M12.5 6.5l5 5"/>
-      </svg>
-    </button>
-
-    <div class="tap-cover hidden" id="filterCover"></div>
-
-    <div class="list-filter-popover hidden" id="filterPopover">
-      <button class="pop-row" data-filter="messages">
-        <span>메시지</span>
-        <span class="pop-check" id="checkMessages">✓</span>
-      </button>
-
-      <button class="pop-row" data-filter="spam">
-        <span>스팸</span>
-        <span class="pop-check hidden" id="checkSpam">✓</span>
-      </button>
-
-      <button class="pop-row" data-filter="deleted">
-        <span>최근 삭제된 항목</span>
-        <span class="pop-check hidden" id="checkDeleted">✓</span>
-      </button>
-
-      <div class="pop-divider"></div>
-
-      <div class="pop-section">필터 기준</div>
-
-      <button class="pop-row" id="unreadFilterButton">
-        <span>읽지 않음</span>
-        <span class="radio-dot" id="unreadRadio"></span>
-      </button>
-
-      <div class="pop-divider"></div>
-
-      <button class="pop-row" id="filterManageButton">
-        <span>필터링 관리</span>
-        <span class="setting-chev">›</span>
-      </button>
+    <div
+      class="list-title"
+      id="listTitle">
+      메시지
     </div>
 
-    <div class="edit-toolbar hidden" id="editToolbar">
-      <button class="edit-action" id="selectAllButton">모두 선택</button>
-      <button class="edit-action" id="readSelectedButton">읽음</button>
-      <button class="edit-action" id="unreadSelectedButton">읽지 않음</button>
-      <button class="edit-action" id="pinSelectedButton">고정</button>
-      <button class="edit-action danger" id="deleteSelectedButton">삭제</button>
-    </div>
-  </section>
+  </header>
 
+  <div
+    class="profile-card"
+    id="profileRow">
 
-  <!-- ==================== CHAT ==================== -->
-  <section class="screen right" id="screenChat">
-
-    <header class="chat-nav">
-      <div class="chat-nav-row">
-
-        <button class="back-chat" id="backToListButton">
-          <svg viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 2L2 10l8 8"/>
-          </svg>
-          <span>메시지</span>
-        </button>
-
-        <div class="chat-contact" id="chatContact">
-          <div class="avatar chat-contact-avatar" id="chatAvatar"></div>
-          <div class="chat-contact-name">
-            <span id="chatName"></span>
-            <span>⌄</span>
-          </div>
-        </div>
-
-        <button class="icon-btn chat-info" id="chatInfoButton" aria-label="정보">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="9"/>
-            <path d="M12 11v6M12 7.5v.5" stroke-linecap="round"/>
-          </svg>
-        </button>
-
-      </div>
-    </header>
-
-    <main class="messages" id="messagesArea"></main>
-
-    <div class="input-area">
-      <button class="plus-button" aria-label="추가">+</button>
-
-      <div class="input-wrap">
-        <textarea
-          id="userMessageInput"
-          class="chat-input"
-          rows="1"
-          placeholder="iMessage"
-        ></textarea>
-      </div>
-
-      <button class="send-button" id="userSendButton" aria-label="전송">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M4 20.5L21 12 4 3.5v6.4l10 2.1-10 2.1v6.4z"/>
-        </svg>
-      </button>
-    </div>
-  </section>
-
-
-  <!-- ==================== CONTACT ==================== -->
-  <section class="screen right" id="screenContact">
-
-    <header class="standard-nav">
-      <button class="back-chat ios-btn" id="contactBackButton">
-        <svg viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10 2L2 10l8 8"/>
-        </svg>
-        <span>메시지</span>
-      </button>
-
-      <div class="standard-title">연락처</div>
-      <div></div>
-    </header>
-
-    <main class="contact-page" id="contactPage"></main>
-  </section>
-
-
-  <!-- ==================== NEW MESSAGE ==================== -->
-  <section class="screen right" id="screenNewMessage">
-
-    <header class="standard-nav">
-      <button class="ios-btn" id="newMessageCancelButton">취소</button>
-      <div class="standard-title">새 메시지</div>
-      <div></div>
-    </header>
-
-    <div class="new-search">
-      <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2">
-        <circle cx="11" cy="11" r="7"/>
-        <path d="M20 20l-4-4"/>
-      </svg>
-      <input id="characterSearchInput" placeholder="검색">
+    <div
+      class="profile-avatar"
+      id="profileAvatar">
     </div>
 
-    <div class="scroll" id="characterPickerList"></div>
-  </section>
+    <div class="profile-info">
 
-
-  <!-- ==================== FILTER SETTINGS ==================== -->
-  <section class="screen right" id="screenFilterSettings">
-
-    <header class="standard-nav">
-      <button class="back-chat ios-btn" id="filterSettingsBackButton">
-        <svg viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10 2L2 10l8 8"/>
-        </svg>
-        <span>메시지</span>
-      </button>
-
-      <div class="standard-title">필터링 관리</div>
-      <div></div>
-    </header>
-
-    <main class="group-page">
-
-      <div class="page-section-title">메시지 필터</div>
-
-      <div class="group-card">
-
-        <div class="setting-row">
-          <div class="setting-main">
-            <div class="setting-title">스팸 필터링</div>
-            <div class="setting-sub">스팸으로 분류된 대화 표시</div>
-          </div>
-          <button class="ios-switch" id="spamFilteringSwitch"><span></span></button>
-        </div>
-
-        <div class="setting-row">
-          <div class="setting-main">
-            <div class="setting-title">알 수 없는 발신자 필터링</div>
-          </div>
-          <button class="ios-switch" id="unknownFilteringSwitch"><span></span></button>
-        </div>
-
-        <div class="setting-row">
-          <div class="setting-main">
-            <div class="setting-title">문자 메시지 필터링</div>
-          </div>
-          <button class="ios-switch" id="smsFilteringSwitch"><span></span></button>
-        </div>
-
+      <div
+        class="profile-name"
+        id="profileName">
       </div>
 
-      <div class="page-section-title">관리</div>
-
-      <div class="group-card">
-        <button class="setting-row" id="openAdminButton">
-          <div class="setting-main">
-            <div class="setting-title">⚙️ 관리자 · 캐릭터 설정</div>
-            <div class="setting-sub">캐릭터와 대화 관리</div>
-          </div>
-          <span class="setting-chev">›</span>
-        </button>
+      <div
+        class="profile-status"
+        id="profileStatus">
       </div>
 
-    </main>
-  </section>
-
-
-  <!-- ==================== ADMIN ==================== -->
-  <section class="screen right" id="screenAdmin">
-
-    <header class="standard-nav">
-      <button class="back-chat ios-btn" id="adminBackButton">
-        <svg viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10 2L2 10l8 8"/>
-        </svg>
-        <span>설정</span>
-      </button>
-
-      <div class="standard-title">캐릭터 설정</div>
-
-      <div class="standard-right">
-        <button class="ios-btn" id="addCharacterButton">추가</button>
-      </div>
-    </header>
-
-    <main class="group-page">
-      <div class="page-section-title">캐릭터</div>
-      <div class="group-card" id="adminCharacterList"></div>
-
-      <div class="admin-note">
-        캐릭터를 선택하면 이름, 전화번호, 프로필 사진, 말풍선 색상과 대화를 관리할 수 있습니다.
-      </div>
-    </main>
-  </section>
-
-
-  <!-- ==================== CHARACTER DETAIL ==================== -->
-  <section class="screen right" id="screenCharacterDetail">
-
-    <header class="standard-nav">
-      <button class="back-chat ios-btn" id="characterDetailBackButton">
-        <svg viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10 2L2 10l8 8"/>
-        </svg>
-        <span>캐릭터</span>
-      </button>
-
-      <div class="standard-title">캐릭터</div>
-
-      <div class="standard-right">
-        <button class="ios-btn" id="saveCharacterButton">완료</button>
-      </div>
-    </header>
-
-    <main class="detail-page" id="characterDetailPage"></main>
-
-    <input type="file" id="characterPhotoInput" accept="image/*" hidden>
-  </section>
-
-
-  <!-- ==================== CHARACTER CONVERSATION ADMIN ==================== -->
-  <section class="screen right" id="screenAdminConversation">
-
-    <header class="standard-nav">
-      <button class="back-chat ios-btn" id="adminConversationBackButton">
-        <svg viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10 2L2 10l8 8"/>
-        </svg>
-        <span>캐릭터</span>
-      </button>
-
-      <div class="standard-title" id="adminConversationTitle">대화 관리</div>
-      <div></div>
-    </header>
-
-    <main class="detail-page">
-
-      <div class="admin-thread" id="adminThread"></div>
-
-      <div class="page-section-title">캐릭터 메시지 작성</div>
-
-      <div class="admin-composer">
-        <textarea
-          id="adminMessageInput"
-          class="admin-textarea"
-          placeholder="캐릭터가 보낼 메시지를 입력하세요…"
-        ></textarea>
-
-        <div class="admin-date-row">
-          <input type="date" id="adminDateInput">
-          <input type="time" id="adminTimeInput">
-          <button class="small-now" id="adminNowButton">지금</button>
-        </div>
-
-        <div class="admin-send-row">
-          <span class="admin-hint">Enter 전송 · Shift + Enter 줄바꿈</span>
-          <button class="primary-button" id="adminSendButton">전송</button>
-        </div>
-      </div>
-
-    </main>
-  </section>
-
-
-  <!-- ==================== PROFILE ==================== -->
-  <section class="screen right" id="screenProfile">
-
-    <header class="standard-nav">
-      <button class="back-chat ios-btn" id="profileBackButton">
-        <svg viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10 2L2 10l8 8"/>
-        </svg>
-        <span>메시지</span>
-      </button>
-
-      <div class="standard-title">이름 및 사진 설정</div>
-
-      <div class="standard-right">
-        <button class="ios-btn" id="profileSaveButton">완료</button>
-      </div>
-    </header>
-
-    <main class="detail-page">
-
-      <div class="detail-hero">
-        <div class="avatar big-avatar" id="profileEditAvatar"></div>
-        <button class="photo-button" id="profilePhotoButton">사진 변경</button>
-      </div>
-
-      <div class="page-section-title">프로필</div>
-
-      <div class="group-card">
-
-        <div class="setting-row">
-          <div class="setting-main">
-            <div class="setting-sub">이름</div>
-            <input class="text-field" id="profileNameInput" maxlength="30">
-          </div>
-        </div>
-
-        <div class="setting-row">
-          <div class="setting-main">
-            <div class="setting-sub">상태 메시지</div>
-            <input class="text-field" id="profileStatusInput" maxlength="60">
-          </div>
-        </div>
-
-      </div>
-
-    </main>
-
-    <input type="file" id="profilePhotoInput" accept="image/*" hidden>
-  </section>
-
-
-  <!-- ==================== RECENTLY DELETED ==================== -->
-  <section class="screen right" id="screenDeleted">
-
-    <header class="standard-nav">
-      <button class="back-chat ios-btn" id="deletedBackButton">
-        <svg viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10 2L2 10l8 8"/>
-        </svg>
-        <span>메시지</span>
-      </button>
-
-      <div class="standard-title">최근 삭제된 항목</div>
-
-      <div class="standard-right">
-        <button class="ios-btn" id="emptyDeletedButton">비우기</button>
-      </div>
-    </header>
-
-    <main class="scroll" id="deletedList"></main>
-  </section>
-
-
-  <!-- ==================== SHEET ==================== -->
-  <div class="sheet-cover" id="sheetCover">
-    <div class="bottom-sheet" id="bottomSheet">
-      <div class="grabber"></div>
-      <div class="sheet-title" id="sheetTitle"></div>
-      <div id="sheetContent"></div>
-      <button class="sheet-cancel" id="sheetCancelButton">취소</button>
     </div>
+
+    <div class="profile-arrow">
+      ›
+    </div>
+
   </div>
 
-  <div class="toast" id="toast"></div>
+  <main
+    class="conversation-list"
+    id="conversationList">
+  </main>
+
+  <div
+    class="bottom-bar"
+    id="bottomBar">
+
+    <div
+      class="search-bar"
+      id="searchBar">
+
+      <svg
+        class="search-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.3"
+        stroke-linecap="round">
+
+        <circle
+          cx="11"
+          cy="11"
+          r="7">
+        </circle>
+
+        <path
+          d="M20 20l-4-4">
+        </path>
+
+      </svg>
+
+      <span class="search-label">
+        검색
+      </span>
+
+    </div>
+
+    <button
+      class="compose-button"
+      id="composeFab"
+      aria-label="새 메시지">
+
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+
+        <path
+          d="M4 20h4L19 9l-4-4L4 16v4z">
+        </path>
+
+        <path
+          d="M14 6l4 4">
+        </path>
+
+      </svg>
+
+    </button>
+
+  </div>
+
+  <div
+    class="filter-backdrop hidden"
+    id="filterBackdrop">
+  </div>
+
+  <div
+    class="filter-popover hidden"
+    id="filterPopover">
+
+    <button
+      class="filter-item"
+      data-filter="messages">
+
+      <span>메시지</span>
+
+      <span
+        class="filter-check"
+        id="checkMessages">
+        ✓
+      </span>
+
+    </button>
+
+    <button
+      class="filter-item"
+      data-filter="spam">
+
+      <span>스팸</span>
+
+      <span
+        class="filter-check hidden"
+        id="checkSpam">
+        ✓
+      </span>
+
+    </button>
+
+    <button
+      class="filter-item"
+      data-filter="deleted">
+
+      <span>
+        최근 삭제된 항목
+      </span>
+
+      <span
+        class="filter-check hidden"
+        id="checkDeleted">
+        ✓
+      </span>
+
+    </button>
+
+    <div class="filter-divider"></div>
+
+    <div class="filter-heading">
+      필터 기준
+    </div>
+
+    <button
+      class="filter-item"
+      id="unreadFilterButton">
+
+      <span>읽지 않음</span>
+
+      <span
+        class="filter-radio"
+        id="unreadRadio">
+      </span>
+
+    </button>
+
+    <div class="filter-divider"></div>
+
+    <button
+      class="filter-item"
+      id="filterManageButton">
+
+      <span>필터링 관리</span>
+
+      <span class="settings-chevron">
+        ›
+      </span>
+
+    </button>
+
+  </div>
+
+  <header
+    class="edit-header hidden"
+    id="editHeader">
+
+    <div class="edit-header-row">
+
+      <button
+        class="edit-text edit-header-left"
+        id="cancelEditButton">
+        취소
+      </button>
+
+      <div class="edit-header-center">
+        메시지 선택
+      </div>
+
+      <button
+        class="edit-text edit-header-right"
+        id="topSelectAllButton">
+        모두 선택
+      </button>
+
+    </div>
+
+    <div
+      class="edit-selection-count"
+      id="editSelectionCount">
+      선택된 대화 없음
+    </div>
+
+  </header>
+
+  <div
+    class="edit-actions hidden"
+    id="editActions">
+
+    <button
+      class="edit-action"
+      id="readSelectedButton">
+      읽음
+    </button>
+
+    <button
+      class="edit-action"
+      id="unreadSelectedButton">
+      읽지 않음
+    </button>
+
+    <button
+      class="edit-action"
+      id="pinSelectedButton">
+      고정
+    </button>
+
+    <button
+      class="edit-action"
+      id="deleteSelectedButton">
+      삭제
+    </button>
+
+    <button
+      class="edit-action danger"
+      id="spamSelectedButton">
+      스팸
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- ======================================================
+     CHAT
+====================================================== -->
+
+<section
+  class="screen right"
+  id="screenChat">
+
+  <header class="chat-nav">
+
+    <div class="chat-nav-row">
+
+      <button
+        class="chat-back"
+        id="backToListButton">
+
+        <svg
+          viewBox="0 0 12 20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round">
+
+          <path
+            d="M10 2L2 10l8 8">
+          </path>
+
+        </svg>
+
+        <span>메시지</span>
+
+      </button>
+
+      <div
+        class="chat-contact"
+        id="chatContact">
+
+        <div
+          class="chat-avatar"
+          id="chatAvatar">
+        </div>
+
+        <div class="chat-name">
+
+          <span id="chatName">
+          </span>
+
+          <span class="chat-name-arrow">
+            ⌄
+          </span>
+
+        </div>
+
+      </div>
+
+      <button
+        class="info-button"
+        id="chatInfoButton">
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2">
+
+          <circle
+            cx="12"
+            cy="12"
+            r="9">
+          </circle>
+
+          <path
+            d="M12 11v6"
+            stroke-linecap="round">
+          </path>
+
+          <circle
+            cx="12"
+            cy="7.5"
+            r=".7"
+            fill="currentColor"
+            stroke="none">
+          </circle>
+
+        </svg>
+
+      </button>
+
+    </div>
+
+  </header>
+
+  <main
+    class="messages"
+    id="messagesArea">
+  </main>
+
+  <div class="input-area">
+
+    <button
+      class="plus-button">
+      +
+    </button>
+
+    <div class="message-input-wrap">
+
+      <textarea
+        class="message-input"
+        id="userMessageInput"
+        rows="1"
+        placeholder="iMessage">
+      </textarea>
+
+    </div>
+
+    <button
+      class="send-button"
+      id="userSendButton">
+
+      <svg
+        viewBox="0 0 24 24"
+        fill="currentColor">
+
+        <path
+          d="M4 20.5L21 12 4 3.5v6.4l10 2.1-10 2.1v6.4z">
+        </path>
+
+      </svg>
+
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- ======================================================
+     CONTACT
+====================================================== -->
+
+<section
+  class="screen right"
+  id="screenContact">
+
+  <header class="standard-nav">
+
+    <button
+      class="nav-button"
+      id="contactBackButton">
+
+      <span>‹</span>
+      <span>메시지</span>
+
+    </button>
+
+    <div class="standard-title">
+      연락처
+    </div>
+
+    <div></div>
+
+  </header>
+
+  <main
+    class="contact-page"
+    id="contactPage">
+  </main>
+
+</section>
+
+
+<!-- ======================================================
+     NEW MESSAGE
+====================================================== -->
+
+<section
+  class="screen right"
+  id="screenNewMessage">
+
+  <header class="standard-nav">
+
+    <button
+      class="nav-button"
+      id="newMessageCancelButton">
+      취소
+    </button>
+
+    <div class="standard-title">
+      새 메시지
+    </div>
+
+    <div></div>
+
+  </header>
+
+  <div class="search-input-row">
+
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2">
+
+      <circle
+        cx="11"
+        cy="11"
+        r="7">
+      </circle>
+
+      <path
+        d="M20 20l-4-4">
+      </path>
+
+    </svg>
+
+    <input
+      id="characterSearchInput"
+      placeholder="검색">
+
+  </div>
+
+  <div
+    class="scroll"
+    id="characterPickerList">
+  </div>
+
+</section>
+
+
+<!-- ======================================================
+     FILTER SETTINGS
+====================================================== -->
+
+<section
+  class="screen right"
+  id="screenFilterSettings">
+
+  <header class="standard-nav">
+
+    <button
+      class="nav-button"
+      id="filterSettingsBackButton">
+
+      <span>‹</span>
+      <span>메시지</span>
+
+    </button>
+
+    <div class="standard-title">
+      필터링 관리
+    </div>
+
+    <div></div>
+
+  </header>
+
+  <main class="group-page">
+
+    <div class="settings-section-title">
+      메시지 필터
+    </div>
+
+    <div class="settings-card">
+
+      <div class="settings-row">
+
+        <div class="settings-main">
+
+          <div class="settings-title">
+            스팸 필터링
+          </div>
+
+          <div class="settings-sub">
+            스팸으로 분류된 대화 표시
+          </div>
+
+        </div>
+
+        <button
+          class="ios-switch"
+          id="spamFilteringSwitch">
+
+          <span></span>
+
+        </button>
+
+      </div>
+
+      <div class="settings-row">
+
+        <div class="settings-main">
+
+          <div class="settings-title">
+            알 수 없는 발신자 필터링
+          </div>
+
+        </div>
+
+        <button
+          class="ios-switch"
+          id="unknownFilteringSwitch">
+
+          <span></span>
+
+        </button>
+
+      </div>
+
+      <div class="settings-row">
+
+        <div class="settings-main">
+
+          <div class="settings-title">
+            문자 메시지 필터링
+          </div>
+
+        </div>
+
+        <button
+          class="ios-switch"
+          id="smsFilteringSwitch">
+
+          <span></span>
+
+        </button>
+
+      </div>
+
+    </div>
+
+    <div class="settings-section-title">
+      관리
+    </div>
+
+    <div class="settings-card">
+
+      <button
+        class="settings-row"
+        id="openAdminButton">
+
+        <div class="settings-main">
+
+          <div class="settings-title">
+            ⚙️ 관리자 · 캐릭터 설정
+          </div>
+
+          <div class="settings-sub">
+            캐릭터와 대화 관리
+          </div>
+
+        </div>
+
+        <span class="settings-chevron">
+          ›
+        </span>
+
+      </button>
+
+    </div>
+
+  </main>
+
+</section>
+
+
+<!-- ======================================================
+     ADMIN
+====================================================== -->
+
+<section
+  class="screen right"
+  id="screenAdmin">
+
+  <header class="standard-nav">
+
+    <button
+      class="nav-button"
+      id="adminBackButton">
+
+      <span>‹</span>
+      <span>설정</span>
+
+    </button>
+
+    <div class="standard-title">
+      캐릭터 설정
+    </div>
+
+    <div class="nav-right">
+
+      <button
+        class="nav-button"
+        id="addCharacterButton">
+        추가
+      </button>
+
+    </div>
+
+  </header>
+
+  <main class="group-page">
+
+    <div class="settings-section-title">
+      캐릭터
+    </div>
+
+    <div
+      class="settings-card"
+      id="adminCharacterList">
+    </div>
+
+    <div class="admin-note">
+      캐릭터를 선택하면 이름, 전화번호,
+      프로필 사진, 말풍선 색상과 대화를
+      관리할 수 있습니다.
+    </div>
+
+  </main>
+
+</section>
+
+
+<!-- ======================================================
+     CHARACTER DETAIL
+====================================================== -->
+
+<section
+  class="screen right"
+  id="screenCharacterDetail">
+
+  <header class="standard-nav">
+
+    <button
+      class="nav-button"
+      id="characterDetailBackButton">
+
+      <span>‹</span>
+      <span>캐릭터</span>
+
+    </button>
+
+    <div class="standard-title">
+      캐릭터
+    </div>
+
+    <div class="nav-right">
+
+      <button
+        class="nav-button"
+        id="saveCharacterButton">
+        완료
+      </button>
+
+    </div>
+
+  </header>
+
+  <main
+    class="detail-page"
+    id="characterDetailPage">
+  </main>
+
+  <input
+    type="file"
+    id="characterPhotoInput"
+    accept="image/*"
+    hidden>
+
+</section>
+
+
+<!-- ======================================================
+     ADMIN CONVERSATION
+====================================================== -->
+
+<section
+  class="screen right"
+  id="screenAdminConversation">
+
+  <header class="standard-nav">
+
+    <button
+      class="nav-button"
+      id="adminConversationBackButton">
+
+      <span>‹</span>
+      <span>캐릭터</span>
+
+    </button>
+
+    <div
+      class="standard-title"
+      id="adminConversationTitle">
+      대화 관리
+    </div>
+
+    <div></div>
+
+  </header>
+
+  <main class="detail-page">
+
+    <div
+      class="admin-thread"
+      id="adminThread">
+    </div>
+
+    <div class="settings-section-title">
+      캐릭터 메시지 작성
+    </div>
+
+    <div class="admin-composer">
+
+      <textarea
+        class="admin-textarea"
+        id="adminMessageInput"
+        placeholder="캐릭터가 보낼 메시지를 입력하세요…">
+      </textarea>
+
+      <div class="admin-date-row">
+
+        <input
+          type="date"
+          id="adminDateInput">
+
+        <input
+          type="time"
+          id="adminTimeInput">
+
+        <button
+          class="now-button"
+          id="adminNowButton">
+          지금
+        </button>
+
+      </div>
+
+      <div class="admin-send-row">
+
+        <span class="admin-hint">
+          Enter 전송 · Shift + Enter 줄바꿈
+        </span>
+
+        <button
+          class="primary"
+          id="adminSendButton">
+          전송
+        </button>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</section>
+
+
+<!-- ======================================================
+     PROFILE
+====================================================== -->
+
+<section
+  class="screen right"
+  id="screenProfile">
+
+  <header class="standard-nav">
+
+    <button
+      class="nav-button"
+      id="profileBackButton">
+
+      <span>‹</span>
+      <span>메시지</span>
+
+    </button>
+
+    <div class="standard-title">
+      이름 및 사진 설정
+    </div>
+
+    <div class="nav-right">
+
+      <button
+        class="nav-button"
+        id="profileSaveButton">
+        완료
+      </button>
+
+    </div>
+
+  </header>
+
+  <main class="detail-page">
+
+    <div class="detail-hero">
+
+      <div
+        class="big-avatar"
+        id="profileEditAvatar">
+      </div>
+
+      <button
+        class="photo-button"
+        id="profilePhotoButton">
+        사진 변경
+      </button>
+
+    </div>
+
+    <div class="settings-section-title">
+      프로필
+    </div>
+
+    <div class="settings-card">
+
+      <div class="settings-row">
+
+        <div class="settings-main">
+
+          <div class="settings-sub">
+            이름
+          </div>
+
+          <input
+            class="text-field"
+            id="profileNameInput"
+            maxlength="30">
+
+        </div>
+
+      </div>
+
+      <div class="settings-row">
+
+        <div class="settings-main">
+
+          <div class="settings-sub">
+            상태 메시지
+          </div>
+
+          <input
+            class="text-field"
+            id="profileStatusInput"
+            maxlength="60">
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <input
+    type="file"
+    id="profilePhotoInput"
+    accept="image/*"
+    hidden>
+
+</section>
+
+
+<!-- ======================================================
+     DELETED
+====================================================== -->
+
+<section
+  class="screen right"
+  id="screenDeleted">
+
+  <header class="standard-nav">
+
+    <button
+      class="nav-button"
+      id="deletedBackButton">
+
+      <span>‹</span>
+      <span>메시지</span>
+
+    </button>
+
+    <div class="standard-title">
+      최근 삭제된 항목
+    </div>
+
+    <div class="nav-right">
+
+      <button
+        class="nav-button"
+        id="emptyDeletedButton">
+        비우기
+      </button>
+
+    </div>
+
+  </header>
+
+  <main
+    class="scroll"
+    id="deletedList">
+  </main>
+
+</section>
+
+
+<!-- ======================================================
+     SHEET
+====================================================== -->
+
+<div
+  class="sheet-cover"
+  id="sheetCover">
+
+  <div
+    class="bottom-sheet"
+    id="bottomSheet">
+
+    <div class="grabber"></div>
+
+    <div
+      class="sheet-title"
+      id="sheetTitle">
+    </div>
+
+    <div
+      id="sheetContent">
+    </div>
+
+    <button
+      class="sheet-cancel"
+      id="sheetCancelButton">
+      취소
+    </button>
+
+  </div>
+
+</div>
+
+<div
+  class="toast"
+  id="toast">
+</div>
 
 </div>
 
 
 <script>
 (function(){
+
 "use strict";
 
 /* =========================================================
-   STORAGE / MIGRATION
+   STORAGE
 ========================================================= */
 
 const STORAGE_KEY = "messenger-demo-state-v1";
-const AVATAR_COLORS = [
-  "#0a84ff","#30d158","#ff9f0a","#bf5af2",
-  "#ff375f","#64d2ff","#5e5ce6"
+
+const COLORS = [
+  "#0a84ff",
+  "#30d158",
+  "#ff9f0a",
+  "#bf5af2",
+  "#ff375f",
+  "#64d2ff",
+  "#5e5ce6"
 ];
 
-let state = null;
+let state;
 
 let currentChatId = null;
 let currentCharacterId = null;
@@ -1851,31 +2699,21 @@ let currentFilter = "messages";
 let unreadOnly = false;
 
 let editMode = false;
-let selectedConversationIds = new Set();
+let selectedIds = new Set();
 
 let pendingProfilePhoto = "";
 let pendingCharacterPhoto = "";
 
+
+/* =========================================================
+   UTIL
+========================================================= */
+
 function uid(){
-  return Math.random().toString(36).slice(2,10)
-    + Date.now().toString(36)
-    + Math.random().toString(36).slice(2,5);
-}
-
-function initials(name){
-  const text = String(name || "나").trim();
-  if(!text) return "나";
-  const parts = text.split(/\s+/);
-  if(parts.length === 1) return parts[0].slice(0,2);
-  return (parts[0][0] || "") + (parts[1][0] || "");
-}
-
-function colorFor(id){
-  let hash = 0;
-  for(const ch of String(id || "")){
-    hash = (hash * 31 + ch.charCodeAt(0)) % 997;
-  }
-  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
+  return (
+    Math.random().toString(36).slice(2,10) +
+    Date.now().toString(36)
+  );
 }
 
 function escapeHtml(value){
@@ -1887,18 +2725,272 @@ function escapeHtml(value){
     .replace(/'/g,"&#39;");
 }
 
-function normalizeTimestamp(value){
-  if(typeof value === "number" && Number.isFinite(value)) return value;
-  const parsed = new Date(value).getTime();
-  return Number.isFinite(parsed) ? parsed : Date.now();
+function initials(name){
+  const value = String(name || "").trim();
+
+  if(!value){
+    return "나";
+  }
+
+  const parts = value.split(/\s+/);
+
+  if(parts.length > 1){
+    return (
+      (parts[0][0] || "") +
+      (parts[1][0] || "")
+    );
+  }
+
+  return value.slice(0,2);
 }
 
+function colorFor(id){
+  let hash = 0;
+
+  for(const char of String(id || "")){
+    hash =
+      (hash * 31 + char.charCodeAt(0)) %
+      997;
+  }
+
+  return COLORS[hash % COLORS.length];
+}
+
+function normalizeTimestamp(value){
+  if(
+    typeof value === "number" &&
+    Number.isFinite(value)
+  ){
+    return value;
+  }
+
+  const date = new Date(value).getTime();
+
+  return Number.isFinite(date)
+    ? date
+    : Date.now();
+}
+
+function characterById(id){
+  return state.characters.find(
+    character => character.id === id
+  );
+}
+
+function messagesFor(id){
+  return state.messages
+    .filter(message =>
+      message.characterId === id
+    )
+    .sort((a,b) => a.ts - b.ts);
+}
+
+function lastMessage(id){
+  const messages = messagesFor(id);
+
+  return messages.length
+    ? messages[messages.length - 1]
+    : null;
+}
+
+function unreadCount(id){
+  return state.messages.filter(message =>
+    message.characterId === id &&
+    message.sender === "them" &&
+    !message.readByUser
+  ).length;
+}
+
+function avatarHtml(entity){
+  if(entity && entity.photo){
+    return `
+      <img
+        src="${escapeHtml(entity.photo)}"
+        alt="">
+    `;
+  }
+
+  return escapeHtml(
+    initials(entity?.name || "나")
+  );
+}
+
+function setAvatar(element,entity){
+  if(!element){
+    return;
+  }
+
+  element.style.background =
+    colorFor(
+      entity?.id ||
+      entity?.name ||
+      "profile"
+    );
+
+  element.innerHTML =
+    avatarHtml(entity);
+}
+
+function formatTime(ts){
+  const date = new Date(ts);
+
+  let hour = date.getHours();
+
+  const period =
+    hour >= 12
+      ? "오후"
+      : "오전";
+
+  hour %= 12;
+
+  if(hour === 0){
+    hour = 12;
+  }
+
+  return (
+    period +
+    " " +
+    hour +
+    ":" +
+    String(date.getMinutes()).padStart(2,"0")
+  );
+}
+
+function sameDay(a,b){
+  const x = new Date(a);
+  const y = new Date(b);
+
+  return (
+    x.getFullYear() === y.getFullYear() &&
+    x.getMonth() === y.getMonth() &&
+    x.getDate() === y.getDate()
+  );
+}
+
+function formatDate(ts){
+  const date = new Date(ts);
+  const now = new Date();
+
+  if(
+    date.getFullYear() === now.getFullYear() &&
+    date.getMonth() === now.getMonth() &&
+    date.getDate() === now.getDate()
+  ){
+    return "오늘";
+  }
+
+  return (
+    date.getFullYear() +
+    "년 " +
+    (date.getMonth()+1) +
+    "월 " +
+    date.getDate() +
+    "일"
+  );
+}
+
+function formatConversationTime(ts){
+  const date = new Date(ts);
+  const now = new Date();
+
+  if(sameDay(date,now)){
+    return formatTime(ts);
+  }
+
+  const yesterday = new Date(now);
+  yesterday.setDate(
+    yesterday.getDate() - 1
+  );
+
+  if(sameDay(date,yesterday)){
+    return "어제";
+  }
+
+  if(
+    date.getFullYear() ===
+    now.getFullYear()
+  ){
+    return (
+      (date.getMonth()+1) +
+      ". " +
+      date.getDate() +
+      "."
+    );
+  }
+
+  return (
+    date.getFullYear() +
+    ". " +
+    (date.getMonth()+1) +
+    ". " +
+    date.getDate() +
+    "."
+  );
+}
+
+function toDateInput(ts){
+  const date = new Date(ts);
+
+  return (
+    date.getFullYear() +
+    "-" +
+    String(date.getMonth()+1).padStart(2,"0") +
+    "-" +
+    String(date.getDate()).padStart(2,"0")
+  );
+}
+
+function toTimeInput(ts){
+  const date = new Date(ts);
+
+  return (
+    String(date.getHours()).padStart(2,"0") +
+    ":" +
+    String(date.getMinutes()).padStart(2,"0")
+  );
+}
+
+function combineDateTime(date,time){
+  if(!date){
+    return Date.now();
+  }
+
+  const result =
+    new Date(
+      `${date}T${time || "00:00"}:00`
+    ).getTime();
+
+  return Number.isFinite(result)
+    ? result
+    : Date.now();
+}
+
+function showToast(text){
+  const toast =
+    document.getElementById("toast");
+
+  toast.textContent = text;
+  toast.classList.add("show");
+
+  clearTimeout(showToast.timer);
+
+  showToast.timer =
+    setTimeout(() => {
+      toast.classList.remove("show");
+    },1800);
+}
+
+
+/* =========================================================
+   DEFAULT DATA
+========================================================= */
+
 function seedData(){
+
   const now = Date.now();
-  const min = 60000;
 
   return {
-    version:3,
+    version:4,
 
     profile:{
       name:"양예서",
@@ -1922,7 +3014,8 @@ function seedData(){
         bubbleColor:"#0a84ff",
         pinned:false,
         spam:false,
-        deleted:false
+        deleted:false,
+        deletedAt:null
       },
       {
         id:"c2",
@@ -1933,7 +3026,8 @@ function seedData(){
         bubbleColor:"#30d158",
         pinned:false,
         spam:false,
-        deleted:false
+        deleted:false,
+        deletedAt:null
       },
       {
         id:"c3",
@@ -1944,7 +3038,8 @@ function seedData(){
         bubbleColor:"#ff9f0a",
         pinned:false,
         spam:false,
-        deleted:false
+        deleted:false,
+        deletedAt:null
       }
     ],
 
@@ -1954,7 +3049,7 @@ function seedData(){
         characterId:"c1",
         sender:"them",
         text:"오늘 저녁에 시간 돼?",
-        ts:now-190*min,
+        ts:now - 190*60000,
         readByUser:false
       },
       {
@@ -1962,7 +3057,7 @@ function seedData(){
         characterId:"c1",
         sender:"them",
         text:"카페 새로 생긴 데 가보고 싶어서 ㅋㅋ",
-        ts:now-189*min,
+        ts:now - 189*60000,
         readByUser:false
       },
       {
@@ -1970,7 +3065,7 @@ function seedData(){
         characterId:"c1",
         sender:"me",
         text:"어디에 생겼는데?",
-        ts:now-185*min,
+        ts:now - 185*60000,
         readByUser:true
       },
       {
@@ -1978,7 +3073,7 @@ function seedData(){
         characterId:"c1",
         sender:"them",
         text:"홍대입구역 근처! 6시쯤 어때",
-        ts:now-182*min,
+        ts:now - 182*60000,
         readByUser:false
       },
       {
@@ -1986,7 +3081,7 @@ function seedData(){
         characterId:"c1",
         sender:"me",
         text:"좋아 6시에 보자",
-        ts:now-180*min,
+        ts:now - 180*60000,
         readByUser:true
       },
       {
@@ -1994,7 +3089,7 @@ function seedData(){
         characterId:"c1",
         sender:"them",
         text:"ㅇㅋㅇㅋ 이따 봐~",
-        ts:now-40*min,
+        ts:now - 40*60000,
         readByUser:false
       },
 
@@ -2003,7 +3098,7 @@ function seedData(){
         characterId:"c2",
         sender:"them",
         text:"형 그 파일 확인해봤어요?",
-        ts:now-3*86400000,
+        ts:now - 3*86400000,
         readByUser:true
       },
       {
@@ -2011,7 +3106,7 @@ function seedData(){
         characterId:"c2",
         sender:"me",
         text:"어 지금 볼게",
-        ts:now-3*86400000+5*min,
+        ts:now - 3*86400000 + 5*60000,
         readByUser:true
       },
       {
@@ -2019,7 +3114,7 @@ function seedData(){
         characterId:"c2",
         sender:"them",
         text:"넵 감사합니다!",
-        ts:now-3*86400000+7*min,
+        ts:now - 3*86400000 + 7*60000,
         readByUser:true
       },
       {
@@ -2027,7 +3122,7 @@ function seedData(){
         characterId:"c2",
         sender:"them",
         text:"참, 다음 주 일정 언제 편하세요?",
-        ts:now-26*min,
+        ts:now - 26*60000,
         readByUser:false
       },
 
@@ -2036,7 +3131,7 @@ function seedData(){
         characterId:"c3",
         sender:"them",
         text:"내일 스터디 자료 첨부했습니다.",
-        ts:now-20*min,
+        ts:now - 20*60000,
         readByUser:false
       },
       {
@@ -2044,7 +3139,7 @@ function seedData(){
         characterId:"c3",
         sender:"them",
         text:"7시 시작이고 장소는 동일합니다!",
-        ts:now-19*min,
+        ts:now - 19*60000,
         readByUser:false
       },
       {
@@ -2052,295 +3147,252 @@ function seedData(){
         characterId:"c3",
         sender:"me",
         text:"넵 확인했습니다 감사해요",
-        ts:now-15*min,
+        ts:now - 15*60000,
         readByUser:true
       }
     ]
   };
 }
 
-function migrateState(raw){
+
+/* =========================================================
+   MIGRATION
+========================================================= */
+
+function migrate(raw){
+
   const defaults = seedData();
 
   if(!raw || typeof raw !== "object"){
     return defaults;
   }
 
-  const migrated = raw;
-
-  if(!Array.isArray(migrated.characters)){
-    migrated.characters = [];
+  if(
+    !raw.profile ||
+    typeof raw.profile !== "object"
+  ){
+    raw.profile = {};
   }
 
-  if(!Array.isArray(migrated.messages)){
-    migrated.messages = [];
+  raw.profile.name =
+    raw.profile.name ||
+    defaults.profile.name;
+
+  raw.profile.status =
+    raw.profile.status ||
+    defaults.profile.status;
+
+  raw.profile.photo =
+    typeof raw.profile.photo === "string"
+      ? raw.profile.photo
+      : "";
+
+  if(
+    !raw.settings ||
+    typeof raw.settings !== "object"
+  ){
+    raw.settings = {};
   }
 
-  if(!migrated.profile || typeof migrated.profile !== "object"){
-    migrated.profile = {...defaults.profile};
+  raw.settings.spamFiltering =
+    !!raw.settings.spamFiltering;
+
+  raw.settings.unknownFiltering =
+    !!raw.settings.unknownFiltering;
+
+  raw.settings.smsFiltering =
+    !!raw.settings.smsFiltering;
+
+  if(!Array.isArray(raw.characters)){
+    raw.characters = [];
   }
 
-  migrated.profile.name =
-    migrated.profile.name || defaults.profile.name;
-
-  migrated.profile.status =
-    migrated.profile.status || defaults.profile.status;
-
-  if(typeof migrated.profile.photo !== "string"){
-    migrated.profile.photo = "";
+  if(!Array.isArray(raw.messages)){
+    raw.messages = [];
   }
 
-  if(!migrated.settings || typeof migrated.settings !== "object"){
-    migrated.settings = {};
-  }
+  raw.characters =
+    raw.characters.map((character,index) => {
 
-  migrated.settings.spamFiltering =
-    !!migrated.settings.spamFiltering;
+      const c = character || {};
 
-  migrated.settings.unknownFiltering =
-    !!migrated.settings.unknownFiltering;
+      return {
+        id:String(
+          c.id ||
+          uid()
+        ),
 
-  migrated.settings.smsFiltering =
-    !!migrated.settings.smsFiltering;
+        name:String(
+          c.name ||
+          `캐릭터 ${index+1}`
+        ),
 
-  migrated.characters = migrated.characters.map((c,index)=>{
-    const item = c || {};
+        phone:String(
+          c.phone || ""
+        ),
 
-    return {
-      id:String(item.id || uid()),
-      name:String(item.name || `캐릭터 ${index+1}`),
-      phone:String(item.phone || ""),
-      photo:typeof item.photo === "string" ? item.photo : "",
-      active:item.active !== false,
-      bubbleColor:
-        typeof item.bubbleColor === "string" && item.bubbleColor
-          ? item.bubbleColor
-          : "#0a84ff",
-      pinned:!!item.pinned,
-      spam:!!item.spam,
-      deleted:!!item.deleted,
-      deletedAt:item.deletedAt || null
-    };
-  });
+        photo:
+          typeof c.photo === "string"
+            ? c.photo
+            : "",
 
-  migrated.messages = migrated.messages.map(m=>{
-    const item = m || {};
+        active:
+          c.active !== false,
 
-    return {
-      id:String(item.id || uid()),
-      characterId:String(
-        item.characterId ||
-        item.character ||
-        item.charId ||
-        ""
-      ),
-      sender:item.sender === "me" ? "me" : "them",
-      text:String(item.text || ""),
-      ts:normalizeTimestamp(item.ts || item.timestamp || Date.now()),
-      readByUser:
-        item.sender === "me"
-          ? true
-          : !!item.readByUser
-    };
-  });
+        bubbleColor:
+          typeof c.bubbleColor === "string" &&
+          c.bubbleColor
+            ? c.bubbleColor
+            : "#0a84ff",
 
-  migrated.version = 3;
+        pinned:
+          !!c.pinned,
 
-  return migrated;
+        spam:
+          !!c.spam,
+
+        deleted:
+          !!c.deleted,
+
+        deletedAt:
+          c.deletedAt ||
+          null
+      };
+    });
+
+  raw.messages =
+    raw.messages.map(message => {
+
+      const m = message || {};
+
+      return {
+        id:String(
+          m.id ||
+          uid()
+        ),
+
+        characterId:String(
+          m.characterId ||
+          m.character ||
+          m.charId ||
+          ""
+        ),
+
+        sender:
+          m.sender === "me"
+            ? "me"
+            : "them",
+
+        text:String(
+          m.text || ""
+        ),
+
+        ts:
+          normalizeTimestamp(
+            m.ts ||
+            m.timestamp ||
+            Date.now()
+          ),
+
+        readByUser:
+          m.sender === "me"
+            ? true
+            : !!m.readByUser
+      };
+    });
+
+  raw.version = 4;
+
+  return raw;
 }
 
 function loadState(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
 
-    if(raw){
-      state = migrateState(JSON.parse(raw));
-    }else{
-      state = seedData();
+  try{
+
+    let raw =
+      localStorage.getItem(
+        STORAGE_KEY
+      );
+
+    /*
+      기존 프로젝트의 다른 키가 혹시 존재할 경우
+      가능한 범위에서 가져온다.
+    */
+
+    if(!raw){
+
+      const fallbackKeys = [
+        "messenger-state",
+        "messengerState",
+        "messageState",
+        "messages-state"
+      ];
+
+      for(const key of fallbackKeys){
+
+        const value =
+          localStorage.getItem(key);
+
+        if(value){
+
+          raw = value;
+          break;
+
+        }
+
+      }
+
     }
+
+    state =
+      raw
+        ? migrate(JSON.parse(raw))
+        : seedData();
+
   }catch(error){
+
+    console.error(error);
+
     state = seedData();
+
   }
 
-  saveState();
+  saveState(true);
 }
 
-let saveTimer = null;
+let saveTimer;
 
-function saveState(){
+function saveState(immediate=false){
+
   clearTimeout(saveTimer);
 
-  saveTimer = setTimeout(()=>{
+  const save = () => {
+
     try{
+
       localStorage.setItem(
         STORAGE_KEY,
         JSON.stringify(state)
       );
+
     }catch(error){
-      console.error("localStorage 저장 실패",error);
+
+      console.error(
+        "localStorage 저장 실패",
+        error
+      );
+
     }
-  },80);
-}
 
+  };
 
-/* =========================================================
-   HELPERS
-========================================================= */
-
-function characterById(id){
-  return state.characters.find(c=>c.id===id);
-}
-
-function messagesFor(id){
-  return state.messages
-    .filter(m=>m.characterId===id)
-    .sort((a,b)=>a.ts-b.ts);
-}
-
-function lastMessage(id){
-  const messages = messagesFor(id);
-  return messages.length
-    ? messages[messages.length-1]
-    : null;
-}
-
-function unreadCount(id){
-  return state.messages.filter(
-    m=>
-      m.characterId===id &&
-      m.sender==="them" &&
-      !m.readByUser
-  ).length;
-}
-
-function avatarContent(entity){
-  if(entity && entity.photo){
-    return `<img src="${entity.photo}" alt="">`;
+  if(immediate){
+    save();
+  }else{
+    saveTimer =
+      setTimeout(save,80);
   }
-
-  return escapeHtml(initials(entity?.name || "나"));
-}
-
-function applyAvatar(element,entity){
-  if(!element) return;
-
-  element.style.background =
-    colorFor(entity?.id || entity?.name || "profile");
-
-  element.innerHTML = avatarContent(entity);
-}
-
-function formatTime(ts){
-  const date = new Date(ts);
-  let hour = date.getHours();
-
-  const period = hour >= 12 ? "오후" : "오전";
-  hour = hour % 12;
-
-  if(hour === 0) hour = 12;
-
-  return `${period} ${hour}:${String(date.getMinutes()).padStart(2,"0")}`;
-}
-
-function formatConversationTime(ts){
-  const date = new Date(ts);
-  const now = new Date();
-
-  const sameDate =
-    date.getFullYear()===now.getFullYear() &&
-    date.getMonth()===now.getMonth() &&
-    date.getDate()===now.getDate();
-
-  if(sameDate){
-    return formatTime(ts);
-  }
-
-  const yesterday = new Date();
-  yesterday.setDate(now.getDate()-1);
-
-  const yesterdayMatch =
-    date.getFullYear()===yesterday.getFullYear() &&
-    date.getMonth()===yesterday.getMonth() &&
-    date.getDate()===yesterday.getDate();
-
-  if(yesterdayMatch) return "어제";
-
-  if(date.getFullYear()===now.getFullYear()){
-    return `${date.getMonth()+1}/${date.getDate()}`;
-  }
-
-  return `${date.getFullYear()}. ${date.getMonth()+1}. ${date.getDate()}.`;
-}
-
-function formatDate(ts){
-  const date = new Date(ts);
-  const now = new Date();
-
-  if(
-    date.getFullYear()===now.getFullYear() &&
-    date.getMonth()===now.getMonth() &&
-    date.getDate()===now.getDate()
-  ){
-    return "오늘";
-  }
-
-  return `${date.getFullYear()}년 ${date.getMonth()+1}월 ${date.getDate()}일`;
-}
-
-function sameDay(a,b){
-  const x = new Date(a);
-  const y = new Date(b);
-
-  return (
-    x.getFullYear()===y.getFullYear() &&
-    x.getMonth()===y.getMonth() &&
-    x.getDate()===y.getDate()
-  );
-}
-
-function toDateInput(ts){
-  const d = new Date(ts);
-  const year = d.getFullYear();
-  const month = String(d.getMonth()+1).padStart(2,"0");
-  const day = String(d.getDate()).padStart(2,"0");
-
-  return `${year}-${month}-${day}`;
-}
-
-function toTimeInput(ts){
-  const d = new Date(ts);
-
-  return `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
-}
-
-function combineDateTime(dateValue,timeValue){
-  if(!dateValue) return Date.now();
-
-  const time = timeValue || "00:00";
-
-  const date = new Date(`${dateValue}T${time}:00`);
-
-  return Number.isFinite(date.getTime())
-    ? date.getTime()
-    : Date.now();
-}
-
-function generatePhone(){
-  const n = ()=>String(Math.floor(1000+Math.random()*9000));
-  return `010-${n()}-${n()}`;
-}
-
-function showToast(text){
-  const toast = document.getElementById("toast");
-
-  toast.textContent = text;
-  toast.classList.add("show");
-
-  clearTimeout(showToast.timer);
-
-  showToast.timer = setTimeout(()=>{
-    toast.classList.remove("show");
-  },1800);
 }
 
 
@@ -2369,71 +3421,97 @@ function closeScreen(screen){
   screen.classList.add("right");
 }
 
-function closeAllSubScreens(){
-  Object.entries(screens).forEach(([key,screen])=>{
-    if(key !== "list"){
-      closeScreen(screen);
-    }
-  });
-}
-
 
 /* =========================================================
    PROFILE
 ========================================================= */
 
 function renderProfile(){
-  const profile = state.profile;
 
-  document.getElementById("profileName").textContent =
-    profile.name || "이름 없음";
+  const profile =
+    state.profile;
 
-  document.getElementById("profileStatus").textContent =
-    profile.status || "이름 및 사진 공유";
+  document.getElementById(
+    "profileName"
+  ).textContent =
+    profile.name;
 
-  applyAvatar(
-    document.getElementById("profileAvatar"),
-    profile
+  document.getElementById(
+    "profileStatus"
+  ).textContent =
+    profile.status ||
+    "이름 및 사진 공유";
+
+  setAvatar(
+    document.getElementById(
+      "profileAvatar"
+    ),
+    {
+      ...profile,
+      id:"profile"
+    }
   );
 }
 
 function openProfile(){
-  pendingProfilePhoto = state.profile.photo || "";
 
-  document.getElementById("profileNameInput").value =
+  pendingProfilePhoto =
+    state.profile.photo || "";
+
+  document.getElementById(
+    "profileNameInput"
+  ).value =
     state.profile.name || "";
 
-  document.getElementById("profileStatusInput").value =
+  document.getElementById(
+    "profileStatusInput"
+  ).value =
     state.profile.status || "";
 
-  applyAvatar(
-    document.getElementById("profileEditAvatar"),
+  setAvatar(
+    document.getElementById(
+      "profileEditAvatar"
+    ),
     {
       ...state.profile,
+      id:"profile",
       photo:pendingProfilePhoto
     }
   );
 
-  openScreen(screens.profile);
+  openScreen(
+    screens.profile
+  );
 }
 
 function saveProfile(){
+
   state.profile.name =
-    document.getElementById("profileNameInput").value.trim()
-    || "이름 없음";
+    document.getElementById(
+      "profileNameInput"
+    ).value.trim() ||
+    "이름 없음";
 
   state.profile.status =
-    document.getElementById("profileStatusInput").value.trim()
-    || "이름 및 사진 공유";
+    document.getElementById(
+      "profileStatusInput"
+    ).value.trim() ||
+    "이름 및 사진 공유";
 
-  state.profile.photo = pendingProfilePhoto || "";
+  state.profile.photo =
+    pendingProfilePhoto || "";
 
   saveState();
+
   renderProfile();
 
-  closeScreen(screens.profile);
+  closeScreen(
+    screens.profile
+  );
 
-  showToast("프로필을 저장했습니다");
+  showToast(
+    "프로필을 저장했습니다"
+  );
 }
 
 
@@ -2441,76 +3519,118 @@ function saveProfile(){
    CONVERSATION LIST
 ========================================================= */
 
-function getVisibleCharacters(){
-  let characters = state.characters.filter(c=>c.active !== false);
+function visibleCharacters(){
+
+  let characters =
+    state.characters.filter(
+      c => c.active !== false
+    );
 
   if(currentFilter === "messages"){
-    characters = characters.filter(
-      c=>!c.deleted && !c.spam
-    );
+
+    characters =
+      characters.filter(
+        c =>
+          !c.deleted &&
+          !c.spam
+      );
+
   }
 
   if(currentFilter === "spam"){
-    characters = characters.filter(
-      c=>!c.deleted && c.spam
-    );
+
+    characters =
+      characters.filter(
+        c =>
+          !c.deleted &&
+          c.spam
+      );
+
   }
 
   if(currentFilter === "deleted"){
-    characters = characters.filter(
-      c=>c.deleted
-    );
+
+    characters =
+      characters.filter(
+        c => c.deleted
+      );
+
   }
 
   if(unreadOnly){
-    characters = characters.filter(
-      c=>unreadCount(c.id)>0
-    );
+
+    characters =
+      characters.filter(
+        c =>
+          unreadCount(c.id) > 0
+      );
+
   }
 
-  return characters.sort((a,b)=>{
+  return characters.sort((a,b) => {
+
     if(currentFilter !== "deleted"){
-      if(!!a.pinned !== !!b.pinned){
-        return a.pinned ? -1 : 1;
+
+      if(
+        !!a.pinned !==
+        !!b.pinned
+      ){
+        return a.pinned
+          ? -1
+          : 1;
       }
+
     }
 
-    const aLast = lastMessage(a.id);
-    const bLast = lastMessage(b.id);
+    const aLast =
+      lastMessage(a.id);
+
+    const bLast =
+      lastMessage(b.id);
 
     const aTime =
-      currentFilter==="deleted"
+      currentFilter === "deleted"
         ? (a.deletedAt || 0)
         : (aLast?.ts || 0);
 
     const bTime =
-      currentFilter==="deleted"
+      currentFilter === "deleted"
         ? (b.deletedAt || 0)
         : (bLast?.ts || 0);
 
-    return bTime-aTime;
+    return bTime - aTime;
+
   });
 }
 
 function renderConversationList(){
-  const list = document.getElementById("conversationList");
+
+  const list =
+    document.getElementById(
+      "conversationList"
+    );
 
   if(currentFilter === "deleted"){
-    renderDeletedList();
+    renderDeletedInline();
     return;
   }
 
-  const characters = getVisibleCharacters();
+  const characters =
+    visibleCharacters();
 
   if(!characters.length){
-    let text = "대화가 없습니다.";
 
-    if(currentFilter==="spam"){
-      text = "스팸으로 분류된 대화가 없습니다.";
+    let text =
+      "대화가 없습니다.";
+
+    if(currentFilter === "spam"){
+      text =
+        "스팸으로 분류된 대화가 없습니다.";
     }
 
     if(unreadOnly){
-      text = "읽지 않은 메시지가 없습니다.";
+      text =
+        "읽지 않은 메시지가 없습니다.";
     }
 
     list.innerHTML =
@@ -2519,250 +3639,390 @@ function renderConversationList(){
     return;
   }
 
-  list.innerHTML = characters.map(c=>{
-    const last = lastMessage(c.id);
-    const unread = unreadCount(c.id)>0;
+  list.innerHTML =
+    characters.map(character => {
 
-    let preview = "대화 없음";
+      const last =
+        lastMessage(character.id);
 
-    if(last){
-      preview =
-        last.sender==="me"
-          ? `나: ${last.text}`
-          : last.text;
-    }
+      const unread =
+        unreadCount(character.id) > 0;
 
-    const selected =
-      selectedConversationIds.has(c.id);
+      const selected =
+        selectedIds.has(
+          character.id
+        );
 
-    return `
-      <div
-        class="conv-row"
-        data-id="${escapeHtml(c.id)}"
-      >
-        ${
-          editMode
-            ? `
-              <div class="select-circle ${selected ? "selected":""}">
+      let preview =
+        "대화 없음";
+
+      if(last){
+
+        preview =
+          last.sender === "me"
+            ? `나: ${last.text}`
+            : last.text;
+
+      }
+
+      return `
+        <div
+          class="conversation-row"
+          data-id="${escapeHtml(character.id)}">
+
+          ${
+            editMode
+              ? `
+                <div
+                  class="selection-circle ${
+                    selected
+                      ? "selected"
+                      : ""
+                  }">
+
+                  ${
+                    selected
+                      ? `
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linecap="round"
+                          stroke-linejoin="round">
+
+                          <path
+                            d="M5 12l4 4L19 6">
+                          </path>
+
+                        </svg>
+                      `
+                      : ""
+                  }
+
+                </div>
+              `
+              : ""
+          }
+
+          <div
+            class="conversation-avatar"
+            style="background:${colorFor(character.id)}">
+
+            ${avatarHtml(character)}
+
+          </div>
+
+          <div class="conversation-main">
+
+            <div class="conversation-top">
+
+              <div
+                class="conversation-name ${
+                  unread ? "unread" : ""
+                }">
+
+                ${escapeHtml(character.name)}
+
+              </div>
+
+              ${
+                character.pinned
+                  ? `
+                    <span class="pin-icon">
+                      📌
+                    </span>
+                  `
+                  : ""
+              }
+
+              <div class="conversation-time">
+
                 ${
-                  selected
-                    ? `
-                      <svg viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="3"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12l4 4L19 6"/>
-                      </svg>
-                    `
+                  last
+                    ? formatConversationTime(
+                        last.ts
+                      )
                     : ""
                 }
+
               </div>
-            `
-            : ""
+
+            </div>
+
+            <div class="conversation-bottom">
+
+              ${
+                unread
+                  ? `
+                    <span
+                      class="unread-dot">
+                    </span>
+                  `
+                  : ""
+              }
+
+              <div class="conversation-preview">
+
+                ${escapeHtml(preview)}
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="conversation-chevron">
+            ›
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
+  list
+    .querySelectorAll(
+      ".conversation-row"
+    )
+    .forEach(row => {
+
+      row.onclick = () => {
+
+        const id =
+          row.dataset.id;
+
+        if(editMode){
+
+          toggleSelected(id);
+
+        }else{
+
+          openChat(id);
+
         }
 
-        <div
-          class="avatar conv-avatar"
-          style="background:${colorFor(c.id)}"
-        >
-          ${avatarContent(c)}
-        </div>
+      };
 
-        <div class="conv-content">
-
-          <div class="conv-top">
-
-            <div class="conv-name ${unread ? "unread":""}">
-              ${escapeHtml(c.name)}
-            </div>
-
-            ${
-              c.pinned
-                ? `<span class="pin">⌖</span>`
-                : ""
-            }
-
-            <div class="conv-time">
-              ${last ? formatConversationTime(last.ts) : ""}
-            </div>
-
-          </div>
-
-          <div class="conv-bottom">
-            ${
-              unread
-                ? `<span class="unread-dot"></span>`
-                : ""
-            }
-
-            <div class="conv-preview">
-              ${escapeHtml(preview)}
-            </div>
-          </div>
-
-        </div>
-      </div>
-    `;
-  }).join("");
-
-  list.querySelectorAll(".conv-row").forEach(row=>{
-    row.addEventListener("click",()=>{
-      const id = row.dataset.id;
-
-      if(editMode){
-        toggleConversationSelection(id);
-      }else{
-        openChat(id);
-      }
     });
-  });
 
-  updateEditToolbar();
+  updateEditControls();
 }
 
-function renderDeletedList(){
-  const list = document.getElementById("conversationList");
-  const deleted = state.characters
-    .filter(c=>c.deleted)
-    .sort((a,b)=>(b.deletedAt||0)-(a.deletedAt||0));
+function renderDeletedInline(){
+
+  const list =
+    document.getElementById(
+      "conversationList"
+    );
+
+  const deleted =
+    state.characters
+      .filter(c => c.deleted)
+      .sort(
+        (a,b) =>
+          (b.deletedAt || 0) -
+          (a.deletedAt || 0)
+      );
 
   if(!deleted.length){
+
     list.innerHTML =
-      `<div class="empty">최근 삭제된 대화가 없습니다.</div>`;
+      `<div class="empty">
+        최근 삭제된 대화가 없습니다.
+      </div>`;
+
     return;
   }
 
   list.innerHTML =
-    `<div class="deleted-info">
-      삭제된 대화는 여기에서 복구하거나 영구적으로 삭제할 수 있습니다.
-    </div>`
-    +
-    deleted.map(c=>{
-      const last = lastMessage(c.id);
+    `
+      <div class="deleted-info">
+        삭제된 대화는 여기에서 복구하거나
+        영구적으로 삭제할 수 있습니다.
+      </div>
+    ` +
+    deleted.map(character => {
+
+      const last =
+        lastMessage(character.id);
 
       return `
-        <div class="conv-row" data-id="${escapeHtml(c.id)}">
+        <div
+          class="conversation-row"
+          data-id="${escapeHtml(character.id)}">
 
           <div
-            class="avatar conv-avatar"
-            style="background:${colorFor(c.id)}"
-          >
-            ${avatarContent(c)}
+            class="conversation-avatar"
+            style="background:${colorFor(character.id)}">
+
+            ${avatarHtml(character)}
+
           </div>
 
-          <div class="conv-content">
+          <div class="conversation-main">
 
-            <div class="conv-top">
-              <div class="conv-name">${escapeHtml(c.name)}</div>
+            <div class="conversation-top">
 
-              <div class="deleted-actions">
-                <button class="inline-action" data-restore="${escapeHtml(c.id)}">
+              <div class="conversation-name">
+                ${escapeHtml(character.name)}
+              </div>
+
+              <div
+                class="deleted-row-actions">
+
+                <button
+                  class="inline-button"
+                  data-restore="${escapeHtml(character.id)}">
                   복구
                 </button>
 
-                <button class="inline-action red" data-permanent="${escapeHtml(c.id)}">
+                <button
+                  class="inline-button red"
+                  data-permanent="${escapeHtml(character.id)}">
                   삭제
                 </button>
+
               </div>
+
             </div>
 
-            <div class="conv-bottom">
-              <div class="conv-preview">
-                ${escapeHtml(last ? last.text : "대화 없음")}
+            <div class="conversation-bottom">
+
+              <div class="conversation-preview">
+                ${
+                  escapeHtml(
+                    last?.text ||
+                    "대화 없음"
+                  )
+                }
               </div>
+
             </div>
 
           </div>
 
         </div>
       `;
+
     }).join("");
 
-  list.querySelectorAll("[data-restore]").forEach(button=>{
-    button.onclick = event=>{
-      event.stopPropagation();
+  list
+    .querySelectorAll(
+      "[data-restore]"
+    )
+    .forEach(button => {
 
-      const character = characterById(button.dataset.restore);
+      button.onclick = event => {
 
-      if(!character) return;
+        event.stopPropagation();
 
-      character.deleted = false;
-      character.deletedAt = null;
+        restoreConversation(
+          button.dataset.restore
+        );
 
-      saveState();
-      renderDeletedList();
-      renderAdminCharacterList();
+      };
 
-      showToast("대화를 복구했습니다");
-    };
-  });
+    });
 
-  list.querySelectorAll("[data-permanent]").forEach(button=>{
-    button.onclick = event=>{
-      event.stopPropagation();
+  list
+    .querySelectorAll(
+      "[data-permanent]"
+    )
+    .forEach(button => {
 
-      permanentlyDeleteConversation(
-        button.dataset.permanent
-      );
-    };
-  });
+      button.onclick = event => {
+
+        event.stopPropagation();
+
+        permanentlyDeleteConversation(
+          button.dataset.permanent
+        );
+
+      };
+
+    });
 }
 
 
 /* =========================================================
-   FILTER MENU
+   FILTER
 ========================================================= */
 
-function updateFilterMenu(){
-  document.getElementById("checkMessages")
-    .classList.toggle("hidden",currentFilter!=="messages");
+function updateFilterPopover(){
 
-  document.getElementById("checkSpam")
-    .classList.toggle("hidden",currentFilter!=="spam");
+  document
+    .getElementById("checkMessages")
+    .classList.toggle(
+      "hidden",
+      currentFilter !== "messages"
+    );
 
-  document.getElementById("checkDeleted")
-    .classList.toggle("hidden",currentFilter!=="deleted");
+  document
+    .getElementById("checkSpam")
+    .classList.toggle(
+      "hidden",
+      currentFilter !== "spam"
+    );
 
-  document.getElementById("unreadRadio")
-    .classList.toggle("active",unreadOnly);
+  document
+    .getElementById("checkDeleted")
+    .classList.toggle(
+      "hidden",
+      currentFilter !== "deleted"
+    );
+
+  document
+    .getElementById("unreadRadio")
+    .classList.toggle(
+      "active",
+      unreadOnly
+    );
 }
 
-function openFilterMenu(){
-  updateFilterMenu();
+function openFilter(){
 
-  document.getElementById("filterCover")
+  updateFilterPopover();
+
+  document
+    .getElementById("filterBackdrop")
     .classList.remove("hidden");
 
-  document.getElementById("filterPopover")
+  document
+    .getElementById("filterPopover")
     .classList.remove("hidden");
 }
 
-function closeFilterMenu(){
-  document.getElementById("filterCover")
+function closeFilter(){
+
+  document
+    .getElementById("filterBackdrop")
     .classList.add("hidden");
 
-  document.getElementById("filterPopover")
+  document
+    .getElementById("filterPopover")
     .classList.add("hidden");
 }
 
-function selectFilter(filter){
-  currentFilter = filter;
+function setFilter(filter){
 
-  if(filter==="deleted"){
+  currentFilter =
+    filter;
+
+  if(filter === "deleted"){
     unreadOnly = false;
   }
 
-  closeFilterMenu();
+  closeFilter();
 
-  if(filter==="deleted"){
-    document.getElementById("listTitle").textContent =
-      "최근 삭제된 항목";
-  }else if(filter==="spam"){
-    document.getElementById("listTitle").textContent =
-      "스팸";
-  }else{
-    document.getElementById("listTitle").textContent =
-      "메시지";
-  }
+  document
+    .getElementById("listTitle")
+    .textContent =
+      filter === "spam"
+        ? "스팸"
+        : filter === "deleted"
+          ? "최근 삭제된 항목"
+          : "메시지";
 
   renderConversationList();
 }
@@ -2773,207 +4033,203 @@ function selectFilter(filter){
 ========================================================= */
 
 function setEditMode(enabled){
-  editMode = enabled;
 
-  selectedConversationIds.clear();
+  editMode =
+    enabled;
 
-  document.getElementById("editToolbar")
-    .classList.toggle("hidden",!enabled);
+  selectedIds.clear();
 
-  document.getElementById("profileRow")
-    .classList.toggle("hidden",enabled);
-
-  document.getElementById("composeFab")
-    .classList.toggle("hidden",enabled);
-
-  const nav = document.getElementById("listNav");
-
-  if(enabled){
-    nav.innerHTML = `
-      <div class="list-nav-row" style="position:relative;">
-        <button class="ios-btn" id="cancelEditButton">취소</button>
-        <div class="edit-nav-title">메시지 선택</div>
-        <button class="ios-btn" id="topSelectAllButton">모두 선택</button>
-      </div>
-      <div style="height:10px"></div>
-    `;
-
-    document.getElementById("cancelEditButton")
-      .onclick = ()=>setEditMode(false);
-
-    document.getElementById("topSelectAllButton")
-      .onclick = selectAllVisible;
-  }else{
-    nav.innerHTML = `
-      <div class="list-nav-row">
-        <button class="ios-btn" id="editButton">편집</button>
-
-        <div class="list-actions">
-          <button class="icon-btn" id="filterButton" aria-label="필터">
-            <svg viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2">
-              <path d="M4 7h16M7 12h10M10 17h4"
-                stroke-linecap="round"/>
-            </svg>
-          </button>
-
-          <button class="icon-btn" id="newMessageButton" aria-label="새 메시지">
-            <svg viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2">
-              <path d="M14.5 4.5l5 5L9 20H4v-5L14.5 4.5z"/>
-              <path d="M12.5 6.5l5 5"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <div class="list-title" id="listTitle">
-        ${
-          currentFilter==="spam"
-            ? "스팸"
-            : currentFilter==="deleted"
-              ? "최근 삭제된 항목"
-              : "메시지"
-        }
-      </div>
-    `;
-
-    bindListNavigationButtons();
-  }
-
-  renderConversationList();
-}
-
-function bindListNavigationButtons(){
-  const edit = document.getElementById("editButton");
-  const filter = document.getElementById("filterButton");
-  const newMessage = document.getElementById("newMessageButton");
-
-  if(edit){
-    edit.onclick = ()=>setEditMode(true);
-  }
-
-  if(filter){
-    filter.onclick = openFilterMenu;
-  }
-
-  if(newMessage){
-    newMessage.onclick = openNewMessage;
-  }
-}
-
-function toggleConversationSelection(id){
-  if(selectedConversationIds.has(id)){
-    selectedConversationIds.delete(id);
-  }else{
-    selectedConversationIds.add(id);
-  }
-
-  renderConversationList();
-}
-
-function selectAllVisible(){
-  const visible = getVisibleCharacters();
-
-  const allSelected =
-    visible.length>0 &&
-    visible.every(c=>selectedConversationIds.has(c.id));
-
-  if(allSelected){
-    selectedConversationIds.clear();
-  }else{
-    visible.forEach(c=>selectedConversationIds.add(c.id));
-  }
-
-  renderConversationList();
-}
-
-function updateEditToolbar(){
-  const count = selectedConversationIds.size;
-
-  const readButton =
-    document.getElementById("readSelectedButton");
-
-  const unreadButton =
-    document.getElementById("unreadSelectedButton");
-
-  const pinButton =
-    document.getElementById("pinSelectedButton");
-
-  const deleteButton =
-    document.getElementById("deleteSelectedButton");
-
-  if(!readButton) return;
-
-  [
-    readButton,
-    unreadButton,
-    pinButton,
-    deleteButton
-  ].forEach(button=>{
-    button.disabled = count===0;
-  });
-
-  readButton.textContent =
-    count ? `읽음` : "읽음";
-
-  unreadButton.textContent =
-    count ? "읽지 않음" : "읽지 않음";
-
-  const selectedCharacters =
-    state.characters.filter(
-      c=>selectedConversationIds.has(c.id)
+  document
+    .getElementById("listHeader")
+    .classList.toggle(
+      "hidden",
+      enabled
     );
 
-  const allPinned =
-    selectedCharacters.length>0 &&
-    selectedCharacters.every(c=>c.pinned);
+  document
+    .getElementById("editHeader")
+    .classList.toggle(
+      "hidden",
+      !enabled
+    );
 
-  pinButton.textContent =
-    allPinned ? "고정 해제" : "고정";
+  document
+    .getElementById("profileRow")
+    .classList.toggle(
+      "hidden",
+      enabled
+    );
+
+  document
+    .getElementById("bottomBar")
+    .classList.toggle(
+      "hidden",
+      enabled
+    );
+
+  document
+    .getElementById("editActions")
+    .classList.toggle(
+      "hidden",
+      !enabled
+    );
+
+  renderConversationList();
+}
+
+function toggleSelected(id){
+
+  if(selectedIds.has(id)){
+    selectedIds.delete(id);
+  }else{
+    selectedIds.add(id);
+  }
+
+  renderConversationList();
+}
+
+function selectAll(){
+
+  const characters =
+    visibleCharacters();
+
+  const allSelected =
+    characters.length > 0 &&
+    characters.every(
+      c => selectedIds.has(c.id)
+    );
+
+  if(allSelected){
+
+    selectedIds.clear();
+
+  }else{
+
+    characters.forEach(
+      c => selectedIds.add(c.id)
+    );
+
+  }
+
+  renderConversationList();
 }
 
 function selectedCharacters(){
+
   return state.characters.filter(
-    c=>selectedConversationIds.has(c.id)
+    c => selectedIds.has(c.id)
   );
+
+}
+
+function updateEditControls(){
+
+  if(!editMode){
+    return;
+  }
+
+  const count =
+    selectedIds.size;
+
+  document
+    .getElementById(
+      "editSelectionCount"
+    )
+    .textContent =
+      count
+        ? `${count}개 선택됨`
+        : "선택된 대화 없음";
+
+  const buttons = [
+    "readSelectedButton",
+    "unreadSelectedButton",
+    "pinSelectedButton",
+    "deleteSelectedButton",
+    "spamSelectedButton"
+  ];
+
+  buttons.forEach(id => {
+
+    document
+      .getElementById(id)
+      .disabled =
+        count === 0;
+
+  });
+
+  const chars =
+    selectedCharacters();
+
+  const allPinned =
+    chars.length > 0 &&
+    chars.every(
+      c => c.pinned
+    );
+
+  document
+    .getElementById(
+      "pinSelectedButton"
+    )
+    .textContent =
+      allPinned
+        ? "고정 해제"
+        : "고정";
 }
 
 function markSelectedRead(read){
-  selectedCharacters().forEach(character=>{
-    state.messages.forEach(message=>{
-      if(
-        message.characterId===character.id &&
-        message.sender==="them"
-      ){
-        message.readByUser = read;
-      }
+
+  selectedCharacters()
+    .forEach(character => {
+
+      state.messages.forEach(message => {
+
+        if(
+          message.characterId ===
+            character.id &&
+          message.sender === "them"
+        ){
+          message.readByUser =
+            read;
+        }
+
+      });
+
     });
-  });
 
   saveState();
+
   renderConversationList();
 
   showToast(
     read
-      ? "선택한 대화를 읽음으로 표시했습니다"
-      : "선택한 대화를 읽지 않음으로 표시했습니다"
+      ? "읽음으로 표시했습니다"
+      : "읽지 않음으로 표시했습니다"
   );
 }
 
 function toggleSelectedPin(){
-  const characters = selectedCharacters();
 
-  if(!characters.length) return;
+  const chars =
+    selectedCharacters();
+
+  if(!chars.length){
+    return;
+  }
 
   const allPinned =
-    characters.every(c=>c.pinned);
+    chars.every(
+      c => c.pinned
+    );
 
-  characters.forEach(c=>{
-    c.pinned = !allPinned;
-  });
+  chars.forEach(
+    c => {
+      c.pinned =
+        !allPinned;
+    }
+  );
 
   saveState();
+
   renderConversationList();
 
   showToast(
@@ -2984,23 +4240,56 @@ function toggleSelectedPin(){
 }
 
 function deleteSelected(){
-  const characters = selectedCharacters();
 
-  if(!characters.length) return;
+  const chars =
+    selectedCharacters();
 
-  characters.forEach(c=>{
+  if(!chars.length){
+    return;
+  }
+
+  chars.forEach(c => {
+
     c.deleted = true;
-    c.deletedAt = Date.now();
+    c.deletedAt =
+      Date.now();
     c.pinned = false;
+
   });
 
-  selectedConversationIds.clear();
+  selectedIds.clear();
 
   saveState();
-  renderConversationList();
-  renderAdminCharacterList();
 
-  showToast("최근 삭제된 항목으로 이동했습니다");
+  renderConversationList();
+
+  showToast(
+    "최근 삭제된 항목으로 이동했습니다"
+  );
+}
+
+function spamSelected(){
+
+  const chars =
+    selectedCharacters();
+
+  if(!chars.length){
+    return;
+  }
+
+  chars.forEach(c => {
+    c.spam = true;
+  });
+
+  selectedIds.clear();
+
+  saveState();
+
+  renderConversationList();
+
+  showToast(
+    "스팸으로 이동했습니다"
+  );
 }
 
 
@@ -3008,193 +4297,335 @@ function deleteSelected(){
    CHAT
 ========================================================= */
 
-function openChat(characterId){
-  const character = characterById(characterId);
+function openChat(id){
 
-  if(!character || character.deleted) return;
+  const character =
+    characterById(id);
 
-  currentChatId = characterId;
+  if(
+    !character ||
+    character.deleted
+  ){
+    return;
+  }
 
-  state.messages.forEach(message=>{
+  currentChatId =
+    id;
+
+  state.messages.forEach(message => {
+
     if(
-      message.characterId===characterId &&
-      message.sender==="them"
+      message.characterId === id &&
+      message.sender === "them"
     ){
-      message.readByUser = true;
+      message.readByUser =
+        true;
     }
+
   });
 
   saveState();
 
   renderChat();
 
-  openScreen(screens.chat);
+  openScreen(
+    screens.chat
+  );
+
   renderConversationList();
 }
 
 function closeChat(){
-  closeScreen(screens.chat);
 
-  setTimeout(()=>{
-    currentChatId = null;
-  },250);
+  closeScreen(
+    screens.chat
+  );
+
+  currentChatId = null;
 }
 
 function renderChat(){
-  const character = characterById(currentChatId);
 
-  if(!character) return;
+  const character =
+    characterById(
+      currentChatId
+    );
 
-  document.getElementById("chatName").textContent =
-    character.name;
+  if(!character){
+    return;
+  }
 
-  applyAvatar(
-    document.getElementById("chatAvatar"),
+  document
+    .getElementById("chatName")
+    .textContent =
+      character.name;
+
+  setAvatar(
+    document.getElementById(
+      "chatAvatar"
+    ),
     character
   );
 
   renderMessages();
+
 }
 
 function renderMessages(){
-  const area = document.getElementById("messagesArea");
 
-  const character = characterById(currentChatId);
+  const area =
+    document.getElementById(
+      "messagesArea"
+    );
+
+  const character =
+    characterById(
+      currentChatId
+    );
 
   if(!character){
     area.innerHTML = "";
     return;
   }
 
-  const messages = messagesFor(currentChatId);
+  const messages =
+    messagesFor(
+      currentChatId
+    );
 
   if(!messages.length){
+
     area.innerHTML =
-      `<div class="empty">아직 메시지가 없습니다.</div>`;
+      `<div class="empty">
+        아직 메시지가 없습니다.
+      </div>`;
+
     return;
   }
 
   let html = "";
 
-  messages.forEach((message,index)=>{
-    const previous = messages[index-1];
-    const next = messages[index+1];
+  messages.forEach(
+    (message,index) => {
 
-    const newDay =
-      !previous ||
-      !sameDay(previous.ts,message.ts);
+      const previous =
+        messages[index - 1];
 
-    if(newDay){
+      const next =
+        messages[index + 1];
+
+      if(
+        !previous ||
+        !sameDay(
+          previous.ts,
+          message.ts
+        )
+      ){
+
+        html += `
+          <div class="date-divider">
+            ${formatDate(message.ts)}
+          </div>
+        `;
+
+      }
+
+      const showTime =
+        !previous ||
+        previous.sender !==
+          message.sender ||
+        message.ts -
+          previous.ts >
+          30*60000 ||
+        !sameDay(
+          previous.ts,
+          message.ts
+        );
+
+      if(showTime){
+
+        html += `
+          <div class="message-time">
+            ${formatTime(message.ts)}
+          </div>
+        `;
+
+      }
+
+      const samePrevious =
+        previous &&
+        previous.sender ===
+          message.sender &&
+        sameDay(
+          previous.ts,
+          message.ts
+        ) &&
+        message.ts -
+          previous.ts <=
+          30*60000;
+
+      const sameNext =
+        next &&
+        next.sender ===
+          message.sender &&
+        sameDay(
+          next.ts,
+          message.ts
+        ) &&
+        next.ts -
+          message.ts <=
+          30*60000;
+
+      const bubbleColor =
+        message.sender === "them"
+          ? (
+              character.bubbleColor ||
+              "#0a84ff"
+            )
+          : "";
+
       html += `
-        <div class="date-divider">
-          ${formatDate(message.ts)}
+        <div
+          class="bubble-row ${
+            message.sender
+          } ${
+            samePrevious
+              ? "same"
+              : ""
+          }">
+
+          <div
+            class="bubble ${
+              message.sender
+            }"
+            ${
+              message.sender === "them"
+                ? `
+                  style="
+                    background:${escapeHtml(
+                      bubbleColor
+                    )};
+                  "
+                `
+                : ""
+            }>
+
+            ${escapeHtml(
+              message.text
+            )}
+
+          </div>
+
         </div>
       `;
+
     }
+  );
 
-    const showTime =
-      !previous ||
-      previous.sender!==message.sender ||
-      message.ts-previous.ts>30*60000 ||
-      !sameDay(previous.ts,message.ts);
+  const last =
+    messages[messages.length - 1];
 
-    if(showTime){
-      html += `
-        <div class="message-time">
-          ${formatTime(message.ts)}
-        </div>
-      `;
-    }
-
-    const samePrevious =
-      previous &&
-      previous.sender===message.sender &&
-      sameDay(previous.ts,message.ts) &&
-      message.ts-previous.ts<=30*60000;
-
-    const sameNext =
-      next &&
-      next.sender===message.sender &&
-      sameDay(next.ts,message.ts) &&
-      next.ts-message.ts<=30*60000;
-
-    const color =
-      message.sender==="them"
-        ? character.bubbleColor
-        : "";
+  if(
+    last &&
+    last.sender === "me"
+  ){
 
     html += `
-      <div
-        class="bubble-row ${message.sender}
-          ${samePrevious ? "same":""}
-          ${!sameNext ? "last-in-group":""}"
-      >
-        <div
-          class="bubble ${message.sender}"
-          ${
-            message.sender==="them"
-              ? `style="background:${escapeHtml(color || "#0a84ff")}"`
-              : ""
-          }
-        >${escapeHtml(message.text)}</div>
+      <div class="read-receipt">
+        읽음
       </div>
     `;
-  });
 
-  const last = messages[messages.length-1];
-
-  if(last && last.sender==="me"){
-    html += `<div class="read-receipt">읽음</div>`;
   }
 
-  area.innerHTML = html;
+  area.innerHTML =
+    html;
 
-  requestAnimationFrame(()=>{
-    area.scrollTop = area.scrollHeight;
+  requestAnimationFrame(() => {
+
+    area.scrollTop =
+      area.scrollHeight;
+
   });
 }
 
 function sendUserMessage(){
+
   const input =
-    document.getElementById("userMessageInput");
+    document.getElementById(
+      "userMessageInput"
+    );
 
-  const text = input.value.trim();
+  const text =
+    input.value.trim();
 
-  if(!text || !currentChatId) return;
+  if(
+    !text ||
+    !currentChatId
+  ){
+    return;
+  }
 
   state.messages.push({
+
     id:uid(),
-    characterId:currentChatId,
+
+    characterId:
+      currentChatId,
+
     sender:"me",
+
     text,
+
     ts:Date.now(),
+
     readByUser:true
+
   });
 
   input.value = "";
-  input.style.height = "auto";
 
-  document.getElementById("userSendButton")
-    .classList.remove("ready");
+  input.style.height =
+    "auto";
+
+  document
+    .getElementById(
+      "userSendButton"
+    )
+    .classList.remove(
+      "ready"
+    );
 
   saveState();
 
   renderMessages();
+
   renderConversationList();
 }
 
-function updateUserInput(){
+function resizeUserInput(){
+
   const input =
-    document.getElementById("userMessageInput");
+    document.getElementById(
+      "userMessageInput"
+    );
 
-  input.style.height = "auto";
   input.style.height =
-    Math.min(input.scrollHeight,110)+"px";
+    "auto";
 
-  document.getElementById("userSendButton")
+  input.style.height =
+    Math.min(
+      input.scrollHeight,
+      120
+    ) + "px";
+
+  document
+    .getElementById(
+      "userSendButton"
+    )
     .classList.toggle(
       "ready",
-      input.value.trim().length>0
+      !!input.value.trim()
     );
 }
 
@@ -3204,20 +4635,31 @@ function updateUserInput(){
 ========================================================= */
 
 function openContact(){
-  const character = characterById(currentChatId);
 
-  if(!character) return;
+  const character =
+    characterById(
+      currentChatId
+    );
+
+  if(!character){
+    return;
+  }
 
   const page =
-    document.getElementById("contactPage");
+    document.getElementById(
+      "contactPage"
+    );
 
   page.innerHTML = `
+
     <div
-      class="avatar big-avatar"
-      id="contactAvatar"
-      style="background:${colorFor(character.id)}"
-    >
-      ${avatarContent(character)}
+      class="big-avatar"
+      style="
+        background:${colorFor(character.id)}
+      ">
+
+      ${avatarHtml(character)}
+
     </div>
 
     <div class="contact-name">
@@ -3225,33 +4667,59 @@ function openContact(){
     </div>
 
     <div class="contact-phone">
-      ${escapeHtml(character.phone || "번호 없음")}
+      ${escapeHtml(
+        character.phone ||
+        "번호 없음"
+      )}
     </div>
 
     <div class="contact-actions">
 
       <div class="contact-action">
-        <button id="contactMessageButton">
-          <svg viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8
+
+        <button
+          id="contactMessageButton">
+
+          <svg
+            width="23"
+            height="23"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2">
+
+            <path
+              d="M21 11.5a8.4 8.4 0 0 1-.9 3.8
               8.5 8.5 0 0 1-7.6 4.7
               8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7
               a8.4 8.4 0 0 1-.9-3.8
               8.5 8.5 0 0 1 4.7-7.6
               8.4 8.4 0 0 1 3.8-.9h.5
-              a8.5 8.5 0 0 1 8 8v.5z"/>
+              a8.5 8.5 0 0 1 8 8v.5z">
+            </path>
+
           </svg>
+
         </button>
+
         <span>메시지</span>
+
       </div>
 
       <div class="contact-action">
+
         <button>
-          <svg viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2">
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2
+
+          <svg
+            width="23"
+            height="23"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2">
+
+            <path
+              d="M22 16.92v3a2 2 0 0 1-2.18 2
               19.8 19.8 0 0 1-8.63-3.07
               19.5 19.5 0 0 1-6-6
               19.8 19.8 0 0 1-3.07-8.67
@@ -3262,47 +4730,105 @@ function openContact(){
               a16 16 0 0 0 6 6l1.27-1.27
               a2 2 0 0 1 2.11-.45
               c.91.34 1.85.57 2.81.7
-              A2 2 0 0 1 22 16.92z"/>
+              A2 2 0 0 1 22 16.92z">
+            </path>
+
           </svg>
+
         </button>
+
         <span>전화</span>
+
       </div>
 
       <div class="contact-action">
+
         <button>
-          <svg viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2">
-            <rect x="2" y="5" width="14" height="14" rx="2"/>
-            <path d="M16 10l6-3v10l-6-3"/>
+
+          <svg
+            width="23"
+            height="23"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2">
+
+            <rect
+              x="2"
+              y="5"
+              width="14"
+              height="14"
+              rx="2">
+            </rect>
+
+            <path
+              d="M16 10l6-3v10l-6-3">
+            </path>
+
           </svg>
+
         </button>
+
         <span>영상통화</span>
+
       </div>
 
     </div>
 
-    <div style="margin-top:29px;text-align:left">
-      <div class="page-section-title">연락처 정보</div>
+    <div style="margin-top:30px;text-align:left">
 
-      <div class="group-card">
-        <div class="setting-row">
-          <div class="setting-main">
-            <div class="setting-sub">휴대전화</div>
-            <div class="setting-title" style="color:var(--blue);margin-top:3px">
-              ${escapeHtml(character.phone || "번호 없음")}
-            </div>
-          </div>
-        </div>
+      <div class="settings-section-title">
+        연락처 정보
       </div>
+
+      <div class="settings-card">
+
+        <div class="settings-row">
+
+          <div class="settings-main">
+
+            <div class="settings-sub">
+              휴대전화
+            </div>
+
+            <div
+              style="
+                color:var(--blue);
+                margin-top:3px;
+                font-size:16px;
+              ">
+
+              ${escapeHtml(
+                character.phone ||
+                "번호 없음"
+              )}
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
   `;
 
-  document.getElementById("contactMessageButton")
-    .onclick = ()=>{
-      closeScreen(screens.contact);
+  document
+    .getElementById(
+      "contactMessageButton"
+    )
+    .onclick = () => {
+
+      closeScreen(
+        screens.contact
+      );
+
     };
 
-  openScreen(screens.contact);
+  openScreen(
+    screens.contact
+  );
 }
 
 
@@ -3311,77 +4837,123 @@ function openContact(){
 ========================================================= */
 
 function openNewMessage(){
+
   renderCharacterPicker("");
 
-  document.getElementById("characterSearchInput").value = "";
+  document
+    .getElementById(
+      "characterSearchInput"
+    )
+    .value = "";
 
-  openScreen(screens.newMessage);
+  openScreen(
+    screens.newMessage
+  );
 
-  setTimeout(()=>{
-    document.getElementById("characterSearchInput").focus();
-  },300);
 }
 
 function renderCharacterPicker(query){
+
   const list =
-    document.getElementById("characterPickerList");
+    document.getElementById(
+      "characterPickerList"
+    );
 
   const search =
-    String(query || "").trim().toLowerCase();
+    String(query || "")
+      .trim()
+      .toLowerCase();
 
-  const characters = state.characters
-    .filter(c=>!c.deleted && c.active!==false)
-    .filter(c=>{
-      if(!search) return true;
+  const characters =
+    state.characters
+      .filter(
+        c =>
+          !c.deleted &&
+          c.active !== false
+      )
+      .filter(c => {
 
-      return (
-        c.name.toLowerCase().includes(search) ||
-        String(c.phone||"").includes(search)
-      );
-    });
+        if(!search){
+          return true;
+        }
+
+        return (
+          c.name
+            .toLowerCase()
+            .includes(search) ||
+          String(c.phone || "")
+            .includes(search)
+        );
+
+      });
 
   if(!characters.length){
+
     list.innerHTML =
-      `<div class="empty">일치하는 캐릭터가 없습니다.</div>`;
+      `<div class="empty">
+        일치하는 캐릭터가 없습니다.
+      </div>`;
+
     return;
   }
 
   list.innerHTML =
-    `<div class="section-label">캐릭터</div>`
-    +
-    characters.map(c=>`
+    characters.map(character => `
+
       <button
-        class="character-picker-row"
-        data-character="${escapeHtml(c.id)}"
-      >
+        class="character-row"
+        data-character="${escapeHtml(character.id)}">
+
         <div
-          class="avatar character-picker-avatar"
-          style="background:${colorFor(c.id)}"
-        >
-          ${avatarContent(c)}
+          class="character-avatar-small"
+          style="
+            background:${colorFor(character.id)}
+          ">
+
+          ${avatarHtml(character)}
+
         </div>
 
         <div>
-          <div class="character-picker-name">
-            ${escapeHtml(c.name)}
+
+          <div class="character-row-name">
+            ${escapeHtml(character.name)}
           </div>
 
-          <div class="character-picker-phone">
-            ${escapeHtml(c.phone || "")}
+          <div class="character-row-phone">
+            ${escapeHtml(
+              character.phone || ""
+            )}
           </div>
+
         </div>
+
       </button>
+
     `).join("");
 
-  list.querySelectorAll("[data-character]")
-    .forEach(button=>{
-      button.onclick = ()=>{
-        closeScreen(screens.newMessage);
+  list
+    .querySelectorAll(
+      "[data-character]"
+    )
+    .forEach(button => {
 
-        setTimeout(()=>{
-          openChat(button.dataset.character);
-        },100);
+      button.onclick = () => {
+
+        closeScreen(
+          screens.newMessage
+        );
+
+        setTimeout(() => {
+
+          openChat(
+            button.dataset.character
+          );
+
+        },120);
+
       };
+
     });
 }
 
@@ -3390,449 +4962,718 @@ function renderCharacterPicker(query){
    FILTER SETTINGS
 ========================================================= */
 
-function updateSwitch(button,enabled){
-  button.classList.toggle("on",!!enabled);
+function updateSwitch(
+  id,
+  enabled
+){
+
+  document
+    .getElementById(id)
+    .classList.toggle(
+      "on",
+      !!enabled
+    );
 }
 
 function renderFilterSettings(){
+
   updateSwitch(
-    document.getElementById("spamFilteringSwitch"),
+    "spamFilteringSwitch",
     state.settings.spamFiltering
   );
 
   updateSwitch(
-    document.getElementById("unknownFilteringSwitch"),
+    "unknownFilteringSwitch",
     state.settings.unknownFiltering
   );
 
   updateSwitch(
-    document.getElementById("smsFilteringSwitch"),
+    "smsFilteringSwitch",
     state.settings.smsFiltering
   );
 }
 
 
 /* =========================================================
-   ADMIN CHARACTER LIST
+   ADMIN
 ========================================================= */
 
-function renderAdminCharacterList(){
-  const list =
-    document.getElementById("adminCharacterList");
+function renderAdminCharacters(){
 
-  const characters = state.characters
-    .filter(c=>c.active!==false);
+  const list =
+    document.getElementById(
+      "adminCharacterList"
+    );
+
+  const characters =
+    state.characters.filter(
+      c => c.active !== false
+    );
 
   if(!characters.length){
+
     list.innerHTML =
-      `<div class="empty">캐릭터가 없습니다.</div>`;
+      `<div class="empty">
+        캐릭터가 없습니다.
+      </div>`;
+
     return;
   }
 
-  list.innerHTML = characters.map(c=>`
-    <button
-      class="setting-row"
-      data-character-id="${escapeHtml(c.id)}"
-    >
-      <div
-        class="avatar"
-        style="width:42px;height:42px;font-size:14px;background:${colorFor(c.id)}"
-      >
-        ${avatarContent(c)}
-      </div>
+  list.innerHTML =
+    characters.map(character => `
 
-      <div class="setting-main">
-        <div class="setting-title">
-          ${escapeHtml(c.name)}
-          ${c.spam ? `<span style="font-size:12px;color:var(--orange)"> · 스팸</span>`:""}
-          ${c.deleted ? `<span style="font-size:12px;color:var(--red)"> · 삭제됨</span>`:""}
+      <button
+        class="settings-row admin-character-row"
+        data-character-id="${escapeHtml(character.id)}">
+
+        <div
+          class="admin-character-avatar"
+          style="
+            background:${colorFor(character.id)}
+          ">
+
+          ${avatarHtml(character)}
+
         </div>
 
-        <div class="setting-sub">
-          ${escapeHtml(c.phone || "번호 없음")}
+        <div class="settings-main">
+
+          <div class="settings-title">
+
+            ${escapeHtml(
+              character.name
+            )}
+
+            ${
+              character.spam
+                ? `
+                  <span
+                    style="
+                      color:var(--orange);
+                      font-size:12px;
+                    ">
+                    · 스팸
+                  </span>
+                `
+                : ""
+            }
+
+          </div>
+
+          <div class="settings-sub">
+
+            ${escapeHtml(
+              character.phone ||
+              "번호 없음"
+            )}
+
+          </div>
+
         </div>
-      </div>
 
-      <span class="setting-chev">›</span>
-    </button>
-  `).join("");
+        <span class="settings-chevron">
+          ›
+        </span>
 
-  list.querySelectorAll("[data-character-id]")
-    .forEach(button=>{
-      button.onclick = ()=>{
+      </button>
+
+    `).join("");
+
+  list
+    .querySelectorAll(
+      "[data-character-id]"
+    )
+    .forEach(button => {
+
+      button.onclick = () => {
+
         currentCharacterId =
           button.dataset.characterId;
 
         openCharacterDetail();
+
       };
+
     });
 }
 
 function openCharacterDetail(){
-  const character =
-    characterById(currentCharacterId);
 
-  if(!character) return;
+  const character =
+    characterById(
+      currentCharacterId
+    );
+
+  if(!character){
+    return;
+  }
 
   pendingCharacterPhoto =
     character.photo || "";
 
   renderCharacterDetail();
 
-  openScreen(screens.characterDetail);
+  openScreen(
+    screens.characterDetail
+  );
 }
 
 function renderCharacterDetail(){
-  const character =
-    characterById(currentCharacterId);
 
-  if(!character) return;
+  const character =
+    characterById(
+      currentCharacterId
+    );
+
+  if(!character){
+    return;
+  }
 
   const page =
-    document.getElementById("characterDetailPage");
+    document.getElementById(
+      "characterDetailPage"
+    );
 
   page.innerHTML = `
+
     <div class="detail-hero">
 
       <div
-        class="avatar big-avatar"
+        class="big-avatar"
         id="characterDetailAvatar"
-        style="background:${colorFor(character.id)}"
-      >
+        style="
+          background:${colorFor(character.id)}
+        ">
+
         ${
           pendingCharacterPhoto
-            ? `<img src="${pendingCharacterPhoto}" alt="">`
-            : escapeHtml(initials(character.name))
+            ? `
+              <img
+                src="${escapeHtml(
+                  pendingCharacterPhoto
+                )}"
+                alt="">
+            `
+            : escapeHtml(
+                initials(
+                  character.name
+                )
+              )
         }
+
       </div>
 
-      <button class="photo-button" id="characterPhotoButton">
+      <button
+        class="photo-button"
+        id="characterPhotoButton">
         사진 변경
       </button>
 
     </div>
 
-    <div class="page-section-title">캐릭터 정보</div>
+    <div class="settings-section-title">
+      캐릭터 정보
+    </div>
 
-    <div class="group-card">
+    <div class="settings-card">
 
-      <div class="setting-row">
-        <div class="setting-main">
-          <div class="setting-sub">이름</div>
+      <div class="settings-row">
+
+        <div class="settings-main">
+
+          <div class="settings-sub">
+            이름
+          </div>
+
           <input
             class="text-field"
             id="characterNameInput"
             maxlength="40"
-            value="${escapeHtml(character.name)}"
-          >
+            value="${escapeHtml(
+              character.name
+            )}">
+
         </div>
+
       </div>
 
-      <div class="setting-row">
-        <div class="setting-main">
-          <div class="setting-sub">전화번호</div>
+      <div class="settings-row">
+
+        <div class="settings-main">
+
+          <div class="settings-sub">
+            전화번호
+          </div>
+
           <input
             class="text-field"
             id="characterPhoneInput"
             maxlength="30"
-            value="${escapeHtml(character.phone || "")}"
-          >
+            value="${escapeHtml(
+              character.phone || ""
+            )}">
+
         </div>
+
       </div>
 
     </div>
 
-    <div class="page-section-title">말풍선 색상</div>
+    <div class="settings-section-title">
+      말풍선 색상
+    </div>
 
-    <div class="group-card">
+    <div class="settings-card">
 
-      <div class="color-picker-row">
+      <div class="color-row">
 
         <div
           class="color-preview"
           id="colorPreview"
-          style="background:${escapeHtml(character.bubbleColor || "#0a84ff")}"
-        ></div>
+          style="
+            background:${
+              escapeHtml(
+                character.bubbleColor ||
+                "#0a84ff"
+              )
+            }
+          ">
+        </div>
 
-        <div class="setting-main">
-          <div class="setting-title">
+        <div class="settings-main">
+
+          <div class="settings-title">
             캐릭터 메시지 색상
           </div>
 
-          <div class="setting-sub">
-            사용자 메시지는 항상 기본 파란색으로 표시됩니다.
+          <div class="settings-sub">
+            사용자 메시지는 항상 파란색입니다.
           </div>
+
         </div>
 
         <input
           type="color"
           id="characterColorInput"
-          value="${escapeHtml(character.bubbleColor || "#0a84ff")}"
-        >
+          value="${escapeHtml(
+            character.bubbleColor ||
+            "#0a84ff"
+          )}">
+
       </div>
 
     </div>
 
-    <div class="page-section-title">대화 관리</div>
-
-    <div class="group-card">
-
-      <button class="setting-row" id="openAdminConversationButton">
-        <div class="setting-main">
-          <div class="setting-title">대화 관리</div>
-          <div class="setting-sub">
-            메시지 확인 및 캐릭터 메시지 전송
-          </div>
-        </div>
-        <span class="setting-chev">›</span>
-      </button>
-
-      <button class="setting-row" id="togglePinCharacterButton">
-        <div class="setting-main">
-          <div class="setting-title">
-            ${character.pinned ? "대화 고정 해제":"대화 고정"}
-          </div>
-        </div>
-      </button>
-
-      <button class="setting-row" id="toggleSpamCharacterButton">
-        <div class="setting-main">
-          <div class="setting-title">
-            ${character.spam ? "스팸에서 복구":"스팸으로 이동"}
-          </div>
-          <div class="setting-sub">
-            ${character.spam ? "일반 메시지 목록으로 복구합니다":"스팸 목록으로 이동합니다"}
-          </div>
-        </div>
-      </button>
-
+    <div class="settings-section-title">
+      대화 관리
     </div>
 
-    <div class="group-card action-card">
+    <div class="settings-card">
 
       <button
-        class="setting-row delete-character"
-        id="deleteCharacterButton"
-      >
-        <div class="setting-main">
-          <div class="setting-title">캐릭터 삭제</div>
+        class="settings-row"
+        id="openAdminConversationButton">
+
+        <div class="settings-main">
+
+          <div class="settings-title">
+            대화 관리
+          </div>
+
+          <div class="settings-sub">
+            메시지 확인 및 캐릭터 메시지 전송
+          </div>
+
         </div>
+
+        <span class="settings-chevron">
+          ›
+        </span>
+
+      </button>
+
+      <button
+        class="settings-row"
+        id="togglePinButton">
+
+        <div class="settings-main">
+
+          <div class="settings-title">
+
+            ${
+              character.pinned
+                ? "대화 고정 해제"
+                : "대화 고정"
+            }
+
+          </div>
+
+        </div>
+
+      </button>
+
+      <button
+        class="settings-row"
+        id="toggleSpamButton">
+
+        <div class="settings-main">
+
+          <div class="settings-title">
+
+            ${
+              character.spam
+                ? "스팸에서 복구"
+                : "스팸으로 이동"
+            }
+
+          </div>
+
+          <div class="settings-sub">
+
+            ${
+              character.spam
+                ? "일반 메시지 목록으로 복구합니다"
+                : "스팸 목록으로 이동합니다"
+            }
+
+          </div>
+
+        </div>
+
       </button>
 
     </div>
+
+    <div class="settings-card">
+
+      <button
+        class="settings-row"
+        id="deleteCharacterButton"
+        style="color:var(--red)">
+
+        <div class="settings-main">
+
+          <div class="settings-title">
+            캐릭터 삭제
+          </div>
+
+        </div>
+
+      </button>
+
+    </div>
+
   `;
 
-  document.getElementById("characterPhotoButton")
-    .onclick = ()=>{
-      document.getElementById("characterPhotoInput").click();
+  document
+    .getElementById(
+      "characterPhotoButton"
+    )
+    .onclick = () => {
+
+      document
+        .getElementById(
+          "characterPhotoInput"
+        )
+        .click();
+
     };
 
-  document.getElementById("characterColorInput")
-    .addEventListener("input",event=>{
-      const preview =
-        document.getElementById("colorPreview");
+  document
+    .getElementById(
+      "characterColorInput"
+    )
+    .oninput = event => {
 
-      preview.style.background = event.target.value;
+      const color =
+        event.target.value;
 
-      const character =
-        characterById(currentCharacterId);
+      document
+        .getElementById(
+          "colorPreview"
+        )
+        .style.background =
+          color;
 
-      if(character){
-        character.bubbleColor = event.target.value;
-        saveState();
-
-        if(currentChatId===character.id){
-          renderMessages();
-        }
-      }
-    });
-
-  document.getElementById("openAdminConversationButton")
-    .onclick = ()=>{
-      adminConversationCharacterId =
-        currentCharacterId;
-
-      openAdminConversation();
-    };
-
-  document.getElementById("togglePinCharacterButton")
-    .onclick = ()=>{
-      const c =
-        characterById(currentCharacterId);
-
-      if(!c) return;
-
-      c.pinned = !c.pinned;
+      character.bubbleColor =
+        color;
 
       saveState();
+
+      if(
+        currentChatId ===
+        character.id
+      ){
+        renderMessages();
+      }
+
+    };
+
+  document
+    .getElementById(
+      "openAdminConversationButton"
+    )
+    .onclick = () => {
+
+      adminConversationCharacterId =
+        character.id;
+
+      openAdminConversation();
+
+    };
+
+  document
+    .getElementById(
+      "togglePinButton"
+    )
+    .onclick = () => {
+
+      character.pinned =
+        !character.pinned;
+
+      saveState();
+
       renderCharacterDetail();
       renderConversationList();
 
       showToast(
-        c.pinned
+        character.pinned
           ? "대화를 고정했습니다"
           : "대화 고정을 해제했습니다"
       );
+
     };
 
-  document.getElementById("toggleSpamCharacterButton")
-    .onclick = ()=>{
-      const c =
-        characterById(currentCharacterId);
+  document
+    .getElementById(
+      "toggleSpamButton"
+    )
+    .onclick = () => {
 
-      if(!c) return;
-
-      c.spam = !c.spam;
+      character.spam =
+        !character.spam;
 
       saveState();
+
       renderCharacterDetail();
       renderConversationList();
-      renderAdminCharacterList();
+      renderAdminCharacters();
 
       showToast(
-        c.spam
+        character.spam
           ? "스팸으로 이동했습니다"
           : "스팸에서 복구했습니다"
       );
+
     };
 
-  document.getElementById("deleteCharacterButton")
-    .onclick = ()=>{
-      openDeleteCharacterSheet();
-    };
+  document
+    .getElementById(
+      "deleteCharacterButton"
+    )
+    .onclick =
+      openDeleteCharacterSheet;
 }
 
 function saveCharacter(){
+
   const character =
-    characterById(currentCharacterId);
+    characterById(
+      currentCharacterId
+    );
 
-  if(!character) return;
-
-  const name =
-    document.getElementById("characterNameInput")
-      .value.trim();
-
-  const phone =
-    document.getElementById("characterPhoneInput")
-      .value.trim();
-
-  const color =
-    document.getElementById("characterColorInput")
-      .value;
-
-  if(name){
-    character.name = name;
+  if(!character){
+    return;
   }
 
-  character.phone = phone;
-  character.photo = pendingCharacterPhoto || "";
-  character.bubbleColor = color || "#0a84ff";
+  character.name =
+    document
+      .getElementById(
+        "characterNameInput"
+      )
+      .value.trim() ||
+    "새 캐릭터";
+
+  character.phone =
+    document
+      .getElementById(
+        "characterPhoneInput"
+      )
+      .value.trim();
+
+  character.bubbleColor =
+    document
+      .getElementById(
+        "characterColorInput"
+      )
+      .value ||
+    "#0a84ff";
+
+  character.photo =
+    pendingCharacterPhoto || "";
 
   saveState();
 
-  renderAdminCharacterList();
+  renderAdminCharacters();
   renderConversationList();
 
-  if(currentChatId===character.id){
+  if(
+    currentChatId ===
+    character.id
+  ){
     renderChat();
   }
 
-  closeScreen(screens.characterDetail);
+  closeScreen(
+    screens.characterDetail
+  );
 
-  showToast("캐릭터를 저장했습니다");
+  showToast(
+    "캐릭터를 저장했습니다"
+  );
 }
 
-
-/* =========================================================
-   CHARACTER ADD / DELETE
-========================================================= */
-
 function addCharacter(){
+
   const character = {
+
     id:uid(),
+
     name:"새 캐릭터",
-    phone:generatePhone(),
+
+    phone:
+      "010-" +
+      Math.floor(
+        1000 +
+        Math.random()*9000
+      ) +
+      "-" +
+      Math.floor(
+        1000 +
+        Math.random()*9000
+      ),
+
     photo:"",
+
     active:true,
+
     bubbleColor:"#0a84ff",
+
     pinned:false,
+
     spam:false,
+
     deleted:false,
+
     deletedAt:null
+
   };
 
-  state.characters.push(character);
+  state.characters.push(
+    character
+  );
 
   saveState();
 
-  currentCharacterId = character.id;
+  currentCharacterId =
+    character.id;
 
-  renderAdminCharacterList();
+  renderAdminCharacters();
   renderConversationList();
 
   openCharacterDetail();
 }
 
-function openDeleteCharacterSheet(){
-  const character =
-    characterById(currentCharacterId);
 
-  if(!character) return;
+/* =========================================================
+   DELETE CHARACTER
+========================================================= */
+
+function openDeleteCharacterSheet(){
+
+  const character =
+    characterById(
+      currentCharacterId
+    );
+
+  if(!character){
+    return;
+  }
 
   openSheet(
     "캐릭터 삭제",
     `
       <button
         class="sheet-button red"
-        id="confirmDeleteCharacter"
-      >
+        id="confirmDeleteCharacter">
         캐릭터와 모든 대화 영구 삭제
       </button>
     `,
-    ()=>{
-      document.getElementById("confirmDeleteCharacter")
-        .onclick = ()=>{
-          closeSheet();
+    () => {
+
+      document
+        .getElementById(
+          "confirmDeleteCharacter"
+        )
+        .onclick = () => {
 
           state.characters =
             state.characters.filter(
-              c=>c.id!==character.id
+              c =>
+                c.id !==
+                character.id
             );
 
           state.messages =
             state.messages.filter(
-              m=>m.characterId!==character.id
+              m =>
+                m.characterId !==
+                character.id
             );
 
           saveState();
 
-          if(currentChatId===character.id){
-            closeChat();
-          }
+          closeSheet();
 
-          closeScreen(screens.characterDetail);
+          closeScreen(
+            screens.characterDetail
+          );
 
-          renderAdminCharacterList();
+          renderAdminCharacters();
           renderConversationList();
 
-          showToast("캐릭터를 삭제했습니다");
+          showToast(
+            "캐릭터를 삭제했습니다"
+          );
+
         };
+
     }
   );
+
 }
 
 
 /* =========================================================
-   ADMIN CONVERSATION
+   ADMIN CHAT
 ========================================================= */
 
 function openAdminConversation(){
+
   const character =
-    characterById(adminConversationCharacterId);
+    characterById(
+      adminConversationCharacterId
+    );
 
-  if(!character) return;
+  if(!character){
+    return;
+  }
 
-  document.getElementById("adminConversationTitle")
+  document
+    .getElementById(
+      "adminConversationTitle"
+    )
     .textContent =
       `${character.name} · 대화`;
 
@@ -3840,19 +5681,27 @@ function openAdminConversation(){
 
   renderAdminThread();
 
-  openScreen(screens.adminConversation);
+  openScreen(
+    screens.adminConversation
+  );
 }
 
 function renderAdminThread(){
+
   const box =
-    document.getElementById("adminThread");
+    document.getElementById(
+      "adminThread"
+    );
 
   const messages =
-    messagesFor(adminConversationCharacterId);
+    messagesFor(
+      adminConversationCharacterId
+    );
 
   if(!messages.length){
+
     box.innerHTML =
-      `<div class="empty" style="padding:25px 5px">
+      `<div class="empty">
         메시지가 없습니다.
       </div>`;
 
@@ -3860,44 +5709,59 @@ function renderAdminThread(){
   }
 
   box.innerHTML =
-    messages.map(message=>`
+    messages.map(message => `
+
       <div class="admin-message">
 
-        <div class="admin-message-who">
+        <div class="admin-who">
+
           ${
-            message.sender==="them"
+            message.sender === "them"
               ? "캐릭터"
               : "사용자"
           }
+
         </div>
 
-        <div style="flex:1;min-width:0">
-          <div class="admin-message-text">
-            ${escapeHtml(message.text)}
+        <div class="admin-text">
+
+          ${escapeHtml(
+            message.text
+          )}
+
+          <div class="admin-time">
+
+            ${formatDate(message.ts)}
+            ·
+            ${formatTime(message.ts)}
+
           </div>
 
-          <div class="admin-message-time">
-            ${formatDate(message.ts)} · ${formatTime(message.ts)}
-          </div>
         </div>
 
         <button
-          class="admin-message-delete"
-          data-delete-message="${escapeHtml(message.id)}"
-        >
+          class="admin-delete"
+          data-delete-message="${escapeHtml(message.id)}">
           ×
         </button>
 
       </div>
+
     `).join("");
 
-  box.querySelectorAll("[data-delete-message]")
-    .forEach(button=>{
-      button.onclick = ()=>{
+  box
+    .querySelectorAll(
+      "[data-delete-message]"
+    )
+    .forEach(button => {
+
+      button.onclick = () => {
+
         state.messages =
           state.messages.filter(
-            message=>
-              message.id!==button.dataset.deleteMessage
+            message =>
+              message.id !==
+              button.dataset.deleteMessage
           );
 
         saveState();
@@ -3906,48 +5770,84 @@ function renderAdminThread(){
         renderConversationList();
 
         if(
-          currentChatId===
+          currentChatId ===
           adminConversationCharacterId
         ){
           renderMessages();
         }
+
       };
+
     });
 }
 
 function setAdminNow(){
-  const now = Date.now();
 
-  document.getElementById("adminDateInput").value =
-    toDateInput(now);
+  const now =
+    Date.now();
 
-  document.getElementById("adminTimeInput").value =
-    toTimeInput(now);
+  document
+    .getElementById(
+      "adminDateInput"
+    )
+    .value =
+      toDateInput(now);
+
+  document
+    .getElementById(
+      "adminTimeInput"
+    )
+    .value =
+      toTimeInput(now);
 }
 
 function sendAdminMessage(){
+
   const input =
-    document.getElementById("adminMessageInput");
+    document.getElementById(
+      "adminMessageInput"
+    );
 
-  const text = input.value.trim();
+  const text =
+    input.value.trim();
 
-  if(!text || !adminConversationCharacterId){
+  if(
+    !text ||
+    !adminConversationCharacterId
+  ){
     return;
   }
 
   const timestamp =
     combineDateTime(
-      document.getElementById("adminDateInput").value,
-      document.getElementById("adminTimeInput").value
+      document
+        .getElementById(
+          "adminDateInput"
+        )
+        .value,
+
+      document
+        .getElementById(
+          "adminTimeInput"
+        )
+        .value
     );
 
   state.messages.push({
+
     id:uid(),
-    characterId:adminConversationCharacterId,
+
+    characterId:
+      adminConversationCharacterId,
+
     sender:"them",
+
     text,
+
     ts:timestamp,
+
     readByUser:false
+
   });
 
   input.value = "";
@@ -3958,179 +5858,241 @@ function sendAdminMessage(){
   renderConversationList();
 
   if(
-    currentChatId===
+    currentChatId ===
     adminConversationCharacterId
   ){
     renderMessages();
   }
 
-  showToast("캐릭터 메시지를 전송했습니다");
+  showToast(
+    "캐릭터 메시지를 전송했습니다"
+  );
 }
 
 
 /* =========================================================
-   SPAM / DELETED
+   DELETED
 ========================================================= */
 
-function moveConversationToDeleted(id){
-  const character = characterById(id);
+function restoreConversation(id){
 
-  if(!character) return;
+  const character =
+    characterById(id);
 
-  character.deleted = true;
-  character.deletedAt = Date.now();
-  character.pinned = false;
+  if(!character){
+    return;
+  }
+
+  character.deleted =
+    false;
+
+  character.deletedAt =
+    null;
 
   saveState();
 
   renderConversationList();
-  renderAdminCharacterList();
+  renderAdminCharacters();
 
-  showToast("최근 삭제된 항목으로 이동했습니다");
+  showToast(
+    "대화를 복구했습니다"
+  );
 }
 
 function permanentlyDeleteConversation(id){
-  const character = characterById(id);
 
-  if(!character) return;
+  const character =
+    characterById(id);
+
+  if(!character){
+    return;
+  }
 
   openSheet(
     "영구 삭제",
     `
       <button
         class="sheet-button red"
-        id="confirmPermanentDelete"
-      >
+        id="confirmPermanentDelete">
         대화 영구 삭제
       </button>
     `,
-    ()=>{
-      document.getElementById("confirmPermanentDelete")
-        .onclick = ()=>{
-          closeSheet();
+    () => {
+
+      document
+        .getElementById(
+          "confirmPermanentDelete"
+        )
+        .onclick = () => {
 
           state.characters =
-            state.characters.filter(c=>c.id!==id);
+            state.characters.filter(
+              c => c.id !== id
+            );
 
           state.messages =
             state.messages.filter(
-              m=>m.characterId!==id
+              m =>
+                m.characterId !== id
             );
 
           saveState();
 
-          renderDeletedList();
-          renderAdminCharacterList();
+          closeSheet();
 
-          showToast("대화를 영구 삭제했습니다");
+          renderConversationList();
+          renderAdminCharacters();
+          renderDeletedScreen();
+
+          showToast(
+            "대화를 영구 삭제했습니다"
+          );
+
         };
+
     }
   );
 }
 
 function openDeletedScreen(){
-  renderFullDeletedScreen();
-  openScreen(screens.deleted);
+
+  renderDeletedScreen();
+
+  openScreen(
+    screens.deleted
+  );
 }
 
-function renderFullDeletedScreen(){
+function renderDeletedScreen(){
+
   const list =
-    document.getElementById("deletedList");
+    document.getElementById(
+      "deletedList"
+    );
 
   const deleted =
     state.characters
-      .filter(c=>c.deleted)
-      .sort((a,b)=>(b.deletedAt||0)-(a.deletedAt||0));
+      .filter(c => c.deleted)
+      .sort(
+        (a,b) =>
+          (b.deletedAt || 0) -
+          (a.deletedAt || 0)
+      );
 
   if(!deleted.length){
+
     list.innerHTML =
-      `<div class="empty">최근 삭제된 대화가 없습니다.</div>`;
+      `<div class="empty">
+        최근 삭제된 대화가 없습니다.
+      </div>`;
 
     return;
   }
 
   list.innerHTML =
-    `<div class="deleted-info">
-      삭제된 대화를 복구하거나 영구적으로 삭제할 수 있습니다.
-    </div>`
-    +
-    deleted.map(c=>`
-      <div class="conv-row">
+    `
+      <div class="deleted-info">
+        삭제된 대화를 복구하거나
+        영구적으로 삭제할 수 있습니다.
+      </div>
+    ` +
+    deleted.map(character => `
+
+      <div
+        class="conversation-row">
 
         <div
-          class="avatar conv-avatar"
-          style="background:${colorFor(c.id)}"
-        >
-          ${avatarContent(c)}
+          class="conversation-avatar"
+          style="
+            background:${colorFor(character.id)}
+          ">
+
+          ${avatarHtml(character)}
+
         </div>
 
-        <div class="conv-content">
+        <div class="conversation-main">
 
-          <div class="conv-top">
-            <div class="conv-name">
-              ${escapeHtml(c.name)}
+          <div class="conversation-top">
+
+            <div class="conversation-name">
+              ${escapeHtml(
+                character.name
+              )}
             </div>
+
           </div>
 
-          <div class="conv-bottom">
+          <div class="conversation-bottom">
+
             <button
-              class="inline-action"
-              data-full-restore="${escapeHtml(c.id)}"
-            >
+              class="inline-button"
+              data-full-restore="${escapeHtml(character.id)}">
               복구
             </button>
 
             <button
-              class="inline-action red"
-              data-full-delete="${escapeHtml(c.id)}"
-            >
+              class="inline-button red"
+              data-full-delete="${escapeHtml(character.id)}">
               영구 삭제
             </button>
+
           </div>
 
         </div>
+
       </div>
+
     `).join("");
 
-  list.querySelectorAll("[data-full-restore]")
-    .forEach(button=>{
-      button.onclick = ()=>{
-        const c =
-          characterById(button.dataset.fullRestore);
+  list
+    .querySelectorAll(
+      "[data-full-restore]"
+    )
+    .forEach(button => {
 
-        if(!c) return;
+      button.onclick = () => {
 
-        c.deleted = false;
-        c.deletedAt = null;
+        restoreConversation(
+          button.dataset.fullRestore
+        );
 
-        saveState();
+        renderDeletedScreen();
 
-        renderFullDeletedScreen();
-        renderConversationList();
-        renderAdminCharacterList();
-
-        showToast("대화를 복구했습니다");
       };
+
     });
 
-  list.querySelectorAll("[data-full-delete]")
-    .forEach(button=>{
-      button.onclick = ()=>{
+  list
+    .querySelectorAll(
+      "[data-full-delete]"
+    )
+    .forEach(button => {
+
+      button.onclick = () => {
+
         permanentlyDeleteConversation(
           button.dataset.fullDelete
         );
+
       };
+
     });
 }
 
 function emptyDeleted(){
+
   const ids =
     state.characters
-      .filter(c=>c.deleted)
-      .map(c=>c.id);
+      .filter(c => c.deleted)
+      .map(c => c.id);
 
   if(!ids.length){
-    showToast("최근 삭제된 항목이 없습니다");
+
+    showToast(
+      "최근 삭제된 항목이 없습니다"
+    );
+
     return;
   }
 
@@ -4139,34 +6101,45 @@ function emptyDeleted(){
     `
       <button
         class="sheet-button red"
-        id="confirmEmptyDeleted"
-      >
+        id="confirmEmptyDeleted">
         모든 항목 영구 삭제
       </button>
     `,
-    ()=>{
-      document.getElementById("confirmEmptyDeleted")
-        .onclick = ()=>{
-          closeSheet();
+    () => {
+
+      document
+        .getElementById(
+          "confirmEmptyDeleted"
+        )
+        .onclick = () => {
 
           state.characters =
             state.characters.filter(
-              c=>!c.deleted
+              c => !c.deleted
             );
 
           state.messages =
             state.messages.filter(
-              m=>!ids.includes(m.characterId)
+              m =>
+                !ids.includes(
+                  m.characterId
+                )
             );
 
           saveState();
 
-          renderFullDeletedScreen();
-          renderConversationList();
-          renderAdminCharacterList();
+          closeSheet();
 
-          showToast("최근 삭제된 항목을 비웠습니다");
+          renderDeletedScreen();
+          renderConversationList();
+          renderAdminCharacters();
+
+          showToast(
+            "최근 삭제된 항목을 비웠습니다"
+          );
+
         };
+
     }
   );
 }
@@ -4176,40 +6149,78 @@ function emptyDeleted(){
    SHEET
 ========================================================= */
 
-function openSheet(title,content,onOpen){
-  document.getElementById("sheetTitle")
-    .textContent = title;
+function openSheet(
+  title,
+  content,
+  afterOpen
+){
 
-  document.getElementById("sheetContent")
-    .innerHTML = content;
+  document
+    .getElementById(
+      "sheetTitle"
+    )
+    .textContent =
+      title;
 
-  const cover =
-    document.getElementById("sheetCover");
+  document
+    .getElementById(
+      "sheetContent"
+    )
+    .innerHTML =
+      content;
 
-  cover.classList.add("open");
+  document
+    .getElementById(
+      "sheetCover"
+    )
+    .classList.add(
+      "open"
+    );
 
-  if(typeof onOpen==="function"){
-    setTimeout(onOpen,20);
+  if(afterOpen){
+    setTimeout(
+      afterOpen,
+      20
+    );
   }
 }
 
 function closeSheet(){
-  document.getElementById("sheetCover")
-    .classList.remove("open");
+
+  document
+    .getElementById(
+      "sheetCover"
+    )
+    .classList.remove(
+      "open"
+    );
 }
 
 
 /* =========================================================
-   FILE HANDLING
+   IMAGE
 ========================================================= */
 
-function readImage(file,callback){
-  if(!file) return;
+function readImage(
+  file,
+  callback
+){
 
-  const reader = new FileReader();
+  if(!file){
+    return;
+  }
 
-  reader.onload = ()=>{
-    callback(String(reader.result || ""));
+  const reader =
+    new FileReader();
+
+  reader.onload = () => {
+
+    callback(
+      String(
+        reader.result || ""
+      )
+    );
+
   };
 
   reader.readAsDataURL(file);
@@ -4222,304 +6233,632 @@ function readImage(file,callback){
 
 function bindEvents(){
 
-  /* list */
+  /* LIST */
 
-  bindListNavigationButtons();
+  document
+    .getElementById(
+      "editButton"
+    )
+    .onclick = () => {
 
-  document.getElementById("composeFab")
-    .onclick = openNewMessage;
+      setEditMode(true);
 
-  document.getElementById("profileRow")
-    .onclick = openProfile;
+    };
 
-  document.getElementById("filterCover")
-    .onclick = closeFilterMenu;
+  document
+    .getElementById(
+      "filterButton"
+    )
+    .onclick =
+      openFilter;
 
-  document.getElementById("filterPopover")
-    .querySelectorAll("[data-filter]")
-    .forEach(button=>{
-      button.onclick = ()=>{
-        const filter = button.dataset.filter;
+  document
+    .getElementById(
+      "composeFab"
+    )
+    .onclick =
+      openNewMessage;
 
-        if(filter==="deleted"){
-          closeFilterMenu();
+  document
+    .getElementById(
+      "profileRow"
+    )
+    .onclick =
+      openProfile;
+
+  document
+    .getElementById(
+      "filterBackdrop"
+    )
+    .onclick =
+      closeFilter;
+
+  document
+    .querySelectorAll(
+      "[data-filter]"
+    )
+    .forEach(button => {
+
+      button.onclick = () => {
+
+        const filter =
+          button.dataset.filter;
+
+        if(
+          filter ===
+          "deleted"
+        ){
+
+          closeFilter();
+
           openDeletedScreen();
+
           return;
         }
 
-        selectFilter(filter);
+        setFilter(
+          filter
+        );
+
       };
+
     });
 
-  document.getElementById("unreadFilterButton")
-    .onclick = ()=>{
-      unreadOnly = !unreadOnly;
+  document
+    .getElementById(
+      "unreadFilterButton"
+    )
+    .onclick = () => {
 
-      updateFilterMenu();
-      closeFilterMenu();
+      unreadOnly =
+        !unreadOnly;
+
+      updateFilterPopover();
+
+      closeFilter();
 
       renderConversationList();
+
     };
 
-  document.getElementById("filterManageButton")
-    .onclick = ()=>{
-      closeFilterMenu();
+  document
+    .getElementById(
+      "filterManageButton"
+    )
+    .onclick = () => {
+
+      closeFilter();
 
       renderFilterSettings();
 
-      openScreen(screens.filterSettings);
+      openScreen(
+        screens.filterSettings
+      );
+
     };
 
-  /* edit */
 
-  document.getElementById("selectAllButton")
-    .onclick = selectAllVisible;
+  /* EDIT */
 
-  document.getElementById("readSelectedButton")
-    .onclick = ()=>markSelectedRead(true);
+  document
+    .getElementById(
+      "cancelEditButton"
+    )
+    .onclick = () => {
 
-  document.getElementById("unreadSelectedButton")
-    .onclick = ()=>markSelectedRead(false);
+      setEditMode(false);
 
-  document.getElementById("pinSelectedButton")
-    .onclick = toggleSelectedPin;
+    };
 
-  document.getElementById("deleteSelectedButton")
-    .onclick = deleteSelected;
+  document
+    .getElementById(
+      "topSelectAllButton"
+    )
+    .onclick =
+      selectAll;
 
-  /* chat */
+  document
+    .getElementById(
+      "readSelectedButton"
+    )
+    .onclick =
+      () =>
+        markSelectedRead(true);
 
-  document.getElementById("backToListButton")
-    .onclick = closeChat;
+  document
+    .getElementById(
+      "unreadSelectedButton"
+    )
+    .onclick =
+      () =>
+        markSelectedRead(false);
 
-  document.getElementById("chatContact")
-    .onclick = openContact;
+  document
+    .getElementById(
+      "pinSelectedButton"
+    )
+    .onclick =
+      toggleSelectedPin;
 
-  document.getElementById("chatInfoButton")
-    .onclick = openContact;
+  document
+    .getElementById(
+      "deleteSelectedButton"
+    )
+    .onclick =
+      deleteSelected;
+
+  document
+    .getElementById(
+      "spamSelectedButton"
+    )
+    .onclick =
+      spamSelected;
+
+
+  /* CHAT */
+
+  document
+    .getElementById(
+      "backToListButton"
+    )
+    .onclick =
+      closeChat;
+
+  document
+    .getElementById(
+      "chatContact"
+    )
+    .onclick =
+      openContact;
+
+  document
+    .getElementById(
+      "chatInfoButton"
+    )
+    .onclick =
+      openContact;
 
   const userInput =
-    document.getElementById("userMessageInput");
+    document.getElementById(
+      "userMessageInput"
+    );
 
-  userInput.addEventListener("input",updateUserInput);
+  userInput.addEventListener(
+    "input",
+    resizeUserInput
+  );
 
-  userInput.addEventListener("keydown",event=>{
-    if(
-      event.key==="Enter" &&
-      !event.shiftKey
-    ){
-      event.preventDefault();
-      sendUserMessage();
+  userInput.addEventListener(
+    "keydown",
+    event => {
+
+      if(
+        event.key === "Enter" &&
+        !event.shiftKey
+      ){
+
+        event.preventDefault();
+
+        sendUserMessage();
+
+      }
+
     }
-  });
+  );
 
-  document.getElementById("userSendButton")
-    .onclick = sendUserMessage;
+  document
+    .getElementById(
+      "userSendButton"
+    )
+    .onclick =
+      sendUserMessage;
 
-  /* contact */
 
-  document.getElementById("contactBackButton")
-    .onclick = ()=>{
-      closeScreen(screens.contact);
+  /* CONTACT */
+
+  document
+    .getElementById(
+      "contactBackButton"
+    )
+    .onclick = () => {
+
+      closeScreen(
+        screens.contact
+      );
+
     };
 
-  /* new message */
 
-  document.getElementById("newMessageCancelButton")
-    .onclick = ()=>{
-      closeScreen(screens.newMessage);
+  /* NEW MESSAGE */
+
+  document
+    .getElementById(
+      "newMessageCancelButton"
+    )
+    .onclick = () => {
+
+      closeScreen(
+        screens.newMessage
+      );
+
     };
 
-  document.getElementById("characterSearchInput")
-    .addEventListener("input",event=>{
-      renderCharacterPicker(event.target.value);
-    });
+  document
+    .getElementById(
+      "characterSearchInput"
+    )
+    .addEventListener(
+      "input",
+      event => {
 
-  /* filter settings */
+        renderCharacterPicker(
+          event.target.value
+        );
 
-  document.getElementById("filterSettingsBackButton")
-    .onclick = ()=>{
-      closeScreen(screens.filterSettings);
+      }
+    );
+
+
+  /* FILTER SETTINGS */
+
+  document
+    .getElementById(
+      "filterSettingsBackButton"
+    )
+    .onclick = () => {
+
+      closeScreen(
+        screens.filterSettings
+      );
+
     };
 
-  document.getElementById("spamFilteringSwitch")
-    .onclick = ()=>{
+  document
+    .getElementById(
+      "spamFilteringSwitch"
+    )
+    .onclick = () => {
+
       state.settings.spamFiltering =
         !state.settings.spamFiltering;
 
       saveState();
+
       renderFilterSettings();
+
     };
 
-  document.getElementById("unknownFilteringSwitch")
-    .onclick = ()=>{
+  document
+    .getElementById(
+      "unknownFilteringSwitch"
+    )
+    .onclick = () => {
+
       state.settings.unknownFiltering =
         !state.settings.unknownFiltering;
 
       saveState();
+
       renderFilterSettings();
+
     };
 
-  document.getElementById("smsFilteringSwitch")
-    .onclick = ()=>{
+  document
+    .getElementById(
+      "smsFilteringSwitch"
+    )
+    .onclick = () => {
+
       state.settings.smsFiltering =
         !state.settings.smsFiltering;
 
       saveState();
+
       renderFilterSettings();
+
     };
 
-  document.getElementById("openAdminButton")
-    .onclick = ()=>{
-      renderAdminCharacterList();
-      openScreen(screens.admin);
+  document
+    .getElementById(
+      "openAdminButton"
+    )
+    .onclick = () => {
+
+      renderAdminCharacters();
+
+      openScreen(
+        screens.admin
+      );
+
     };
 
-  /* admin */
 
-  document.getElementById("adminBackButton")
-    .onclick = ()=>{
-      closeScreen(screens.admin);
+  /* ADMIN */
+
+  document
+    .getElementById(
+      "adminBackButton"
+    )
+    .onclick = () => {
+
+      closeScreen(
+        screens.admin
+      );
+
     };
 
-  document.getElementById("addCharacterButton")
-    .onclick = addCharacter;
+  document
+    .getElementById(
+      "addCharacterButton"
+    )
+    .onclick =
+      addCharacter;
 
-  /* character detail */
 
-  document.getElementById("characterDetailBackButton")
-    .onclick = ()=>{
-      closeScreen(screens.characterDetail);
+  /* CHARACTER */
+
+  document
+    .getElementById(
+      "characterDetailBackButton"
+    )
+    .onclick = () => {
+
+      closeScreen(
+        screens.characterDetail
+      );
+
     };
 
-  document.getElementById("saveCharacterButton")
-    .onclick = saveCharacter;
+  document
+    .getElementById(
+      "saveCharacterButton"
+    )
+    .onclick =
+      saveCharacter;
 
-  document.getElementById("characterPhotoInput")
-    .addEventListener("change",event=>{
-      const file = event.target.files?.[0];
+  document
+    .getElementById(
+      "characterPhotoInput"
+    )
+    .addEventListener(
+      "change",
+      event => {
 
-      readImage(file,result=>{
-        pendingCharacterPhoto = result;
+        const file =
+          event.target.files?.[0];
 
-        const character =
-          characterById(currentCharacterId);
+        readImage(
+          file,
+          result => {
 
-        if(character){
-          character.photo = result;
-          saveState();
-        }
+            pendingCharacterPhoto =
+              result;
 
-        renderCharacterDetail();
-      });
+            const character =
+              characterById(
+                currentCharacterId
+              );
 
-      event.target.value = "";
-    });
+            if(character){
 
-  /* admin conversation */
+              character.photo =
+                result;
 
-  document.getElementById("adminConversationBackButton")
-    .onclick = ()=>{
-      closeScreen(screens.adminConversation);
-    };
+              saveState();
 
-  document.getElementById("adminNowButton")
-    .onclick = setAdminNow;
+            }
 
-  document.getElementById("adminSendButton")
-    .onclick = sendAdminMessage;
+            renderCharacterDetail();
 
-  document.getElementById("adminMessageInput")
-    .addEventListener("keydown",event=>{
-      if(
-        event.key==="Enter" &&
-        !event.shiftKey
-      ){
-        event.preventDefault();
-        sendAdminMessage();
-      }
-    });
-
-  /* profile */
-
-  document.getElementById("profileBackButton")
-    .onclick = ()=>{
-      closeScreen(screens.profile);
-    };
-
-  document.getElementById("profileSaveButton")
-    .onclick = saveProfile;
-
-  document.getElementById("profilePhotoButton")
-    .onclick = ()=>{
-      document.getElementById("profilePhotoInput").click();
-    };
-
-  document.getElementById("profilePhotoInput")
-    .addEventListener("change",event=>{
-      const file = event.target.files?.[0];
-
-      readImage(file,result=>{
-        pendingProfilePhoto = result;
-
-        applyAvatar(
-          document.getElementById("profileEditAvatar"),
-          {
-            ...state.profile,
-            photo:result
           }
         );
-      });
 
-      event.target.value = "";
-    });
+        event.target.value = "";
 
-  /* deleted */
+      }
+    );
 
-  document.getElementById("deletedBackButton")
-    .onclick = ()=>{
-      closeScreen(screens.deleted);
+
+  /* ADMIN CONVERSATION */
+
+  document
+    .getElementById(
+      "adminConversationBackButton"
+    )
+    .onclick = () => {
+
+      closeScreen(
+        screens.adminConversation
+      );
+
     };
 
-  document.getElementById("emptyDeletedButton")
-    .onclick = emptyDeleted;
+  document
+    .getElementById(
+      "adminNowButton"
+    )
+    .onclick =
+      setAdminNow;
 
-  /* sheet */
+  document
+    .getElementById(
+      "adminSendButton"
+    )
+    .onclick =
+      sendAdminMessage;
 
-  document.getElementById("sheetCancelButton")
-    .onclick = closeSheet;
+  document
+    .getElementById(
+      "adminMessageInput"
+    )
+    .addEventListener(
+      "keydown",
+      event => {
 
-  document.getElementById("sheetCover")
-    .addEventListener("click",event=>{
-      if(event.target.id==="sheetCover"){
-        closeSheet();
+        if(
+          event.key === "Enter" &&
+          !event.shiftKey
+        ){
+
+          event.preventDefault();
+
+          sendAdminMessage();
+
+        }
+
       }
-    });
+    );
+
+
+  /* PROFILE */
+
+  document
+    .getElementById(
+      "profileBackButton"
+    )
+    .onclick = () => {
+
+      closeScreen(
+        screens.profile
+      );
+
+    };
+
+  document
+    .getElementById(
+      "profileSaveButton"
+    )
+    .onclick =
+      saveProfile;
+
+  document
+    .getElementById(
+      "profilePhotoButton"
+    )
+    .onclick = () => {
+
+      document
+        .getElementById(
+          "profilePhotoInput"
+        )
+        .click();
+
+    };
+
+  document
+    .getElementById(
+      "profilePhotoInput"
+    )
+    .addEventListener(
+      "change",
+      event => {
+
+        const file =
+          event.target.files?.[0];
+
+        readImage(
+          file,
+          result => {
+
+            pendingProfilePhoto =
+              result;
+
+            setAvatar(
+              document.getElementById(
+                "profileEditAvatar"
+              ),
+              {
+                ...state.profile,
+                id:"profile",
+                photo:result
+              }
+            );
+
+          }
+        );
+
+        event.target.value = "";
+
+      }
+    );
+
+
+  /* DELETED */
+
+  document
+    .getElementById(
+      "deletedBackButton"
+    )
+    .onclick = () => {
+
+      closeScreen(
+        screens.deleted
+      );
+
+    };
+
+  document
+    .getElementById(
+      "emptyDeletedButton"
+    )
+    .onclick =
+      emptyDeleted;
+
+
+  /* SHEET */
+
+  document
+    .getElementById(
+      "sheetCancelButton"
+    )
+    .onclick =
+      closeSheet;
+
+  document
+    .getElementById(
+      "sheetCover"
+    )
+    .onclick =
+      event => {
+
+        if(
+          event.target.id ===
+          "sheetCover"
+        ){
+
+          closeSheet();
+
+        }
+
+      };
+
 }
 
 
 /* =========================================================
-   INITIALIZATION
+   INIT
 ========================================================= */
 
 function init(){
+
   loadState();
 
   renderProfile();
+
   renderConversationList();
+
   renderFilterSettings();
-  renderAdminCharacterList();
+
+  renderAdminCharacters();
 
   bindEvents();
 
-  document.documentElement.style.background =
-    getComputedStyle(document.documentElement)
-      .getPropertyValue("--bg");
 }
 
 init();
 
 })();
 </script>
+
 </body>
 </html>
