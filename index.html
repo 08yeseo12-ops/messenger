@@ -12,1773 +12,4238 @@
 <style>
 :root{
   --blue:#0a84ff;
+  --green:#30d158;
+  --red:#ff3b30;
+  --orange:#ff9f0a;
+  --purple:#bf5af2;
+  --pink:#ff375f;
   --bg:#fff;
-  --dim:#f2f2f7;
+  --secondary:#f2f2f7;
+  --tertiary:#e5e5ea;
   --text:#111;
   --sub:#8e8e93;
-  --line:rgba(60,60,67,.29);
-  --them:#e9e9eb;
+  --separator:rgba(60,60,67,.29);
+  --bubble:#e9e9eb;
+  --shadow:0 12px 40px rgba(0,0,0,.18);
 }
 
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;width:100%;height:100%;overflow:hidden}
-body{
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
-  background:#000;color:var(--text)
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#000;
+    --secondary:#1c1c1e;
+    --tertiary:#2c2c2e;
+    --text:#f5f5f7;
+    --sub:#98989f;
+    --separator:rgba(84,84,88,.65);
+    --bubble:#262628;
+  }
 }
-button,input,textarea{font-family:inherit}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#000;
+}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",
+  "Helvetica Neue",Arial,sans-serif;
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+}
+
+button,input,textarea{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
 
 .app{
-  width:100%;height:100dvh;max-width:430px;margin:auto;
-  position:relative;overflow:hidden;background:var(--bg)
+  position:relative;
+  width:100%;
+  height:100dvh;
+  max-width:430px;
+  margin:auto;
+  overflow:hidden;
+  background:var(--bg);
+  isolation:isolate;
 }
-body.dark .app{background:#000;color:#f2f2f7}
+
+body.force-dark{
+  --bg:#000;
+  --secondary:#1c1c1e;
+  --tertiary:#2c2c2e;
+  --text:#f5f5f7;
+  --sub:#98989f;
+  --separator:rgba(84,84,88,.65);
+  --bubble:#262628;
+}
+
+body.force-light{
+  --bg:#fff;
+  --secondary:#f2f2f7;
+  --tertiary:#e5e5ea;
+  --text:#111;
+  --sub:#8e8e93;
+  --separator:rgba(60,60,67,.29);
+  --bubble:#e9e9eb;
+}
+
+/* =========================
+   공통
+========================= */
 
 .screen{
-  position:absolute;inset:0;display:flex;flex-direction:column;
-  background:inherit;transition:.3s cubic-bezier(.32,.72,0,1);
-}
-.hidden{transform:translateX(100%)!important}
-.left{transform:translateX(-25%)!important}
-
-.nav{
-  flex-shrink:0;padding:
-    calc(env(safe-area-inset-top,0px) + 8px)
-    16px 8px;
-}
-.navrow{
-  height:45px;display:flex;align-items:center;
-  justify-content:space-between
-}
-.nav button{
-  border:0;background:none;color:var(--blue);
-  font-size:17px;padding:6px 2px
-}
-.title{
-  font-size:40px;font-weight:800;letter-spacing:-1.8px;
-  margin-top:9px;margin-bottom:10px
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  background:var(--bg);
+  transition:
+    transform .38s cubic-bezier(.32,.72,0,1),
+    opacity .2s ease;
+  z-index:1;
 }
 
-/* 상단 메뉴 */
-.top-actions{display:flex;align-items:center;gap:8px}
-.circle-btn{
-  width:44px;height:44px;border-radius:50%;border:0;
-  background:var(--dim);color:var(--text);
-  display:flex;align-items:center;justify-content:center;
-  font-size:23px
+.screen.off-right{
+  transform:translateX(100%);
+  pointer-events:none;
 }
-body.dark .circle-btn{background:#1c1c1e;color:#fff}
 
-.menu-popup{
-  position:absolute;z-index:1000;
-  top:calc(env(safe-area-inset-top,0px) + 60px);
-  right:12px;width:250px;
-  padding:7px 0;border-radius:15px;
-  background:rgba(250,250,252,.97);
-  box-shadow:0 8px 35px rgba(0,0,0,.25);
-  backdrop-filter:blur(25px);
-  display:none
+.screen.off-left{
+  transform:translateX(-28%);
+  pointer-events:none;
 }
-body.dark .menu-popup{background:rgba(42,42,44,.98);color:#fff}
-.menu-popup.open{display:block}
-.menu-popup button{
-  width:100%;border:0;background:none;
-  color:inherit;text-align:left;
-  padding:11px 17px;font-size:17px
-}
-.menu-popup button:active{background:rgba(128,128,128,.15)}
-.menu-label{
-  color:var(--sub);font-size:12px;padding:8px 17px 4px
-}
-.menu-line{height:.5px;background:var(--line);margin:4px 0}
 
-/* 검색 */
-.search{
-  margin:0 16px 8px;height:38px;border-radius:10px;
-  background:var(--dim);color:var(--sub);
-  display:flex;align-items:center;gap:7px;
-  padding:0 11px;font-size:16px
+.screen.active{
+  transform:translateX(0);
+  pointer-events:auto;
 }
-.search svg{width:16px;height:16px}
 
-/* 프로필 */
-.profile{
-  margin:0 16px 7px;padding:12px 14px;
-  border-radius:25px;background:var(--dim);
-  display:flex;align-items:center;gap:12px
+.hidden{
+  display:none!important;
 }
-body.dark .profile{background:#171719}
-.avatar{
-  width:52px;height:52px;border-radius:50%;
-  overflow:hidden;display:flex;align-items:center;
-  justify-content:center;color:white;font-weight:700;
-  flex-shrink:0
-}
-.avatar img{width:100%;height:100%;object-fit:cover}
-.profile-info{flex:1;min-width:0}
-.profile-name{font-size:18px;font-weight:700}
-.profile-status{font-size:14px;color:var(--sub);margin-top:2px}
-.chev{font-size:34px;color:var(--sub);font-weight:300}
 
-/* 편집 */
-.editbar{
-  height:45px;display:none;
-  align-items:center;justify-content:space-between;
-  padding:0 16px;border-bottom:.5px solid var(--line)
+.no-scrollbar{
+  scrollbar-width:none;
 }
-.editbar.open{display:flex}
-.editbar button{
-  border:0;background:none;color:var(--blue);
-  font-size:16px
-}
-.edit-count{font-size:14px;color:var(--sub)}
 
-.list{
-  flex:1;overflow-y:auto;padding-bottom:75px
+.no-scrollbar::-webkit-scrollbar{
+  display:none;
 }
-.row{
-  min-height:73px;padding:9px 16px 0 14px;
-  display:flex;align-items:flex-start;gap:10px;
-  position:relative
-}
-.row:active{background:var(--dim)}
-.row.selected{background:rgba(10,132,255,.08)}
-.row-main{
-  flex:1;min-width:0;padding-bottom:11px;
-  border-bottom:.5px solid var(--line)
-}
-.row:last-child .row-main{border-bottom:0}
-.row-top{display:flex;justify-content:space-between;gap:8px}
-.name{font-size:18px;font-weight:650}
-.time{font-size:14px;color:var(--sub)}
-.preview{
-  color:var(--sub);font-size:15.5px;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  margin-top:2px
-}
-.unread{
-  width:10px;height:10px;background:var(--blue);
-  border-radius:50%;flex-shrink:0;margin-top:6px
-}
-.check{
-  width:22px;height:22px;border-radius:50%;
-  border:2px solid #aaa;flex-shrink:0;margin-top:15px;
-  display:flex;align-items:center;justify-content:center
-}
-.check.on{background:var(--blue);border-color:var(--blue);color:#fff}
-.check.on:after{content:"✓";font-size:13px;font-weight:700}
 
-/* 하단 검색 */
-.bottom-search{
-  position:absolute;z-index:20;
-  left:16px;right:82px;
-  bottom:calc(env(safe-area-inset-bottom,0px) + 9px);
-  margin:0;height:48px;border-radius:24px;
-  background:rgba(242,242,247,.94);
-  backdrop-filter:blur(20px);
-  display:flex;align-items:center;
-  padding:0 15px;color:var(--sub);gap:7px
+button{
+  border:0;
+  background:none;
+  color:inherit;
+  padding:0;
 }
-body.dark .bottom-search{background:rgba(28,28,30,.94)}
-.compose{
-  position:absolute;z-index:21;right:14px;
-  bottom:calc(env(safe-area-inset-bottom,0px) + 9px);
-  width:56px;height:56px;border-radius:50%;
-  border:0;background:var(--dim);font-size:27px;color:var(--text)
-}
-body.dark .compose{background:#171719;color:#fff}
 
-/* 채팅 */
-.chatnav{padding-bottom:2px}
-.back{
-  display:flex!important;align-items:center;gap:2px
+button:active{
+  opacity:.55;
 }
-.back svg{width:11px;height:19px}
-.chatinfo{
-  display:flex;flex-direction:column;
-  align-items:center;gap:3px;cursor:pointer
-}
-.chatinfo .avatar{width:54px;height:54px}
-.chatname{font-size:12px;font-weight:600;color:var(--sub)}
-.messages{
-  flex:1;overflow-y:auto;padding:8px 12px 14px;
-  display:flex;flex-direction:column
-}
-.date{
-  text-align:center;color:var(--sub);
-  font-size:12px;font-weight:600;margin:13px 0 8px
-}
-.msgrow{display:flex;margin:1.5px 0}
-.msgrow.me{justify-content:flex-end}
-.msgrow.them{justify-content:flex-start}
-.bubble{
-  max-width:75%;padding:8px 14px;
-  border-radius:20px;font-size:16.5px;
-  line-height:1.32;word-break:break-word;
-  white-space:pre-wrap
-}
-.bubble.them{
-  background:var(--them);color:var(--text);
-  border-bottom-left-radius:5px
-}
-.bubble.me{
-  color:#fff;border-bottom-right-radius:5px;
-  background:var(--bubble-color,#0a84ff)
-}
-.read{
-  text-align:right;color:var(--sub);
-  font-size:12px;margin:2px 5px
-}
-.inputbar{
-  flex-shrink:0;display:flex;align-items:flex-end;
-  gap:8px;padding:8px 10px
-}
-.plus{
-  width:30px;height:30px;border-radius:50%;
-  border:1.5px solid var(--sub);background:none;
-  color:var(--sub);font-size:20px
-}
-.inputwrap{
-  flex:1;min-height:34px;border-radius:20px;
-  background:var(--dim);border:.5px solid var(--line);
-  display:flex
-}
-textarea.msginput{
-  width:100%;resize:none;outline:0;border:0;
-  background:none;padding:7px 11px;
-  font-size:16.5px;color:inherit;max-height:100px
-}
-.send{
-  width:30px;height:30px;border-radius:50%;
-  border:0;background:var(--blue);color:#fff;
-  opacity:.35
-}
-.send.ready{opacity:1}
 
-/* 연락처 */
-.contact-body{
-  flex:1;overflow:auto;text-align:center;padding:8px 20px
+svg{
+  display:block;
 }
-.big-avatar{
-  width:104px;height:104px;border-radius:50%;
-  margin:5px auto 10px;overflow:hidden;
-  display:flex;align-items:center;justify-content:center;
-  color:white;font-size:38px;font-weight:700
-}
-.big-avatar img{width:100%;height:100%;object-fit:cover}
-.contact-name{font-size:24px;font-weight:700}
-.contact-phone{font-size:14px;color:var(--sub);margin-top:2px}
-.contact-actions{
-  display:flex;justify-content:center;gap:30px;margin:22px 0
-}
-.contact-action{color:var(--blue);font-size:12px}
-.contact-action button{
-  display:block;width:56px;height:56px;border:0;
-  border-radius:50%;background:var(--dim);
-  margin:auto auto 5px;color:var(--blue);font-size:22px
-}
-.info-card{
-  text-align:left;background:var(--dim);
-  border-radius:14px;overflow:hidden
-}
-.info-row{padding:10px 14px;border-bottom:.5px solid var(--line)}
-.info-row:last-child{border:0}
-.info-label{font-size:12px;color:var(--sub)}
-.info-value{font-size:16px;color:var(--blue);margin-top:2px}
 
-/* 관리자 */
-.admin{
-  background:var(--dim)
+.safe-top{
+  padding-top:env(safe-area-inset-top,0px);
 }
-body.dark .admin{background:#000}
-.admin-head{
-  padding:calc(env(safe-area-inset-top,0px) + 15px) 16px 12px
+
+.safe-bottom{
+  padding-bottom:env(safe-area-inset-bottom,0px);
 }
-.admin-head h1{margin:0;font-size:22px}
-.badge{
-  display:inline-block;margin-top:6px;
-  padding:3px 8px;border-radius:8px;
-  font-size:11px;font-weight:700;
-  background:rgba(255,159,10,.14);color:#ff9f0a
+
+/* =========================
+   SVG icons
+========================= */
+
+.icon{
+  width:23px;
+  height:23px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:1.8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
 }
-.admin-body{flex:1;overflow:auto;padding:0 14px 30px}
-.card{
-  background:var(--bg);border-radius:15px;
-  padding:14px;margin-bottom:14px
+
+.icon.small{
+  width:19px;
+  height:19px;
 }
-body.dark .card{background:#1c1c1e}
-.card h2{margin:0 0 10px;font-size:13px;color:var(--sub)}
-.char{
-  display:flex;align-items:center;gap:10px;
-  padding:8px 0;border-bottom:.5px solid var(--line)
+
+.icon.large{
+  width:27px;
+  height:27px;
 }
-.char:last-child{border-bottom:0}
-.char.selected{background:rgba(10,132,255,.08);margin:0 -8px;padding:8px;border-radius:10px}
-.char .avatar{width:38px;height:38px;font-size:14px}
-.char-info{flex:1;min-width:0}
-.char-name{font-size:15px;font-weight:600}
-.char-phone{font-size:12px;color:var(--sub)}
-.danger{
-  border:0;background:none;color:#ff3b30;font-size:16px
+
+/* =========================
+   목록 상단
+========================= */
+
+.list-header{
+  flex-shrink:0;
+  padding:
+    calc(env(safe-area-inset-top,0px) + 6px)
+    16px
+    0;
+  background:var(--bg);
+  z-index:20;
 }
-.form{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-.form input,.form textarea{
-  border:.5px solid var(--line);border-radius:9px;
-  padding:9px;background:var(--dim);
-  color:inherit;font-size:14px
-}
-.form input[type=text]{flex:1;min-width:100px}
-.primary{
-  border:0;border-radius:9px;
-  background:var(--blue);color:#fff;
-  padding:9px 14px;font-weight:600
-}
-.thread{max-height:280px;overflow:auto;background:var(--dim);border-radius:10px;padding:5px}
-body.dark .thread{background:#0b0b0c}
-.thread-msg{
-  display:flex;gap:6px;padding:5px;font-size:13px;
-  align-items:center
-}
-.thread-who{width:45px;font-size:11px;font-weight:700;color:var(--sub)}
-.thread-msg.them .thread-who{color:#ff9f0a}
-.thread-msg.me .thread-who{color:var(--blue)}
-.thread-text{flex:1;word-break:break-word}
-.thread-time{font-size:10px;color:var(--sub)}
-.thread-del{border:0;background:none;color:var(--sub)}
-.composer textarea{width:100%;min-height:65px;resize:none}
-.color-setting{
-  width:100%;display:flex;align-items:center;
+
+.header-top{
+  height:43px;
+  display:flex;
+  align-items:center;
   justify-content:space-between;
-  margin-top:9px;font-size:14px
 }
-.color-setting input{width:52px;height:34px;padding:0;border:0;background:none}
 
-/* 프로필 시트 */
-.overlay{
-  position:absolute;inset:0;z-index:200;
-  background:rgba(0,0,0,.35);
-  display:none;align-items:flex-end
+.header-top-left,
+.header-top-right{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:80px;
 }
-.overlay.open{display:flex}
+
+.header-top-right{
+  justify-content:flex-end;
+}
+
+.edit-button{
+  color:var(--blue);
+  font-size:17px;
+  letter-spacing:-.2px;
+}
+
+.header-icon-button{
+  width:36px;
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--blue);
+}
+
+.main-title{
+  margin:3px 0 11px;
+  font-size:39px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:-1.7px;
+}
+
+.search-bar{
+  height:37px;
+  border-radius:10px;
+  background:var(--secondary);
+  color:var(--sub);
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:0 10px;
+  margin-bottom:8px;
+  font-size:16px;
+}
+
+.search-bar input{
+  width:100%;
+  border:0;
+  outline:0;
+  background:none;
+  color:var(--text);
+  font-size:16px;
+}
+
+.search-bar input::placeholder{
+  color:var(--sub);
+}
+
+/* =========================
+   사용자 프로필
+========================= */
+
+.user-profile{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:9px 4px 10px;
+  margin-bottom:2px;
+  border-bottom:0;
+  position:relative;
+}
+
+.user-profile:active{
+  opacity:.6;
+}
+
+.avatar{
+  width:50px;
+  height:50px;
+  flex:0 0 50px;
+  border-radius:50%;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#7b61ff,#bf5af2);
+  color:#fff;
+  font-size:19px;
+  font-weight:700;
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.user-profile-info{
+  min-width:0;
+  flex:1;
+}
+
+.user-profile-name{
+  font-size:17px;
+  font-weight:650;
+  letter-spacing:-.2px;
+}
+
+.user-profile-status{
+  margin-top:2px;
+  font-size:14px;
+  color:var(--sub);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.chevron{
+  color:#8e8e93;
+  font-size:27px;
+  font-weight:300;
+  padding-right:4px;
+}
+
+/* =========================
+   메시지 목록
+========================= */
+
+.message-list{
+  flex:1;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  padding-bottom:
+    calc(env(safe-area-inset-bottom,0px) + 82px);
+}
+
+.conversation-row{
+  min-height:77px;
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:9px 16px 0 16px;
+  position:relative;
+  transition:background .15s;
+}
+
+.conversation-row:active{
+  background:var(--secondary);
+}
+
+.row-avatar{
+  width:54px;
+  height:54px;
+  flex:0 0 54px;
+  border-radius:50%;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#777;
+  color:#fff;
+  font-size:19px;
+  font-weight:700;
+}
+
+.row-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.row-content{
+  min-width:0;
+  flex:1;
+  padding:1px 0 11px;
+  border-bottom:.5px solid var(--separator);
+}
+
+.row-top{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+
+.row-name{
+  min-width:0;
+  flex:1;
+  font-size:18px;
+  line-height:22px;
+  font-weight:650;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.row-time{
+  flex-shrink:0;
+  font-size:14px;
+  color:var(--sub);
+}
+
+.row-preview-line{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-top:1px;
+}
+
+.row-preview{
+  min-width:0;
+  flex:1;
+  color:var(--sub);
+  font-size:15.5px;
+  line-height:20px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.row-unread{
+  width:9px;
+  height:9px;
+  flex:0 0 9px;
+  background:var(--blue);
+  border-radius:50%;
+  margin-right:1px;
+}
+
+.row-pin{
+  color:var(--sub);
+  font-size:12px;
+  margin-right:3px;
+}
+
+.selection-circle{
+  width:23px;
+  height:23px;
+  flex:0 0 23px;
+  border:2px solid #a7a7ac;
+  border-radius:50%;
+  margin-top:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.selection-circle.selected{
+  border-color:var(--blue);
+  background:var(--blue);
+  color:white;
+}
+
+.selection-circle.selected:after{
+  content:"✓";
+  font-size:13px;
+  font-weight:700;
+}
+
+.editing .conversation-row{
+  padding-left:12px;
+}
+
+.editing .row-avatar{
+  width:52px;
+  height:52px;
+  flex-basis:52px;
+}
+
+/* =========================
+   하단 compose
+========================= */
+
+.list-bottom{
+  position:absolute;
+  z-index:30;
+  left:0;
+  right:0;
+  bottom:0;
+  pointer-events:none;
+  padding:
+    0
+    14px
+    calc(env(safe-area-inset-bottom,0px) + 10px);
+  display:flex;
+  justify-content:flex-end;
+  align-items:flex-end;
+}
+
+.compose-button{
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  background:var(--secondary);
+  color:var(--blue);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+  pointer-events:auto;
+}
+
+.compose-button .icon{
+  width:27px;
+  height:27px;
+}
+
+/* =========================
+   편집 toolbar
+========================= */
+
+.edit-toolbar{
+  display:none;
+  height:45px;
+  flex-shrink:0;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 16px;
+  border-bottom:.5px solid var(--separator);
+}
+
+.editing .edit-toolbar{
+  display:flex;
+}
+
+.editing .normal-toolbar{
+  display:none;
+}
+
+.edit-toolbar .cancel{
+  color:var(--blue);
+  font-size:17px;
+}
+
+.edit-toolbar .selection-title{
+  font-size:16px;
+  font-weight:650;
+}
+
+.edit-toolbar .select-all{
+  color:var(--blue);
+  font-size:16px;
+}
+
+.edit-action-bar{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:50;
+  display:none;
+  padding:
+    10px
+    14px
+    calc(env(safe-area-inset-bottom,0px) + 10px);
+  background:color-mix(in srgb,var(--bg) 82%,transparent);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-top:.5px solid var(--separator);
+}
+
+.editing.has-selection .edit-action-bar{
+  display:flex;
+}
+
+.edit-actions{
+  width:100%;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+}
+
+.edit-action{
+  min-width:58px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  color:var(--blue);
+  font-size:11px;
+}
+
+.edit-action.danger{
+  color:var(--red);
+}
+
+.edit-action.disabled{
+  color:var(--sub);
+  opacity:.45;
+}
+
+/* =========================
+   팝업 메뉴
+========================= */
+
+.popup-backdrop{
+  position:absolute;
+  inset:0;
+  z-index:80;
+  display:none;
+}
+
+.popup-backdrop.open{
+  display:block;
+}
+
+.filter-popup{
+  position:absolute;
+  top:calc(env(safe-area-inset-top,0px) + 55px);
+  right:10px;
+  width:260px;
+  padding:7px 0;
+  border-radius:17px;
+  background:rgba(248,248,250,.95);
+  color:#111;
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(30px) saturate(180%);
+  -webkit-backdrop-filter:blur(30px) saturate(180%);
+  z-index:100;
+  transform-origin:top right;
+  animation:popupIn .18s cubic-bezier(.2,.8,.2,1);
+}
+
+@media(prefers-color-scheme:dark){
+  .filter-popup{
+    background:rgba(42,42,44,.96);
+    color:#fff;
+  }
+}
+
+body.force-dark .filter-popup{
+  background:rgba(42,42,44,.96);
+  color:#fff;
+}
+
+body.force-light .filter-popup{
+  background:rgba(248,248,250,.95);
+  color:#111;
+}
+
+@keyframes popupIn{
+  from{opacity:0;transform:scale(.94) translateY(-4px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+
+.filter-popup button{
+  width:100%;
+  min-height:43px;
+  padding:9px 17px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  text-align:left;
+  font-size:17px;
+}
+
+.filter-popup button .popup-check{
+  color:var(--blue);
+  font-size:18px;
+}
+
+.popup-label{
+  padding:8px 17px 5px;
+  font-size:12px;
+  color:#8e8e93;
+}
+
+.popup-separator{
+  height:.5px;
+  background:rgba(60,60,67,.22);
+  margin:4px 0;
+}
+
+/* =========================
+   공통 서브 화면 nav
+========================= */
+
+.subnav{
+  min-height:54px;
+  flex-shrink:0;
+  padding:
+    calc(env(safe-area-inset-top,0px) + 3px)
+    10px
+    0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:.5px solid var(--separator);
+}
+
+.subnav-title{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:17px;
+  font-weight:650;
+  white-space:nowrap;
+}
+
+.nav-button{
+  min-width:45px;
+  min-height:44px;
+  display:flex;
+  align-items:center;
+  color:var(--blue);
+  font-size:17px;
+  padding:0 5px;
+  z-index:2;
+}
+
+.nav-button.right{
+  justify-content:flex-end;
+}
+
+.nav-back{
+  display:flex;
+  align-items:center;
+  gap:0;
+}
+
+.nav-back svg{
+  width:12px;
+  height:21px;
+  stroke-width:2;
+}
+
+/* =========================
+   필터 관리
+========================= */
+
+.settings-screen{
+  background:var(--secondary);
+}
+
+.settings-scroll{
+  flex:1;
+  overflow-y:auto;
+  padding:20px 16px calc(env(safe-area-inset-bottom,0px) + 30px);
+}
+
+.settings-group{
+  background:var(--bg);
+  border-radius:14px;
+  overflow:hidden;
+  margin-bottom:27px;
+}
+
+.settings-row{
+  min-height:53px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  padding:9px 16px;
+  border-bottom:.5px solid var(--separator);
+}
+
+.settings-row:last-child{
+  border-bottom:0;
+}
+
+.settings-row-main{
+  min-width:0;
+  flex:1;
+}
+
+.settings-row-title{
+  font-size:16px;
+}
+
+.settings-row-sub{
+  font-size:12px;
+  color:var(--sub);
+  margin-top:2px;
+}
+
+.settings-arrow{
+  color:var(--sub);
+  font-size:24px;
+  font-weight:300;
+}
+
+.settings-heading{
+  color:var(--sub);
+  font-size:13px;
+  margin:0 0 8px 15px;
+}
+
+.admin-entry{
+  color:var(--blue);
+}
+
+.admin-entry-icon{
+  width:31px;
+  height:31px;
+  border-radius:8px;
+  background:var(--secondary);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:17px;
+}
+
+/* iOS toggle */
+
+.toggle{
+  width:51px;
+  height:31px;
+  border-radius:16px;
+  background:#78788029;
+  position:relative;
+  flex:0 0 51px;
+  transition:.2s;
+}
+
+.toggle:after{
+  content:"";
+  position:absolute;
+  width:27px;
+  height:27px;
+  top:2px;
+  left:2px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 2px 5px rgba(0,0,0,.25);
+  transition:.2s;
+}
+
+.toggle.on{
+  background:var(--green);
+}
+
+.toggle.on:after{
+  transform:translateX(20px);
+}
+
+/* =========================
+   관리자
+========================= */
+
+.admin-screen{
+  background:var(--secondary);
+}
+
+.admin-scroll{
+  flex:1;
+  overflow-y:auto;
+  padding:18px 14px calc(env(safe-area-inset-bottom,0px) + 35px);
+}
+
+.admin-section{
+  background:var(--bg);
+  border-radius:15px;
+  overflow:hidden;
+  margin-bottom:17px;
+}
+
+.admin-section-title{
+  color:var(--sub);
+  font-size:13px;
+  padding:15px 16px 7px;
+}
+
+.character-item{
+  min-height:65px;
+  padding:9px 13px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border-bottom:.5px solid var(--separator);
+}
+
+.character-item:last-child{
+  border-bottom:0;
+}
+
+.character-item.selected{
+  background:rgba(10,132,255,.07);
+}
+
+.character-avatar{
+  width:43px;
+  height:43px;
+  flex:0 0 43px;
+  border-radius:50%;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-weight:700;
+  background:#777;
+}
+
+.character-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.character-info{
+  min-width:0;
+  flex:1;
+}
+
+.character-name{
+  font-size:16px;
+  font-weight:600;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.character-phone{
+  color:var(--sub);
+  font-size:12px;
+  margin-top:2px;
+}
+
+.color-dot{
+  width:19px;
+  height:19px;
+  border-radius:50%;
+  border:1px solid rgba(0,0,0,.12);
+}
+
+.admin-detail{
+  padding:16px;
+}
+
+.admin-detail-title{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.admin-detail-avatar{
+  width:62px;
+  height:62px;
+  border-radius:50%;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-size:24px;
+  font-weight:700;
+}
+
+.admin-detail-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.admin-detail-name{
+  font-size:20px;
+  font-weight:700;
+}
+
+.admin-field{
+  margin-bottom:13px;
+}
+
+.admin-field label{
+  display:block;
+  font-size:12px;
+  color:var(--sub);
+  margin:0 0 6px 3px;
+}
+
+.admin-input,
+.admin-textarea,
+.admin-select{
+  width:100%;
+  border:0;
+  outline:0;
+  background:var(--secondary);
+  color:var(--text);
+  border-radius:11px;
+  padding:11px 12px;
+  font-size:16px;
+}
+
+.admin-textarea{
+  resize:none;
+  min-height:85px;
+}
+
+.color-control{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:var(--secondary);
+  border-radius:11px;
+  padding:8px 11px;
+}
+
+.color-control input{
+  width:50px;
+  height:34px;
+  border:0;
+  padding:0;
+  background:none;
+}
+
+.admin-button{
+  min-height:43px;
+  padding:0 16px;
+  border-radius:11px;
+  background:var(--blue);
+  color:#fff;
+  font-weight:600;
+  font-size:15px;
+}
+
+.admin-button.secondary{
+  background:var(--secondary);
+  color:var(--blue);
+}
+
+.admin-button.danger{
+  background:rgba(255,59,48,.1);
+  color:var(--red);
+}
+
+.admin-button.full{
+  width:100%;
+}
+
+.admin-buttons{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.admin-message-thread{
+  max-height:270px;
+  overflow-y:auto;
+  background:var(--secondary);
+  border-radius:11px;
+}
+
+.admin-thread-item{
+  display:flex;
+  align-items:flex-start;
+  gap:7px;
+  padding:8px 9px;
+  border-bottom:.5px solid var(--separator);
+  font-size:13px;
+}
+
+.admin-thread-item:last-child{
+  border-bottom:0;
+}
+
+.admin-thread-who{
+  width:39px;
+  flex:0 0 39px;
+  color:var(--blue);
+  font-size:11px;
+  font-weight:700;
+}
+
+.admin-thread-who.them{
+  color:var(--orange);
+}
+
+.admin-thread-text{
+  flex:1;
+  min-width:0;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+
+.admin-thread-time{
+  color:var(--sub);
+  font-size:10px;
+  white-space:nowrap;
+}
+
+.admin-thread-delete{
+  color:var(--red);
+  font-size:14px;
+}
+
+.empty-admin{
+  padding:25px 16px;
+  text-align:center;
+  color:var(--sub);
+  font-size:14px;
+}
+
+.add-character{
+  padding:15px;
+}
+
+.add-character .admin-buttons{
+  margin-top:10px;
+}
+
+/* =========================
+   날짜/시간 관리자
+========================= */
+
+.datetime-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.now-button{
+  margin-top:8px;
+  width:100%;
+  min-height:38px;
+  border-radius:9px;
+  background:var(--secondary);
+  color:var(--blue);
+  font-size:14px;
+  font-weight:600;
+}
+
+/* =========================
+   채팅
+========================= */
+
+.chat-screen{
+  background:var(--bg);
+}
+
+.chat-nav{
+  min-height:67px;
+  flex-shrink:0;
+  position:relative;
+  padding:
+    calc(env(safe-area-inset-top,0px) + 2px)
+    10px
+    4px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  border-bottom:.5px solid var(--separator);
+  background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  z-index:30;
+}
+
+.chat-back{
+  min-width:55px;
+  min-height:43px;
+  display:flex;
+  align-items:center;
+  gap:2px;
+  color:var(--blue);
+  font-size:17px;
+  align-self:center;
+}
+
+.chat-back svg{
+  width:11px;
+  height:20px;
+  stroke-width:2;
+}
+
+.chat-person{
+  position:absolute;
+  left:50%;
+  bottom:4px;
+  transform:translateX(-50%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:1px;
+  max-width:150px;
+}
+
+.chat-person .avatar{
+  width:32px;
+  height:32px;
+  flex-basis:32px;
+  font-size:12px;
+}
+
+.chat-person-name{
+  font-size:11px;
+  line-height:13px;
+  max-width:150px;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+
+.chat-person-arrow{
+  position:absolute;
+  right:-14px;
+  bottom:10px;
+  color:var(--sub);
+  font-size:12px;
+}
+
+.chat-info-button{
+  min-width:45px;
+  min-height:43px;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  color:var(--blue);
+  align-self:center;
+}
+
+.chat-messages{
+  flex:1;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  padding:9px 11px 12px;
+  display:flex;
+  flex-direction:column;
+}
+
+.chat-date{
+  align-self:center;
+  color:var(--sub);
+  font-size:12px;
+  font-weight:600;
+  margin:12px 0 8px;
+}
+
+.message-row{
+  width:100%;
+  display:flex;
+  margin:1px 0;
+}
+
+.message-row.them{
+  justify-content:flex-start;
+}
+
+.message-row.me{
+  justify-content:flex-end;
+}
+
+.message-content{
+  max-width:78%;
+  display:flex;
+  flex-direction:column;
+}
+
+.message-row.me .message-content{
+  align-items:flex-end;
+}
+
+.message-bubble{
+  padding:8px 13px;
+  font-size:16.5px;
+  line-height:1.3;
+  white-space:pre-wrap;
+  word-break:break-word;
+  border-radius:19px;
+}
+
+.message-row.them .message-bubble{
+  color:#fff;
+  background:var(--character-color,#0a84ff);
+  border-bottom-left-radius:5px;
+}
+
+.message-row.me .message-bubble{
+  color:#fff;
+  background:var(--blue);
+  border-bottom-right-radius:5px;
+}
+
+.message-row.continued .message-bubble{
+  border-radius:19px;
+}
+
+.message-row.them.continued .message-bubble{
+  border-bottom-left-radius:5px;
+}
+
+.message-row.them.last-group .message-bubble{
+  border-bottom-left-radius:19px;
+}
+
+.message-row.me.continued .message-bubble{
+  border-bottom-right-radius:5px;
+}
+
+.message-row.me.last-group .message-bubble{
+  border-bottom-right-radius:19px;
+}
+
+.message-time{
+  color:var(--sub);
+  font-size:10px;
+  margin:2px 5px 3px;
+}
+
+.chat-date + .message-row{
+  margin-top:0;
+}
+
+.chat-read{
+  align-self:flex-end;
+  color:var(--sub);
+  font-size:11px;
+  margin:1px 5px 0;
+}
+
+/* =========================
+   채팅 입력
+========================= */
+
+.chat-input-area{
+  flex-shrink:0;
+  display:flex;
+  align-items:flex-end;
+  gap:7px;
+  padding:
+    7px
+    10px
+    calc(env(safe-area-inset-bottom,0px) + 7px);
+  background:var(--bg);
+  border-top:.5px solid var(--separator);
+}
+
+.plus-button{
+  width:31px;
+  height:31px;
+  flex:0 0 31px;
+  margin-bottom:2px;
+  border-radius:50%;
+  border:1.5px solid var(--sub);
+  color:var(--sub);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.plus-button svg{
+  width:18px;
+  height:18px;
+}
+
+.message-input-wrap{
+  flex:1;
+  min-height:35px;
+  border:1px solid #c7c7cc;
+  border-radius:19px;
+  display:flex;
+  align-items:flex-end;
+  background:var(--bg);
+  overflow:hidden;
+}
+
+.message-input{
+  width:100%;
+  max-height:105px;
+  resize:none;
+  border:0;
+  outline:0;
+  background:none;
+  color:var(--text);
+  padding:7px 11px;
+  font-size:16px;
+  line-height:20px;
+}
+
+.message-input::placeholder{
+  color:var(--sub);
+}
+
+.send-button{
+  width:31px;
+  height:31px;
+  flex:0 0 31px;
+  margin-bottom:2px;
+  border-radius:50%;
+  background:var(--blue);
+  color:#fff;
+  opacity:.35;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.send-button.ready{
+  opacity:1;
+}
+
+.send-button svg{
+  width:17px;
+  height:17px;
+  stroke-width:2.3;
+}
+
+/* =========================
+   연락처
+========================= */
+
+.contact-screen{
+  background:var(--secondary);
+}
+
+.contact-scroll{
+  flex:1;
+  overflow-y:auto;
+  padding:24px 16px calc(env(safe-area-inset-bottom,0px) + 30px);
+  text-align:center;
+}
+
+.contact-big-avatar{
+  width:105px;
+  height:105px;
+  border-radius:50%;
+  margin:2px auto 12px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-size:38px;
+  font-weight:700;
+}
+
+.contact-big-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.contact-name{
+  font-size:24px;
+  line-height:29px;
+  font-weight:700;
+}
+
+.contact-phone{
+  color:var(--sub);
+  font-size:14px;
+  margin-top:2px;
+}
+
+.contact-actions{
+  display:flex;
+  justify-content:center;
+  gap:27px;
+  margin:23px 0 28px;
+}
+
+.contact-action{
+  color:var(--blue);
+  min-width:54px;
+  font-size:12px;
+}
+
+.contact-action-button{
+  width:54px;
+  height:54px;
+  margin:0 auto 5px;
+  border-radius:50%;
+  background:var(--bg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--blue);
+}
+
+.contact-action-button svg{
+  width:22px;
+  height:22px;
+}
+
+.contact-card{
+  background:var(--bg);
+  border-radius:14px;
+  text-align:left;
+  overflow:hidden;
+}
+
+.contact-card-row{
+  min-height:53px;
+  padding:9px 15px;
+  border-bottom:.5px solid var(--separator);
+}
+
+.contact-card-row:last-child{
+  border-bottom:0;
+}
+
+.contact-card-label{
+  color:var(--sub);
+  font-size:12px;
+}
+
+.contact-card-value{
+  color:var(--blue);
+  font-size:16px;
+  margin-top:2px;
+}
+
+/* =========================
+   사용자 프로필 sheet
+========================= */
+
+.modal-overlay{
+  position:absolute;
+  inset:0;
+  z-index:200;
+  background:rgba(0,0,0,.38);
+  display:none;
+  align-items:flex-end;
+}
+
+.modal-overlay.open{
+  display:flex;
+}
+
 .sheet{
-  width:100%;max-height:90%;overflow:auto;
-  background:var(--bg);border-radius:27px 27px 0 0;
-  padding:10px 18px calc(env(safe-area-inset-bottom,0px) + 25px)
+  width:100%;
+  max-height:92%;
+  overflow-y:auto;
+  background:var(--bg);
+  border-radius:27px 27px 0 0;
+  padding:
+    9px
+    18px
+    calc(env(safe-area-inset-bottom,0px) + 26px);
+  animation:sheetUp .32s cubic-bezier(.32,.72,0,1);
 }
-body.dark .sheet{background:#111113}
-.grabber{width:44px;height:5px;background:#c7c7cc;border-radius:5px;margin:auto auto 15px}
-.sheet h2{text-align:center;font-size:21px;margin:0 0 18px}
-.preview{
-  width:104px;height:104px;border-radius:50%;
-  margin:auto auto 10px;overflow:hidden;
-  background:#3d365a;color:white;
-  display:flex;align-items:center;justify-content:center;
-  font-size:34px;font-weight:700
-}
-.preview img{width:100%;height:100%;object-fit:cover}
-.change{
-  display:block;margin:auto;border:0;background:none;
-  color:var(--blue);font-size:16px;font-weight:600
-}
-.field{
-  background:var(--dim);border-radius:14px;
-  padding:10px 13px;margin-top:10px
-}
-body.dark .field{background:#1c1c1e}
-.field label{display:block;color:var(--sub);font-size:12px}
-.field input{
-  width:100%;border:0;outline:0;background:none;
-  color:inherit;font-size:17px;margin-top:3px
-}
-.sheet-buttons{display:flex;gap:10px;margin-top:16px}
-.sheet-buttons button{
-  flex:1;border:0;border-radius:14px;
-  padding:13px;font-size:16px;font-weight:700
-}
-.cancel{background:var(--dim);color:inherit}
-.save{background:var(--blue);color:#fff}
 
-/* 빈 화면 */
-.empty{text-align:center;color:var(--sub);padding:60px 25px}
+@keyframes sheetUp{
+  from{transform:translateY(100%)}
+  to{transform:translateY(0)}
+}
+
+.grabber{
+  width:39px;
+  height:5px;
+  border-radius:5px;
+  background:#c7c7cc;
+  margin:0 auto 17px;
+}
+
+.sheet-title{
+  text-align:center;
+  font-size:20px;
+  font-weight:700;
+  margin-bottom:19px;
+}
+
+.sheet-avatar{
+  width:104px;
+  height:104px;
+  border-radius:50%;
+  overflow:hidden;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#7b61ff,#bf5af2);
+  color:#fff;
+  font-size:35px;
+  font-weight:700;
+}
+
+.sheet-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.sheet-photo-button{
+  display:block;
+  margin:9px auto 19px;
+  color:var(--blue);
+  font-size:16px;
+  font-weight:600;
+}
+
+.sheet-field{
+  margin-top:10px;
+  padding:9px 13px;
+  border-radius:14px;
+  background:var(--secondary);
+}
+
+.sheet-field label{
+  display:block;
+  color:var(--sub);
+  font-size:11px;
+  margin-bottom:2px;
+}
+
+.sheet-field input{
+  width:100%;
+  border:0;
+  outline:0;
+  background:none;
+  color:var(--text);
+  font-size:16px;
+}
+
+.sheet-buttons{
+  display:flex;
+  gap:9px;
+  margin-top:17px;
+}
+
+.sheet-button{
+  flex:1;
+  min-height:45px;
+  border-radius:12px;
+  background:var(--secondary);
+  color:var(--blue);
+  font-size:16px;
+  font-weight:600;
+}
+
+.sheet-button.primary{
+  background:var(--blue);
+  color:#fff;
+}
+
+/* =========================
+   새 메시지
+========================= */
+
+.new-message-screen{
+  background:var(--bg);
+}
+
+.new-message-search{
+  margin:12px 16px;
+  height:39px;
+  border-radius:10px;
+  background:var(--secondary);
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:0 11px;
+  color:var(--sub);
+}
+
+.new-message-search input{
+  flex:1;
+  border:0;
+  outline:0;
+  background:none;
+  color:var(--text);
+  font-size:16px;
+}
+
+.new-message-list{
+  flex:1;
+  overflow-y:auto;
+}
+
+.new-character-row{
+  min-height:66px;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:7px 16px;
+  border-bottom:.5px solid var(--separator);
+}
+
+.new-character-row:active{
+  background:var(--secondary);
+}
+
+.new-character-row .avatar{
+  width:48px;
+  height:48px;
+  flex-basis:48px;
+}
+
+.new-character-name{
+  font-size:17px;
+  font-weight:600;
+}
+
+.new-character-phone{
+  color:var(--sub);
+  font-size:13px;
+  margin-top:2px;
+}
+
+/* =========================
+   최근 삭제
+========================= */
+
+.deleted-screen{
+  background:var(--secondary);
+}
+
+.deleted-info{
+  color:var(--sub);
+  font-size:13px;
+  line-height:18px;
+  text-align:center;
+  padding:18px 28px 12px;
+}
+
+.deleted-row{
+  background:var(--bg);
+  padding:11px 14px;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  border-bottom:.5px solid var(--separator);
+}
+
+.deleted-row-info{
+  flex:1;
+  min-width:0;
+}
+
+.deleted-row-name{
+  font-size:16px;
+  font-weight:600;
+}
+
+.deleted-row-time{
+  color:var(--sub);
+  font-size:12px;
+  margin-top:2px;
+}
+
+.deleted-buttons{
+  display:flex;
+  gap:6px;
+}
+
+.deleted-buttons button{
+  padding:7px 9px;
+  border-radius:8px;
+  background:var(--secondary);
+  color:var(--blue);
+  font-size:12px;
+}
+
+/* =========================
+   토스트
+========================= */
+
+.toast{
+  position:absolute;
+  z-index:500;
+  left:50%;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 78px);
+  transform:translate(-50%,10px);
+  max-width:calc(100% - 40px);
+  padding:10px 15px;
+  border-radius:13px;
+  background:rgba(30,30,30,.9);
+  color:#fff;
+  font-size:14px;
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
+  white-space:nowrap;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+/* =========================
+   작은 화면
+========================= */
+
+@media(max-width:360px){
+  .main-title{
+    font-size:36px;
+  }
+
+  .message-bubble{
+    font-size:16px;
+  }
+
+  .conversation-row{
+    padding-right:11px;
+  }
+}
 </style>
 </head>
 
 <body>
-<div class="app">
+<div class="app" id="app">
 
-<!-- ================= 사용자 목록 ================= -->
-<section class="screen" id="listScreen">
+  <!-- ================= 목록 ================= -->
+  <section class="screen active" id="listScreen">
 
-  <div class="nav">
-    <div class="navrow">
-      <button id="editBtn">편집</button>
+    <header class="list-header">
+      <div class="normal-toolbar">
+        <div class="header-top">
+          <div class="header-top-left">
+            <button class="edit-button" id="editButton">편집</button>
+          </div>
 
-      <div class="top-actions">
-        <button class="circle-btn" id="menuBtn">☰</button>
-        <button class="circle-btn" id="composeBtn">✎</button>
+          <div class="header-top-right">
+            <button class="header-icon-button" id="filterButton" aria-label="필터">
+              <svg class="icon" viewBox="0 0 24 24">
+                <path d="M4 6h16M7 12h10M10 18h4"/>
+              </svg>
+            </button>
+
+            <button class="header-icon-button" id="newMessageButton" aria-label="새 메시지">
+              <svg class="icon" viewBox="0 0 24 24">
+                <path d="M4 20l1.8-5.8L15.7 4.3a2.1 2.1 0 0 1 3 3l-9.9 9.9L4 20z"/>
+                <path d="M13.8 6.2l4 4"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <h1 class="main-title">메시지</h1>
+
+        <div class="search-bar">
+          <svg class="icon small" viewBox="0 0 24 24">
+            <circle cx="10.8" cy="10.8" r="6.8"/>
+            <path d="M16 16l5 5"/>
+          </svg>
+          <input id="conversationSearch" placeholder="검색">
+        </div>
+
+        <div class="user-profile" id="userProfileButton">
+          <div class="avatar" id="listUserAvatar"></div>
+          <div class="user-profile-info">
+            <div class="user-profile-name" id="listUserName"></div>
+            <div class="user-profile-status" id="listUserStatus"></div>
+          </div>
+          <div class="chevron">›</div>
+        </div>
+      </div>
+
+      <div class="edit-toolbar">
+        <button class="cancel" id="cancelEditButton">취소</button>
+        <div class="selection-title">메시지 선택</div>
+        <button class="select-all" id="selectAllButton">모두 선택</button>
+      </div>
+    </header>
+
+    <div class="message-list no-scrollbar" id="messageList"></div>
+
+    <div class="list-bottom">
+      <button class="compose-button" id="bottomComposeButton" aria-label="새 메시지">
+        <svg class="icon" viewBox="0 0 24 24">
+          <path d="M4 20l1.8-5.8L15.7 4.3a2.1 2.1 0 0 1 3 3l-9.9 9.9L4 20z"/>
+          <path d="M13.8 6.2l4 4"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="edit-action-bar">
+      <div class="edit-actions">
+        <button class="edit-action" id="markReadAction">
+          <svg class="icon small" viewBox="0 0 24 24">
+            <path d="M3 12.5l5 5L21 5"/>
+          </svg>
+          <span>읽음</span>
+        </button>
+
+        <button class="edit-action" id="markUnreadAction">
+          <svg class="icon small" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="8"/>
+          </svg>
+          <span>읽지 않음</span>
+        </button>
+
+        <button class="edit-action" id="pinAction">
+          <svg class="icon small" viewBox="0 0 24 24">
+            <path d="M8 4h8l-1 7 3 3H6l3-3-1-7z"/>
+            <path d="M12 14v6"/>
+          </svg>
+          <span>고정</span>
+        </button>
+
+        <button class="edit-action danger" id="deleteAction">
+          <svg class="icon small" viewBox="0 0 24 24">
+            <path d="M4 7h16"/>
+            <path d="M9 7V4h6v3M7 7l1 14h8l1-14"/>
+          </svg>
+          <span>삭제</span>
+        </button>
       </div>
     </div>
 
-    <div class="title">메시지</div>
+    <div class="popup-backdrop" id="popupBackdrop"></div>
 
-    <div class="editbar" id="editBar">
-      <button id="editCancel">취소</button>
-      <span class="edit-count" id="editCount">0개 선택됨</span>
-      <button id="editDelete">삭제</button>
+    <div class="filter-popup hidden" id="filterPopup">
+      <button data-filter="all">
+        <span>메시지</span>
+        <span class="popup-check" id="checkAll">✓</span>
+      </button>
+
+      <button data-filter="spam">
+        <span>스팸</span>
+        <span class="popup-check hidden" id="checkSpam">✓</span>
+      </button>
+
+      <button data-filter="deleted">
+        <span>최근 삭제된 항목</span>
+      </button>
+
+      <div class="popup-separator"></div>
+
+      <div class="popup-label">필터 기준</div>
+
+      <button data-filter="unread">
+        <span>● 읽지 않음</span>
+        <span class="popup-check hidden" id="checkUnread">✓</span>
+      </button>
+
+      <div class="popup-separator"></div>
+
+      <button id="filterSettingsButton">
+        <span>필터링 관리</span>
+        <span style="color:#8e8e93;font-size:23px">›</span>
+      </button>
     </div>
-  </div>
+  </section>
 
-  <div class="profile" id="profileCard">
-    <div class="avatar" id="myAvatar"></div>
-    <div class="profile-info">
-      <div class="profile-name" id="myName">양예서</div>
-      <div class="profile-status" id="myStatus">이름 및 사진 공유</div>
-    </div>
-    <div class="chev">›</div>
-  </div>
+  <!-- ================= 필터링 관리 ================= -->
+  <section class="screen off-right" id="settingsScreen">
 
-  <div class="list" id="conversationList"></div>
-
-  <div class="bottom-search">
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
-         stroke="currentColor" stroke-width="2">
-      <circle cx="11" cy="11" r="7"/>
-      <path d="M20 20l-4-4"/>
-    </svg>
-    검색
-  </div>
-
-  <button class="compose" id="bottomCompose">✎</button>
-
-  <!-- 아이폰식 오른쪽 메뉴 -->
-  <div class="menu-popup" id="menuPopup">
-
-    <button id="menuMessages">메시지</button>
-    <button id="menuSpam">스팸</button>
-    <button id="menuDeleted">최근 삭제된 항목</button>
-
-    <div class="menu-line"></div>
-
-    <div class="menu-label">필터 기준</div>
-
-    <button id="menuUnread">
-      읽지 않음
-      <span id="unreadMark" style="float:right;color:#0a84ff">○</span>
-    </button>
-
-    <div class="menu-line"></div>
-
-    <button id="filterManage">
-      필터링 관리
-      <span style="float:right;color:#8e8e93">⚙︎</span>
-    </button>
-
-  </div>
-</section>
-
-
-<!-- ================= 채팅 ================= -->
-<section class="screen hidden" id="chatScreen">
-
-  <div class="nav chatnav">
-    <div class="navrow">
-      <button class="nav back" id="chatBack">
-        <svg viewBox="0 0 12 20" fill="none" stroke="currentColor"
-             stroke-width="2.4">
-          <path d="M10 2L2 10l8 8"/>
+    <header class="subnav">
+      <button class="nav-button nav-back" id="settingsBackButton">
+        <svg viewBox="0 0 12 22" fill="none">
+          <path d="M10 1L2 11l8 10"/>
         </svg>
         <span>메시지</span>
       </button>
 
-      <div></div>
+      <div class="subnav-title">필터링 관리</div>
 
-      <button class="nav" id="chatInfo" style="font-size:22px">ⓘ</button>
-    </div>
+      <div style="width:55px"></div>
+    </header>
 
-    <div class="chatinfo" id="chatHeader"></div>
-  </div>
+    <div class="settings-scroll no-scrollbar">
 
-  <div class="messages" id="messages"></div>
+      <div class="settings-heading">메시지 필터링</div>
 
-  <div class="inputbar">
-    <button class="plus">+</button>
+      <div class="settings-group">
 
-    <div class="inputwrap">
-      <textarea class="msginput" id="messageInput"
-                rows="1" placeholder="iMessage"></textarea>
-    </div>
-
-    <button class="send" id="sendBtn">
-      ↑
-    </button>
-  </div>
-
-</section>
-
-
-<!-- ================= 연락처 ================= -->
-<section class="screen hidden" id="contactScreen">
-
-  <div class="nav">
-    <div class="navrow">
-      <button class="nav back" id="contactBack">
-        <svg viewBox="0 0 12 20" fill="none" stroke="currentColor"
-             stroke-width="2.4">
-          <path d="M10 2L2 10l8 8"/>
-        </svg>
-        메시지
-      </button>
-      <div></div><div style="width:40px"></div>
-    </div>
-  </div>
-
-  <div class="contact-body" id="contactBody"></div>
-
-</section>
-
-
-<!-- ================= 관리자 ================= -->
-<section class="screen admin hidden" id="adminScreen">
-
-  <div class="admin-head">
-    <h1>메신저 관리자</h1>
-    <div class="badge">데모 · 실제 전송 없음</div>
-  </div>
-
-  <div class="admin-body">
-
-    <div class="card">
-      <h2>캐릭터</h2>
-      <div id="characterList"></div>
-
-      <div class="form">
-        <input type="text" id="newCharacter"
-               placeholder="새 캐릭터 이름">
-        <button class="primary" id="addCharacter">추가</button>
-      </div>
-    </div>
-
-    <div class="card" id="characterSettings" style="display:none">
-
-      <h2 id="settingsTitle">캐릭터 설정</h2>
-
-      <div class="form">
-        <input type="text" id="characterName"
-               placeholder="이름">
-
-        <input type="text" id="characterPhone"
-               placeholder="전화번호">
-
-        <input type="file" id="characterPhoto"
-               accept="image/*">
-
-        <div class="color-setting">
-          <span>사용자 말풍선 색상</span>
-          <input type="color" id="bubbleColor">
+        <div class="settings-row">
+          <div class="settings-row-main">
+            <div class="settings-row-title">스팸 필터링</div>
+            <div class="settings-row-sub">스팸으로 지정된 대화를 별도로 표시합니다.</div>
+          </div>
+          <button class="toggle" id="spamFilterToggle"></button>
         </div>
 
-        <button class="primary" id="saveCharacter">
-          저장
+        <div class="settings-row">
+          <div class="settings-row-main">
+            <div class="settings-row-title">알 수 없는 발신자 필터링</div>
+            <div class="settings-row-sub">저장되지 않은 발신자의 메시지를 분리합니다.</div>
+          </div>
+          <button class="toggle" id="unknownFilterToggle"></button>
+        </div>
+
+        <div class="settings-row">
+          <div class="settings-row-main">
+            <div class="settings-row-title">문자 메시지 필터링</div>
+            <div class="settings-row-sub">문자 메시지를 별도 필터로 관리합니다.</div>
+          </div>
+          <button class="toggle" id="smsFilterToggle"></button>
+        </div>
+
+      </div>
+
+      <div class="settings-heading">관리</div>
+
+      <div class="settings-group">
+        <button class="settings-row admin-entry" id="adminEntryButton">
+          <div class="admin-entry-icon">⚙️</div>
+          <div class="settings-row-main">
+            <div class="settings-row-title">관리자 · 캐릭터 설정</div>
+            <div class="settings-row-sub">캐릭터, 프로필, 말풍선, 대화를 관리합니다.</div>
+          </div>
+          <div class="settings-arrow">›</div>
         </button>
       </div>
 
-      <h2 style="margin-top:18px">대화</h2>
+      <div class="settings-heading">화면</div>
 
-      <div class="thread" id="thread"></div>
-
-      <div class="composer" style="margin-top:10px">
-        <textarea id="adminMessage"
-                  placeholder="캐릭터로서 보낼 메시지"></textarea>
-
-        <button class="primary" id="adminSend"
-                style="width:100%">
-          메시지 전송
-        </button>
+      <div class="settings-group">
+        <div class="settings-row">
+          <div class="settings-row-main">
+            <div class="settings-row-title">다크 모드</div>
+          </div>
+          <button class="toggle" id="darkModeToggle"></button>
+        </div>
       </div>
 
     </div>
+  </section>
 
+  <!-- ================= 관리자 ================= -->
+  <section class="screen off-right admin-screen" id="adminScreen">
+
+    <header class="subnav">
+      <button class="nav-button nav-back" id="adminBackButton">
+        <svg viewBox="0 0 12 22" fill="none">
+          <path d="M10 1L2 11l8 10"/>
+        </svg>
+        <span>필터링 관리</span>
+      </button>
+
+      <div class="subnav-title">캐릭터 설정</div>
+
+      <button class="nav-button right" id="adminAddTopButton">추가</button>
+    </header>
+
+    <div class="admin-scroll no-scrollbar">
+
+      <div class="admin-section">
+        <div class="admin-section-title">캐릭터</div>
+        <div id="characterList"></div>
+
+        <div class="add-character">
+          <button class="admin-button secondary full" id="showAddCharacterButton">
+            + 캐릭터 추가
+          </button>
+
+          <div id="addCharacterForm" class="hidden">
+            <div class="admin-field">
+              <label>이름</label>
+              <input class="admin-input" id="newCharName" placeholder="캐릭터 이름">
+            </div>
+
+            <div class="admin-field">
+              <label>전화번호</label>
+              <input class="admin-input" id="newCharPhone" placeholder="010-0000-0000">
+            </div>
+
+            <div class="admin-buttons">
+              <button class="admin-button" id="addCharacterConfirm">추가</button>
+              <button class="admin-button secondary" id="addCharacterCancel">취소</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="adminDetailArea"></div>
+
+    </div>
+  </section>
+
+  <!-- ================= 새 메시지 ================= -->
+  <section class="screen off-right new-message-screen" id="newMessageScreen">
+
+    <header class="subnav">
+      <button class="nav-button" id="newMessageCancel">취소</button>
+      <div class="subnav-title">새 메시지</div>
+      <div style="width:55px"></div>
+    </header>
+
+    <div class="new-message-search">
+      <svg class="icon small" viewBox="0 0 24 24">
+        <circle cx="10.8" cy="10.8" r="6.8"/>
+        <path d="M16 16l5 5"/>
+      </svg>
+      <input id="newCharacterSearch" placeholder="받는 사람">
+    </div>
+
+    <div class="new-message-list no-scrollbar" id="newCharacterList"></div>
+  </section>
+
+  <!-- ================= 채팅 ================= -->
+  <section class="screen off-right chat-screen" id="chatScreen">
+
+    <header class="chat-nav">
+
+      <button class="chat-back" id="chatBackButton">
+        <svg viewBox="0 0 12 22" fill="none">
+          <path d="M10 1L2 11l8 10"/>
+        </svg>
+        <span>메시지</span>
+      </button>
+
+      <button class="chat-person" id="chatPersonButton">
+        <div class="avatar" id="chatAvatar"></div>
+        <div class="chat-person-name" id="chatPersonName"></div>
+        <div class="chat-person-arrow">⌄</div>
+      </button>
+
+      <button class="chat-info-button" id="chatInfoButton" aria-label="정보">
+        <svg class="icon" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M12 10v6"/>
+          <circle cx="12" cy="7" r=".8" fill="currentColor" stroke="none"/>
+        </svg>
+      </button>
+    </header>
+
+    <div class="chat-messages no-scrollbar" id="chatMessages"></div>
+
+    <div class="chat-input-area">
+      <button class="plus-button" aria-label="첨부">
+        <svg viewBox="0 0 24 24" class="icon">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+      </button>
+
+      <div class="message-input-wrap">
+        <textarea
+          class="message-input"
+          id="messageInput"
+          rows="1"
+          placeholder="iMessage"
+          enterkeyhint="send"></textarea>
+      </div>
+
+      <button class="send-button" id="sendButton" aria-label="전송">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M5 12h13"/>
+          <path d="M13 6l6 6-6 6"/>
+        </svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ================= 연락처 ================= -->
+  <section class="screen off-right contact-screen" id="contactScreen">
+
+    <header class="subnav">
+      <button class="nav-button nav-back" id="contactBackButton">
+        <svg viewBox="0 0 12 22" fill="none">
+          <path d="M10 1L2 11l8 10"/>
+        </svg>
+        <span>메시지</span>
+      </button>
+
+      <div class="subnav-title">정보</div>
+
+      <div style="width:55px"></div>
+    </header>
+
+    <div class="contact-scroll no-scrollbar">
+
+      <div class="contact-big-avatar" id="contactAvatar"></div>
+      <div class="contact-name" id="contactName"></div>
+      <div class="contact-phone" id="contactPhone"></div>
+
+      <div class="contact-actions">
+
+        <div class="contact-action">
+          <button class="contact-action-button" id="contactMessageButton">
+            <svg class="icon" viewBox="0 0 24 24">
+              <path d="M5 5h14v11H9l-4 4V5z"/>
+            </svg>
+          </button>
+          메시지
+        </div>
+
+        <div class="contact-action">
+          <button class="contact-action-button">
+            <svg class="icon" viewBox="0 0 24 24">
+              <path d="M7 4h3l1.5 4-2 1.5a12 12 0 0 0 5 5l1.5-2L20 14v3c0 1-1 2-2 2C10.8 19 5 13.2 5 6c0-1.1.9-2 2-2z"/>
+            </svg>
+          </button>
+          전화
+        </div>
+
+        <div class="contact-action">
+          <button class="contact-action-button">
+            <svg class="icon" viewBox="0 0 24 24">
+              <path d="M4 7h16v10H4z"/>
+              <path d="M8 7l2-3h4l2 3"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+          영상통화
+        </div>
+
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-card-row">
+          <div class="contact-card-label">전화번호</div>
+          <div class="contact-card-value" id="contactPhoneCard"></div>
+        </div>
+
+        <div class="contact-card-row">
+          <div class="contact-card-label">말풍선 색상</div>
+          <div class="contact-card-value" id="contactColorCard"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= 최근 삭제 ================= -->
+  <section class="screen off-right deleted-screen" id="deletedScreen">
+
+    <header class="subnav">
+      <button class="nav-button nav-back" id="deletedBackButton">
+        <svg viewBox="0 0 12 22" fill="none">
+          <path d="M10 1L2 11l8 10"/>
+        </svg>
+        <span>메시지</span>
+      </button>
+
+      <div class="subnav-title">최근 삭제된 항목</div>
+
+      <div style="width:55px"></div>
+    </header>
+
+    <div class="deleted-info">
+      삭제한 대화는 최근 삭제된 항목에 보관됩니다.<br>
+      여기에서 대화를 복구하거나 영구적으로 삭제할 수 있습니다.
+    </div>
+
+    <div id="deletedList" style="flex:1;overflow-y:auto"></div>
+  </section>
+
+  <!-- ================= 사용자 프로필 ================= -->
+  <div class="modal-overlay" id="profileOverlay">
+    <div class="sheet">
+
+      <div class="grabber"></div>
+      <div class="sheet-title">이름 및 사진 설정</div>
+
+      <div class="sheet-avatar" id="profilePreview"></div>
+
+      <input type="file" id="profilePhotoInput" accept="image/*" hidden>
+      <button class="sheet-photo-button" id="profilePhotoButton">
+        사진 선택
+      </button>
+
+      <div class="sheet-field">
+        <label>이름</label>
+        <input id="profileNameInput" autocomplete="off">
+      </div>
+
+      <div class="sheet-field">
+        <label>상태 메시지</label>
+        <input id="profileStatusInput" autocomplete="off">
+      </div>
+
+      <div class="sheet-buttons">
+        <button class="sheet-button" id="profileCancelButton">취소</button>
+        <button class="sheet-button primary" id="profileSaveButton">완료</button>
+      </div>
+    </div>
   </div>
-</section>
 
-
-<!-- ================= 프로필 편집 ================= -->
-<div class="overlay" id="profileOverlay">
-
-  <div class="sheet">
-
-    <div class="grabber"></div>
-
-    <h2>이름 및 사진 설정</h2>
-
-    <div class="preview" id="profilePreview"></div>
-
-    <button class="change" id="profilePhotoBtn">
-      사진 변경
-    </button>
-
-    <input type="file" id="profilePhoto"
-           accept="image/*" hidden>
-
-    <div class="field">
-      <label>이름</label>
-      <input id="profileNameInput" maxlength="30">
-    </div>
-
-    <div class="field">
-      <label>상태 메시지</label>
-      <input id="profileStatusInput" maxlength="60">
-    </div>
-
-    <div class="sheet-buttons">
-      <button class="cancel" id="profileCancel">취소</button>
-      <button class="save" id="profileSave">저장</button>
-    </div>
-
-  </div>
+  <div class="toast" id="toast"></div>
 </div>
-
-</div>
-
 
 <script>
-"use strict";
-
 /* =========================================================
-   데이터
+   데이터 / 호환성
 ========================================================= */
 
 const STORAGE = "messenger-demo-state-v3";
+const LEGACY_KEYS = [
+  "messenger-demo-state-v3",
+  "messenger-state",
+  "messengerState",
+  "messages-state",
+  "messenger-demo-state"
+];
 
-const COLORS = [
-  "#ff9f0a",
-  "#ff375f",
-  "#30d158",
+const DEFAULT_COLORS = [
   "#0a84ff",
+  "#30d158",
+  "#ff9f0a",
   "#bf5af2",
+  "#ff375f",
   "#64d2ff",
   "#ffd60a"
 ];
 
-function uid(){
-  return Math.random().toString(36).slice(2)+Date.now().toString(36);
-}
+let state = loadState();
 
-function initials(name){
-  const p=String(name||"나").trim().split(/\s+/);
-  if(p.length===1) return p[0].slice(0,2);
-  return (p[0][0]||"")+(p[1][0]||"");
-}
-
-function avatar(c){
-  if(c.photo){
-    return `<img src="${c.photo}" alt="">`;
-  }
-  return initials(c.name);
-}
-
-function colorFor(id){
-  let n=0;
-  for(const x of id){
-    n=(n*31+x.charCodeAt(0))%997;
-  }
-  return COLORS[n%COLORS.length];
-}
-
-function esc(x){
-  return String(x??"")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#39;");
-}
-
-function time(ts){
-  const d=new Date(ts);
-  let h=d.getHours();
-  const m=String(d.getMinutes()).padStart(2,"0");
-  const ap=h>=12?"오후":"오전";
-  h=h%12||12;
-  return `${ap} ${h}:${m}`;
-}
-
-function day(ts){
-  const d=new Date(ts);
-  const w=["일","월","화","수","목","금","토"];
-  return `${d.getMonth()+1}월 ${d.getDate()}일 ${w[d.getDay()]}요일`;
-}
-
-function sameDay(a,b){
-  const x=new Date(a),y=new Date(b);
-  return x.getFullYear()===y.getFullYear() &&
-    x.getMonth()===y.getMonth() &&
-    x.getDate()===y.getDate();
-}
-
+let currentScreen = "listScreen";
+let currentCharacterId = null;
+let currentFilter = "all";
+let editing = false;
+let selectedIds = new Set();
+let profileTempPhoto = null;
+let toastTimer = null;
 
 /* =========================================================
-   초기 데이터
+   기본 데이터
 ========================================================= */
 
-function seed(){
-
-  const now=Date.now();
-  const min=60000;
-
-  const characters=[
-    {
-      id:"c1",
-      name:"서연",
-      phone:"010-2481-0193",
-      active:true,
-      bubbleColor:"#0a84ff"
-    },
-    {
-      id:"c2",
-      name:"민준",
-      phone:"010-9902-4471",
-      active:true,
-      bubbleColor:"#30d158"
-    },
-    {
-      id:"c3",
-      name:"스터디 조교 김쌤",
-      phone:"010-1120-8834",
-      active:true,
-      bubbleColor:"#bf5af2"
-    }
-  ];
-
-  const messages=[
-    {id:uid(),characterId:"c1",sender:"them",
-     text:"오늘 저녁에 시간 돼?",ts:now-190*min},
-    {id:uid(),characterId:"c1",sender:"them",
-     text:"카페 새로 생긴 데 가보고 싶어서 ㅋㅋ",ts:now-189*min},
-    {id:uid(),characterId:"c1",sender:"me",
-     text:"어디에 생겼는데?",ts:now-185*min},
-    {id:uid(),characterId:"c1",sender:"them",
-     text:"홍대입구역 근처! 6시쯤 어때",ts:now-182*min},
-    {id:uid(),characterId:"c1",sender:"me",
-     text:"좋아 6시에 보자",ts:now-180*min},
-    {id:uid(),characterId:"c1",sender:"them",
-     text:"ㅇㅋㅇㅋ 이따 봐~",ts:now-40*min},
-
-    {id:uid(),characterId:"c2",sender:"them",
-     text:"형 그 파일 확인해봤어요?",ts:now-3*24*60*min},
-    {id:uid(),characterId:"c2",sender:"me",
-     text:"어 지금 볼게",ts:now-3*24*60*min+5*min},
-    {id:uid(),characterId:"c2",sender:"them",
-     text:"넵 감사합니다!",ts:now-3*24*60*min+7*min},
-    {id:uid(),characterId:"c2",sender:"them",
-     text:"참, 다음 주 일정 언제 편하세요?",ts:now-26*min},
-
-    {id:uid(),characterId:"c3",sender:"them",
-     text:"내일 스터디 자료 첨부했습니다.",ts:now-20*min},
-    {id:uid(),characterId:"c3",sender:"them",
-     text:"7시 시작이고 장소는 동일합니다!",ts:now-19*min},
-    {id:uid(),characterId:"c3",sender:"me",
-     text:"넵 확인했습니다 감사해요",ts:now-15*min}
-  ];
+function seedState(){
+  const now = Date.now();
 
   return {
-    characters,
-    messages,
+    characters:[
+      {
+        id:"c1",
+        name:"서연",
+        phone:"010-2481-0193",
+        photo:"",
+        active:true,
+        spam:false,
+        bubbleColor:"#0a84ff"
+      },
+      {
+        id:"c2",
+        name:"민준",
+        phone:"010-9902-4471",
+        photo:"",
+        active:true,
+        spam:false,
+        bubbleColor:"#30d158"
+      },
+      {
+        id:"c3",
+        name:"스터디 조교 김쌤",
+        phone:"010-1120-8834",
+        photo:"",
+        active:true,
+        spam:false,
+        bubbleColor:"#bf5af2"
+      }
+    ],
+
+    messages:[
+      {
+        id:"m1",
+        characterId:"c1",
+        sender:"them",
+        text:"안녕! 오늘 뭐 하고 있어?",
+        timestamp:now - 1000*60*80,
+        read:false
+      },
+      {
+        id:"m2",
+        characterId:"c1",
+        sender:"me",
+        text:"나 지금 집이야 ㅋㅋ",
+        timestamp:now - 1000*60*72,
+        read:true
+      },
+      {
+        id:"m3",
+        characterId:"c1",
+        sender:"them",
+        text:"오 나도 집에서 쉬는 중이야",
+        timestamp:now - 1000*60*65,
+        read:true
+      },
+
+      {
+        id:"m4",
+        characterId:"c2",
+        sender:"them",
+        text:"내일 시간 돼?",
+        timestamp:now - 1000*60*190,
+        read:false
+      },
+
+      {
+        id:"m5",
+        characterId:"c3",
+        sender:"them",
+        text:"과제 제출 일정 확인해주세요.",
+        timestamp:now - 1000*60*60*25,
+        read:true
+      }
+    ],
+
     deleted:[],
+
+    conversationMeta:{},
+
     profile:{
       name:"양예서",
       status:"이름 및 사진 공유",
       photo:""
-    }
+    },
+
+    filters:{
+      spam:true,
+      unknown:true,
+      sms:true
+    },
+
+    darkMode:null
   };
 }
 
-let state;
-
-try{
-  state=JSON.parse(localStorage.getItem(STORAGE));
-}catch(e){
-  state=null;
-}
-
-if(!state){
-  state=seed();
-  save();
-}
-
-function save(){
-  localStorage.setItem(STORAGE,JSON.stringify(state));
-}
-
-
 /* =========================================================
-   상태
+   상태 로드 / Migration
 ========================================================= */
 
-let currentChat=null;
-let adminSelected=null;
-let editMode=false;
-let selected=new Set();
-let unreadOnly=false;
+function loadState(){
+  let raw = null;
 
-function messagesFor(id){
+  for(const key of LEGACY_KEYS){
+    try{
+      const value = localStorage.getItem(key);
+      if(value){
+        raw = JSON.parse(value);
+        if(raw) break;
+      }
+    }catch(e){}
+  }
+
+  if(!raw){
+    const fresh = seedState();
+    localStorage.setItem(STORAGE,JSON.stringify(fresh));
+    return fresh;
+  }
+
+  const base = seedState();
+
+  const merged = {
+    ...base,
+    ...raw,
+    characters:Array.isArray(raw.characters) ? raw.characters : base.characters,
+    messages:Array.isArray(raw.messages) ? raw.messages : base.messages,
+    deleted:Array.isArray(raw.deleted) ? raw.deleted : [],
+    conversationMeta:raw.conversationMeta || {},
+    profile:{
+      ...base.profile,
+      ...(raw.profile || {})
+    },
+    filters:{
+      ...base.filters,
+      ...(raw.filters || {})
+    }
+  };
+
+  merged.characters = merged.characters.map((c,i)=>({
+    ...c,
+    id:c.id || ("c"+Date.now()+i),
+    name:c.name || "새로운 사람",
+    phone:c.phone || "",
+    photo:c.photo || "",
+    active:c.active !== false,
+    spam:c.spam === true,
+    bubbleColor:c.bubbleColor || DEFAULT_COLORS[i % DEFAULT_COLORS.length]
+  }));
+
+  merged.messages = merged.messages.map((m,i)=>({
+    ...m,
+    id:m.id || ("m"+Date.now()+i),
+    characterId:m.characterId || m.character || m.senderId || "",
+    sender:
+      m.sender === "me" ||
+      m.sender === "user" ||
+      m.from === "me" ? "me" : "them",
+    text:String(m.text ?? m.message ?? ""),
+    timestamp:normalizeTimestamp(m.timestamp ?? m.time ?? m.date),
+    read:m.read !== false,
+    deleted:m.deleted === true
+  }));
+
+  merged.deleted = merged.deleted.map(item=>{
+    if(typeof item === "string"){
+      return {
+        characterId:item,
+        deletedAt:Date.now()
+      };
+    }
+
+    return {
+      characterId:item.characterId || item.id,
+      deletedAt:item.deletedAt || Date.now()
+    };
+  });
+
+  saveState();
+  return merged;
+}
+
+function normalizeTimestamp(value){
+  if(typeof value === "number"){
+    return value < 100000000000 ? value * 1000 : value;
+  }
+
+  const n = Date.parse(value);
+  return Number.isFinite(n) ? n : Date.now();
+}
+
+function saveState(){
+  try{
+    localStorage.setItem(STORAGE,JSON.stringify(state));
+  }catch(e){
+    showToast("저장 공간이 부족합니다.");
+  }
+}
+
+/* =========================================================
+   Utility
+========================================================= */
+
+function uid(prefix="id"){
+  return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+}
+
+function getCharacter(id){
+  return state.characters.find(c=>c.id===id);
+}
+
+function getMessages(characterId){
   return state.messages
-    .filter(m=>m.characterId===id)
-    .sort((a,b)=>a.ts-b.ts);
+    .filter(m=>m.characterId===characterId && !m.deleted)
+    .sort((a,b)=>a.timestamp-b.timestamp);
+}
+
+function isDeleted(characterId){
+  return state.deleted.some(d=>d.characterId===characterId);
+}
+
+function getMeta(id){
+  if(!state.conversationMeta[id]){
+    state.conversationMeta[id]={
+      pinned:false
+    };
+  }
+
+  return state.conversationMeta[id];
+}
+
+function isPinned(id){
+  return !!getMeta(id).pinned;
+}
+
+function setPinned(id,value){
+  getMeta(id).pinned=!!value;
+  saveState();
+}
+
+function isUnread(id){
+  return getMessages(id).some(m=>m.sender==="them" && !m.read);
 }
 
 function lastMessage(id){
-  const a=messagesFor(id);
-  return a[a.length-1]||null;
+  const msgs=getMessages(id);
+  return msgs[msgs.length-1] || null;
 }
 
-function unreadCount(id){
-  return state.messages.filter(
-    m=>m.characterId===id &&
-    m.sender==="them" &&
-    !m.read
-  ).length;
+function escapeHTML(value){
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
 
+function formatListTime(timestamp){
+  const date=new Date(timestamp);
+  const now=new Date();
 
-/* =========================================================
-   화면
-========================================================= */
-
-const listScreen=document.getElementById("listScreen");
-const chatScreen=document.getElementById("chatScreen");
-const contactScreen=document.getElementById("contactScreen");
-const adminScreen=document.getElementById("adminScreen");
-
-
-/* =========================================================
-   프로필
-========================================================= */
-
-function renderProfile(){
-
-  const p=state.profile;
-
-  document.getElementById("myName").textContent=p.name;
-  document.getElementById("myStatus").textContent=
-    p.status||"이름 및 사진 공유";
-
-  document.getElementById("myAvatar").innerHTML=
-    p.photo
-      ? `<img src="${p.photo}" alt="">`
-      : initials(p.name);
-}
-
-document.getElementById("profileCard").onclick=()=>{
-
-  const p=state.profile;
-
-  document.getElementById("profileNameInput").value=p.name;
-  document.getElementById("profileStatusInput").value=p.status||"";
-
-  document.getElementById("profilePreview").innerHTML=
-    p.photo
-      ? `<img src="${p.photo}" alt="">`
-      : initials(p.name);
-
-  document.getElementById("profileOverlay").classList.add("open");
-};
-
-document.getElementById("profileCancel").onclick=()=>{
-  document.getElementById("profileOverlay").classList.remove("open");
-};
-
-let pendingProfilePhoto="";
-
-document.getElementById("profilePhotoBtn").onclick=()=>{
-  document.getElementById("profilePhoto").click();
-};
-
-document.getElementById("profilePhoto").onchange=e=>{
-
-  const f=e.target.files[0];
-  if(!f)return;
-
-  const r=new FileReader();
-
-  r.onload=()=>{
-    pendingProfilePhoto=r.result;
-    document.getElementById("profilePreview").innerHTML=
-      `<img src="${pendingProfilePhoto}" alt="">`;
-  };
-
-  r.readAsDataURL(f);
-};
-
-document.getElementById("profileSave").onclick=()=>{
-
-  state.profile.name=
-    document.getElementById("profileNameInput").value.trim()
-    ||"이름 없음";
-
-  state.profile.status=
-    document.getElementById("profileStatusInput").value.trim()
-    ||"이름 및 사진 공유";
-
-  if(pendingProfilePhoto){
-    state.profile.photo=pendingProfilePhoto;
+  if(
+    date.getFullYear()===now.getFullYear() &&
+    date.getMonth()===now.getMonth() &&
+    date.getDate()===now.getDate()
+  ){
+    return formatTime(timestamp);
   }
 
-  pendingProfilePhoto="";
+  if(
+    date.getFullYear()===now.getFullYear()
+  ){
+    return `${date.getMonth()+1}.${date.getDate()}`;
+  }
 
-  save();
-  renderProfile();
+  return `${date.getFullYear()}.${date.getMonth()+1}.${date.getDate()}`;
+}
 
-  document.getElementById("profileOverlay").classList.remove("open");
-};
+function formatTime(timestamp){
+  const d=new Date(timestamp);
+  const h=d.getHours();
+  const ap=h<12 ? "오전" : "오후";
+  const hour=h%12 || 12;
 
+  return `${ap} ${hour}:${String(d.getMinutes()).padStart(2,"0")}`;
+}
+
+function formatDateLong(timestamp){
+  const d=new Date(timestamp);
+  return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;
+}
+
+function dateKey(timestamp){
+  const d=new Date(timestamp);
+  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+}
+
+function scrollToBottom(element){
+  requestAnimationFrame(()=>{
+    element.scrollTop=element.scrollHeight;
+  });
+}
+
+function showToast(text){
+  const toast=document.getElementById("toast");
+  toast.textContent=text;
+  toast.classList.add("show");
+
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{
+    toast.classList.remove("show");
+  },1800);
+}
+
+function avatarHTML(person, className="avatar"){
+  const initial=(person?.name || "?").trim().charAt(0) || "?";
+
+  if(person?.photo){
+    return `
+      <div class="${className}">
+        <img src="${person.photo}" alt="">
+      </div>
+    `;
+  }
+
+  return `
+    <div class="${className}">
+      ${escapeHTML(initial)}
+    </div>
+  `;
+}
+
+function setAvatarElement(element, person){
+  if(!element || !person) return;
+
+  const initial=(person.name || "?").trim().charAt(0) || "?";
+
+  if(person.photo){
+    element.innerHTML=`<img src="${person.photo}" alt="">`;
+  }else{
+    element.innerHTML=escapeHTML(initial);
+  }
+}
+
+function readImage(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+
+    reader.onload=()=>resolve(reader.result);
+    reader.onerror=reject;
+
+    reader.readAsDataURL(file);
+  });
+}
 
 /* =========================================================
-   목록
+   Screen navigation
 ========================================================= */
 
-function renderList(){
+function showScreen(id,fromId=currentScreen){
+  if(id===fromId) return;
 
-  const box=document.getElementById("conversationList");
+  const from=document.getElementById(fromId);
+  const to=document.getElementById(id);
 
-  let chars=state.characters.filter(c=>c.active);
+  if(!to) return;
 
-  if(unreadOnly){
-    chars=chars.filter(c=>unreadCount(c.id)>0);
+  if(from){
+    from.classList.remove("active");
+    from.classList.add("off-left");
+  }
+
+  to.classList.remove("off-right","off-left");
+  to.classList.add("active");
+
+  currentScreen=id;
+}
+
+function returnToList(){
+  const screens=document.querySelectorAll(".screen");
+
+  screens.forEach(s=>{
+    s.classList.remove("active","off-left");
+    s.classList.add("off-right");
+  });
+
+  document.getElementById("listScreen").classList.remove("off-right");
+  document.getElementById("listScreen").classList.add("active");
+
+  currentScreen="listScreen";
+
+  renderList();
+}
+
+/* =========================================================
+   목록 필터
+========================================================= */
+
+function getVisibleCharacters(){
+  let chars=state.characters.filter(c=>c.active !== false);
+
+  if(currentFilter==="spam"){
+    chars=chars.filter(c=>c.spam);
+  }else if(currentFilter==="unread"){
+    chars=chars.filter(c=>!c.spam && !isDeleted(c.id) && isUnread(c.id));
+  }else{
+    chars=chars.filter(c=>!c.spam && !isDeleted(c.id));
+  }
+
+  if(state.filters.unknown===true){
+    // 캐릭터 데이터 기반 프로토타입이므로 캐릭터는 알려진 발신자로 취급
+  }
+
+  const query=document.getElementById("conversationSearch")?.value
+    .trim()
+    .toLowerCase();
+
+  if(query){
+    chars=chars.filter(c=>{
+      const last=lastMessage(c.id);
+      return (
+        c.name.toLowerCase().includes(query) ||
+        c.phone.toLowerCase().includes(query) ||
+        (last?.text || "").toLowerCase().includes(query)
+      );
+    });
   }
 
   chars.sort((a,b)=>{
-    const x=lastMessage(a.id);
-    const y=lastMessage(b.id);
-    return (y?.ts||0)-(x?.ts||0);
+    const pinA=isPinned(a.id);
+    const pinB=isPinned(b.id);
+
+    if(pinA!==pinB) return pinA ? -1 : 1;
+
+    const ta=lastMessage(a.id)?.timestamp || 0;
+    const tb=lastMessage(b.id)?.timestamp || 0;
+
+    return tb-ta;
   });
 
-  if(!chars.length){
+  return chars;
+}
 
-    box.innerHTML=
-      `<div class="empty">
-        ${unreadOnly
-          ?"읽지 않은 메시지가 없습니다."
-          :"대화가 없습니다."}
-      </div>`;
+function renderList(){
+  const list=document.getElementById("messageList");
+  if(!list) return;
 
+  const chars=getVisibleCharacters();
+
+  if(chars.length===0){
+    let text="메시지가 없습니다.";
+
+    if(currentFilter==="spam"){
+      text="스팸으로 지정된 대화가 없습니다.";
+    }else if(currentFilter==="unread"){
+      text="읽지 않은 메시지가 없습니다.";
+    }
+
+    list.innerHTML=`
+      <div style="
+        padding:65px 25px;
+        text-align:center;
+        color:var(--sub);
+        font-size:15px;
+      ">${text}</div>
+    `;
+
+    updateFilterChecks();
     return;
   }
 
-  box.innerHTML=chars.map(c=>{
-
-    const lm=lastMessage(c.id);
-    const unread=unreadCount(c.id);
-    const checked=selected.has(c.id);
+  list.innerHTML=chars.map(character=>{
+    const last=lastMessage(character.id);
+    const unread=isUnread(character.id);
+    const selected=selectedIds.has(character.id);
 
     return `
-      <div class="row ${checked?"selected":""}"
-           data-id="${c.id}">
+      <div
+        class="conversation-row ${selected ? "selected":""}"
+        data-id="${escapeHTML(character.id)}"
+      >
+        ${editing ? `
+          <button
+            class="selection-circle ${selected ? "selected":""}"
+            data-select="${escapeHTML(character.id)}"
+            aria-label="선택"
+          ></button>
+        ` : ""}
 
-        ${editMode
-          ? `<div class="check ${checked?"on":""}"></div>`
-          : ""}
+        ${avatarHTML(character,"row-avatar")}
 
-        <div class="avatar"
-             style="background:${colorFor(c.id)}">
-          ${avatar(c)}
-        </div>
-
-        <div class="row-main">
-
+        <div class="row-content">
           <div class="row-top">
-            <div class="name">${esc(c.name)}</div>
-            <div class="time">${lm?time(lm.ts):""}</div>
+            <div class="row-name">${escapeHTML(character.name)}</div>
+
+            ${isPinned(character.id) ? `
+              <span class="row-pin">📌</span>
+            ` : ""}
+
+            <div class="row-time">
+              ${last ? escapeHTML(formatListTime(last.timestamp)) : ""}
+            </div>
           </div>
 
-          <div style="display:flex;gap:6px;align-items:center">
-
-            ${unread
-              ? `<span class="unread"></span>`
-              : ""}
-
-            <div class="preview">
-              ${lm
-                ? esc((lm.sender==="me"?"나: ":"")+lm.text)
-                : "대화 없음"}
+          <div class="row-preview-line">
+            <div class="row-preview">
+              ${last ? escapeHTML(last.text) : "새로운 대화를 시작해보세요."}
             </div>
 
+            ${unread ? `<div class="row-unread"></div>` : ""}
           </div>
-
         </div>
-
       </div>
     `;
-
   }).join("");
 
-  box.querySelectorAll(".row").forEach(row=>{
-
-    row.onclick=()=>{
-
-      const id=row.dataset.id;
-
-      if(editMode){
-
-        if(selected.has(id))
-          selected.delete(id);
-        else
-          selected.add(id);
-
-        document.getElementById("editCount").textContent=
-          `${selected.size}개 선택됨`;
-
-        renderList();
-        return;
-      }
-
-      openChat(id);
-    };
-
-  });
-
-  document.getElementById("editCount").textContent=
-    `${selected.size}개 선택됨`;
+  updateFilterChecks();
+  updateEditState();
 }
 
+/* =========================================================
+   목록 클릭
+========================================================= */
+
+document.getElementById("messageList").addEventListener("click",e=>{
+  const select=e.target.closest("[data-select]");
+
+  if(select){
+    const id=select.dataset.select;
+
+    if(selectedIds.has(id)){
+      selectedIds.delete(id);
+    }else{
+      selectedIds.add(id);
+    }
+
+    renderList();
+    return;
+  }
+
+  const row=e.target.closest(".conversation-row");
+
+  if(!row) return;
+
+  const id=row.dataset.id;
+
+  if(editing){
+    if(selectedIds.has(id)){
+      selectedIds.delete(id);
+    }else{
+      selectedIds.add(id);
+    }
+
+    renderList();
+    return;
+  }
+
+  openChat(id);
+});
 
 /* =========================================================
    편집
 ========================================================= */
 
-document.getElementById("editBtn").onclick=()=>{
+function enterEditMode(){
+  editing=true;
+  selectedIds.clear();
 
-  if(editMode){
+  document.getElementById("listScreen").classList.add("editing");
 
-    editMode=false;
-    selected.clear();
+  renderList();
+}
 
-    document.getElementById("editBtn").textContent="편집";
-    document.getElementById("editBar").classList.remove("open");
+function exitEditMode(){
+  editing=false;
+  selectedIds.clear();
 
+  document.getElementById("listScreen").classList.remove(
+    "editing",
+    "has-selection"
+  );
+
+  renderList();
+}
+
+function updateEditState(){
+  const listScreen=document.getElementById("listScreen");
+
+  listScreen.classList.toggle(
+    "has-selection",
+    selectedIds.size>0
+  );
+
+  const all=getVisibleCharacters();
+
+  const selectAll=document.getElementById("selectAllButton");
+
+  if(all.length && selectedIds.size===all.length){
+    selectAll.textContent="선택 해제";
   }else{
+    selectAll.textContent="모두 선택";
+  }
+}
 
-    editMode=true;
+document.getElementById("editButton").addEventListener("click",enterEditMode);
 
-    document.getElementById("editBtn").textContent="완료";
-    document.getElementById("editBar").classList.add("open");
+document.getElementById("cancelEditButton").addEventListener("click",exitEditMode);
+
+document.getElementById("selectAllButton").addEventListener("click",()=>{
+  const ids=getVisibleCharacters().map(c=>c.id);
+
+  if(ids.length && ids.every(id=>selectedIds.has(id))){
+    selectedIds.clear();
+  }else{
+    ids.forEach(id=>selectedIds.add(id));
   }
 
   renderList();
-};
+});
 
-document.getElementById("editCancel").onclick=()=>{
+function selectedCharacters(){
+  return [...selectedIds]
+    .map(id=>getCharacter(id))
+    .filter(Boolean);
+}
 
-  editMode=false;
-  selected.clear();
+document.getElementById("markReadAction").addEventListener("click",()=>{
+  selectedCharacters().forEach(c=>{
+    state.messages.forEach(m=>{
+      if(m.characterId===c.id && m.sender==="them"){
+        m.read=true;
+      }
+    });
+  });
 
-  document.getElementById("editBtn").textContent="편집";
-  document.getElementById("editBar").classList.remove("open");
+  saveState();
+  showToast("읽음으로 표시했습니다.");
+  exitEditMode();
+});
 
-  renderList();
-};
+document.getElementById("markUnreadAction").addEventListener("click",()=>{
+  selectedCharacters().forEach(c=>{
+    const msgs=getMessages(c.id).filter(m=>m.sender==="them");
 
-document.getElementById("editDelete").onclick=()=>{
+    if(msgs.length){
+      msgs[msgs.length-1].read=false;
+    }
+  });
 
-  if(!selected.size){
-    alert("선택된 메시지가 없습니다.");
-    return;
+  saveState();
+  showToast("읽지 않음으로 표시했습니다.");
+  exitEditMode();
+});
+
+document.getElementById("pinAction").addEventListener("click",()=>{
+  const chars=selectedCharacters();
+
+  if(chars.length){
+    const shouldPin=chars.some(c=>!isPinned(c.id));
+
+    chars.forEach(c=>setPinned(c.id,shouldPin));
+
+    showToast(
+      shouldPin ? "대화를 고정했습니다." : "고정을 해제했습니다."
+    );
   }
 
-  if(!confirm("선택한 대화를 삭제할까요?"))return;
+  exitEditMode();
+});
 
-  state.characters.forEach(c=>{
-    if(selected.has(c.id)){
+document.getElementById("deleteAction").addEventListener("click",()=>{
+  const chars=selectedCharacters();
+
+  if(!chars.length) return;
+
+  chars.forEach(c=>{
+    if(!isDeleted(c.id)){
       state.deleted.push({
-        character:c,
-        messages:messagesFor(c.id),
+        characterId:c.id,
         deletedAt:Date.now()
       });
     }
   });
 
-  state.characters=
-    state.characters.filter(c=>!selected.has(c.id));
+  saveState();
 
-  state.messages=
-    state.messages.filter(m=>!selected.has(m.characterId));
-
-  selected.clear();
-  editMode=false;
-
-  document.getElementById("editBtn").textContent="편집";
-  document.getElementById("editBar").classList.remove("open");
-
-  save();
-  renderList();
-};
-
+  showToast("최근 삭제된 항목으로 이동했습니다.");
+  exitEditMode();
+});
 
 /* =========================================================
-   오른쪽 메뉴
+   필터 팝업
 ========================================================= */
 
-const menu=document.getElementById("menuPopup");
+function closeFilterPopup(){
+  document.getElementById("filterPopup").classList.add("hidden");
+  document.getElementById("popupBackdrop").classList.remove("open");
+}
 
-document.getElementById("menuBtn").onclick=e=>{
+function openFilterPopup(){
+  document.getElementById("filterPopup").classList.remove("hidden");
+  document.getElementById("popupBackdrop").classList.add("open");
+  updateFilterChecks();
+}
+
+document.getElementById("filterButton").addEventListener("click",e=>{
   e.stopPropagation();
-  menu.classList.toggle("open");
-};
 
-document.addEventListener("click",e=>{
-  if(!e.target.closest("#menuPopup") &&
-     !e.target.closest("#menuBtn")){
-    menu.classList.remove("open");
+  const popup=document.getElementById("filterPopup");
+
+  if(popup.classList.contains("hidden")){
+    openFilterPopup();
+  }else{
+    closeFilterPopup();
   }
 });
 
-document.getElementById("menuMessages").onclick=()=>{
-  unreadOnly=false;
-  document.getElementById("unreadMark").textContent="○";
-  menu.classList.remove("open");
-  renderList();
-};
+document.getElementById("popupBackdrop").addEventListener("click",closeFilterPopup);
 
-document.getElementById("menuUnread").onclick=()=>{
+document.getElementById("filterPopup").addEventListener("click",e=>{
+  e.stopPropagation();
 
-  unreadOnly=!unreadOnly;
+  const button=e.target.closest("[data-filter]");
 
-  document.getElementById("unreadMark").textContent=
-    unreadOnly?"✓":"○";
+  if(!button) return;
 
-  menu.classList.remove("open");
-  renderList();
-};
+  const filter=button.dataset.filter;
 
-document.getElementById("menuSpam").onclick=()=>{
-  menu.classList.remove("open");
-  alert("스팸 메시지가 없습니다.");
-};
-
-document.getElementById("menuDeleted").onclick=()=>{
-
-  menu.classList.remove("open");
-
-  if(!state.deleted.length){
-    alert("최근 삭제된 항목이 없습니다.");
+  if(filter==="deleted"){
+    closeFilterPopup();
+    openDeleted();
     return;
   }
 
-  const names=state.deleted
-    .map(x=>x.character.name)
-    .join("\n");
+  currentFilter=filter;
+  closeFilterPopup();
+  renderList();
+});
 
-  if(confirm(
-    "최근 삭제된 항목\n\n"+
-    names+
-    "\n\n삭제된 항목을 모두 복구할까요?"
-  )){
+function updateFilterChecks(){
+  const all=document.getElementById("checkAll");
+  const spam=document.getElementById("checkSpam");
+  const unread=document.getElementById("checkUnread");
 
-    state.deleted.forEach(x=>{
-      if(!state.characters.some(c=>c.id===x.character.id)){
-        state.characters.push(x.character);
-      }
+  all.classList.toggle("hidden",currentFilter!=="all");
+  spam.classList.toggle("hidden",currentFilter!=="spam");
+  unread.classList.toggle("hidden",currentFilter!=="unread");
+}
 
-      x.messages.forEach(m=>{
-        if(!state.messages.some(z=>z.id===m.id)){
-          state.messages.push(m);
-        }
-      });
-    });
+document.getElementById("filterSettingsButton").addEventListener("click",()=>{
+  closeFilterPopup();
+  showScreen("settingsScreen");
+  renderSettings();
+});
 
-    state.deleted=[];
-    save();
-    renderList();
-  }
-};
+/* =========================================================
+   검색
+========================================================= */
 
-document.getElementById("filterManage").onclick=()=>{
-  menu.classList.remove("open");
-  alert(
-    "필터링 관리\n\n"+
-    "읽지 않음\n"+
-    "알 수 없는 발신자\n"+
-    "스팸 메시지"
+document.getElementById("conversationSearch").addEventListener("input",renderList);
+
+/* =========================================================
+   사용자 프로필
+========================================================= */
+
+function renderUserProfile(){
+  const profile=state.profile;
+
+  setAvatarElement(
+    document.getElementById("listUserAvatar"),
+    {
+      name:profile.name,
+      photo:profile.photo
+    }
   );
-};
 
+  document.getElementById("listUserName").textContent=profile.name;
+  document.getElementById("listUserStatus").textContent=profile.status || "";
+}
+
+document.getElementById("userProfileButton").addEventListener("click",()=>{
+  const p=state.profile;
+
+  document.getElementById("profileNameInput").value=p.name || "";
+  document.getElementById("profileStatusInput").value=p.status || "";
+
+  profileTempPhoto=p.photo || null;
+
+  setAvatarElement(
+    document.getElementById("profilePreview"),
+    {
+      name:p.name,
+      photo:profileTempPhoto
+    }
+  );
+
+  document.getElementById("profileOverlay").classList.add("open");
+});
+
+document.getElementById("profileOverlay").addEventListener("click",e=>{
+  if(e.target===document.getElementById("profileOverlay")){
+    closeProfileSheet();
+  }
+});
+
+function closeProfileSheet(){
+  document.getElementById("profileOverlay").classList.remove("open");
+  profileTempPhoto=null;
+}
+
+document.getElementById("profileCancelButton").addEventListener("click",closeProfileSheet);
+
+document.getElementById("profilePhotoButton").addEventListener("click",()=>{
+  document.getElementById("profilePhotoInput").click();
+});
+
+document.getElementById("profilePhotoInput").addEventListener("change",async e=>{
+  const file=e.target.files?.[0];
+
+  if(!file) return;
+
+  try{
+    profileTempPhoto=await readImage(file);
+
+    setAvatarElement(
+      document.getElementById("profilePreview"),
+      {
+        name:document.getElementById("profileNameInput").value || "?",
+        photo:profileTempPhoto
+      }
+    );
+  }catch{
+    showToast("사진을 불러오지 못했습니다.");
+  }
+});
+
+document.getElementById("profileNameInput").addEventListener("input",()=>{
+  setAvatarElement(
+    document.getElementById("profilePreview"),
+    {
+      name:document.getElementById("profileNameInput").value || "?",
+      photo:profileTempPhoto
+    }
+  );
+});
+
+document.getElementById("profileSaveButton").addEventListener("click",()=>{
+  state.profile.name=
+    document.getElementById("profileNameInput").value.trim() ||
+    "사용자";
+
+  state.profile.status=
+    document.getElementById("profileStatusInput").value.trim();
+
+  state.profile.photo=profileTempPhoto || "";
+
+  saveState();
+  renderUserProfile();
+  closeProfileSheet();
+
+  showToast("프로필이 저장되었습니다.");
+});
+
+/* =========================================================
+   새 메시지
+========================================================= */
+
+function renderNewCharacterList(){
+  const list=document.getElementById("newCharacterList");
+  const query=document.getElementById("newCharacterSearch").value
+    .trim()
+    .toLowerCase();
+
+  const chars=state.characters.filter(c=>{
+    if(c.active===false || c.spam || isDeleted(c.id)) return false;
+
+    return !query ||
+      c.name.toLowerCase().includes(query) ||
+      c.phone.toLowerCase().includes(query);
+  });
+
+  list.innerHTML=chars.length
+    ? chars.map(c=>`
+      <button class="new-character-row" data-new-chat="${escapeHTML(c.id)}">
+        ${avatarHTML(c,"avatar")}
+        <div>
+          <div class="new-character-name">${escapeHTML(c.name)}</div>
+          <div class="new-character-phone">${escapeHTML(c.phone)}</div>
+        </div>
+      </button>
+    `).join("")
+    : `<div style="padding:50px;text-align:center;color:var(--sub)">
+        일치하는 연락처가 없습니다.
+       </div>`;
+}
+
+function openNewMessage(){
+  document.getElementById("newCharacterSearch").value="";
+  renderNewCharacterList();
+  showScreen("newMessageScreen");
+}
+
+document.getElementById("newMessageButton").addEventListener("click",openNewMessage);
+document.getElementById("bottomComposeButton").addEventListener("click",openNewMessage);
+
+document.getElementById("newMessageCancel").addEventListener("click",returnToList);
+
+document.getElementById("newCharacterSearch").addEventListener("input",renderNewCharacterList);
+
+document.getElementById("newCharacterList").addEventListener("click",e=>{
+  const row=e.target.closest("[data-new-chat]");
+
+  if(!row) return;
+
+  openChat(row.dataset.newChat);
+});
 
 /* =========================================================
    채팅
 ========================================================= */
 
-function openChat(id){
+function openChat(characterId){
+  const character=getCharacter(characterId);
 
-  currentChat=id;
+  if(!character) return;
+
+  currentCharacterId=characterId;
 
   state.messages.forEach(m=>{
-    if(m.characterId===id && m.sender==="them"){
+    if(m.characterId===characterId && m.sender==="them"){
       m.read=true;
     }
   });
 
-  save();
+  saveState();
 
   renderChat();
 
-  listScreen.classList.add("left");
-  chatScreen.classList.remove("hidden");
+  showScreen("chatScreen");
 
-  renderList();
+  requestAnimationFrame(()=>{
+    scrollToBottom(document.getElementById("chatMessages"));
+  });
 }
-
-function closeChat(){
-
-  currentChat=null;
-
-  chatScreen.classList.add("hidden");
-  listScreen.classList.remove("left");
-
-  renderList();
-}
-
-document.getElementById("chatBack").onclick=closeChat;
 
 function renderChat(){
+  const character=getCharacter(currentCharacterId);
 
-  const c=state.characters.find(x=>x.id===currentChat);
-  if(!c)return;
+  if(!character) return;
 
-  document.getElementById("chatHeader").innerHTML=`
-    <div class="avatar"
-         style="background:${colorFor(c.id)}">
-      ${avatar(c)}
-    </div>
-    <div class="chatname">
-      ${esc(c.name)}　›
-    </div>
-  `;
+  setAvatarElement(
+    document.getElementById("chatAvatar"),
+    character
+  );
 
-  renderMessages();
+  document.getElementById("chatPersonName").textContent=character.name;
+
+  renderChatMessages();
 }
 
-function renderMessages(){
+function renderChatMessages(){
+  const container=document.getElementById("chatMessages");
 
-  const c=state.characters.find(x=>x.id===currentChat);
-  if(!c)return;
+  const messages=getMessages(currentCharacterId);
 
-  const box=document.getElementById("messages");
-  const list=messagesFor(currentChat);
+  if(!messages.length){
+    container.innerHTML=`
+      <div style="
+        margin:auto;
+        color:var(--sub);
+        font-size:14px;
+        text-align:center;
+        padding:30px;
+      ">
+        새로운 대화를 시작해보세요.
+      </div>
+    `;
+    return;
+  }
 
   let html="";
-  let lastTs=null;
-  let lastSender=null;
+  let previousDate=null;
 
-  list.forEach(m=>{
+  messages.forEach((message,index)=>{
+    const previous=messages[index-1];
+    const next=messages[index+1];
 
-    if(
-      lastTs===null ||
-      m.ts-lastTs>30*60*1000 ||
-      !sameDay(m.ts,lastTs)
-    ){
+    const key=dateKey(message.timestamp);
+
+    if(key!==previousDate){
       html+=`
-        <div class="date">
-          ${day(m.ts)} ${time(m.ts)}
+        <div class="chat-date">
+          ${escapeHTML(formatDateLong(message.timestamp))}
         </div>
       `;
-      lastSender=null;
+
+      previousDate=key;
     }
 
+    const continued=previous &&
+      previous.sender===message.sender &&
+      dateKey(previous.timestamp)===key &&
+      message.timestamp-previous.timestamp < 5*60*1000;
+
+    const lastGroup=!next ||
+      next.sender!==message.sender ||
+      dateKey(next.timestamp)!==key ||
+      next.timestamp-message.timestamp >= 5*60*1000;
+
+    const color=message.sender==="them"
+      ? (getCharacter(currentCharacterId)?.bubbleColor || "#0a84ff")
+      : "#0a84ff";
+
     html+=`
-      <div class="msgrow ${m.sender}">
-        <div
-          class="bubble ${m.sender}"
-          ${m.sender==="me"
-            ? `style="--bubble-color:${c.bubbleColor||"#0a84ff"}"`
-            : ""}
-        >
-          ${esc(m.text)}
+      <div class="
+        message-row
+        ${message.sender}
+        ${continued ? "continued":""}
+        ${lastGroup ? "last-group":""}
+      "
+      style="--character-color:${escapeHTML(color)}">
+
+        <div class="message-content">
+
+          <div class="message-bubble">
+            ${escapeHTML(message.text)}
+          </div>
+
+          ${lastGroup ? `
+            <div class="message-time">
+              ${escapeHTML(formatTime(message.timestamp))}
+            </div>
+          ` : ""}
+
         </div>
       </div>
     `;
-
-    lastTs=m.ts;
-    lastSender=m.sender;
   });
 
-  if(list.length && list[list.length-1].sender==="me"){
-    html+=`<div class="read">읽음</div>`;
+  const last=messages[messages.length-1];
+
+  if(last && last.sender==="me"){
+    html+=`<div class="chat-read">전달됨</div>`;
   }
 
-  box.innerHTML=html ||
-    `<div class="empty">아직 메시지가 없습니다.</div>`;
-
-  setTimeout(()=>{
-    box.scrollTop=box.scrollHeight;
-  },0);
+  container.innerHTML=html;
 }
 
-document.getElementById("chatInfo").onclick=()=>{
-  if(currentChat)openContact(currentChat);
-};
+/* 사용자 메시지 */
 
-document.getElementById("chatHeader").onclick=()=>{
-  if(currentChat)openContact(currentChat);
-};
-
-
-/* =========================================================
-   사용자 메시지
-========================================================= */
-
-const input=document.getElementById("messageInput");
-const send=document.getElementById("sendBtn");
-
-input.addEventListener("input",()=>{
-
-  input.style.height="auto";
-  input.style.height=
-    Math.min(input.scrollHeight,100)+"px";
-
-  send.classList.toggle(
-    "ready",
-    input.value.trim().length>0
-  );
-});
-
-function sendUser(){
-
+function sendUserMessage(){
+  const input=document.getElementById("messageInput");
   const text=input.value.trim();
 
-  if(!text || !currentChat)return;
+  if(!text || !currentCharacterId) return;
 
   state.messages.push({
-    id:uid(),
-    characterId:currentChat,
+    id:uid("m"),
+    characterId:currentCharacterId,
     sender:"me",
     text,
-    ts:Date.now(),
+    timestamp:Date.now(),
     read:true
   });
 
-  input.value="";
-  input.style.height="auto";
-  send.classList.remove("ready");
+  saveState();
 
-  save();
-  renderMessages();
-  renderList();
+  input.value="";
+  autoResizeTextarea(input);
+
+  updateSendButton();
+  renderChatMessages();
+
+  scrollToBottom(document.getElementById("chatMessages"));
 }
 
-send.onclick=sendUser;
+document.getElementById("sendButton").addEventListener("click",sendUserMessage);
 
-input.addEventListener("keydown",e=>{
-  if(e.key==="Enter"&&!e.shiftKey){
+document.getElementById("messageInput").addEventListener("input",()=>{
+  autoResizeTextarea(document.getElementById("messageInput"));
+  updateSendButton();
+});
+
+document.getElementById("messageInput").addEventListener("keydown",e=>{
+  if(e.key==="Enter" && !e.shiftKey){
     e.preventDefault();
-    sendUser();
+    sendUserMessage();
   }
 });
 
+function updateSendButton(){
+  const input=document.getElementById("messageInput");
+  const button=document.getElementById("sendButton");
+
+  button.classList.toggle(
+    "ready",
+    !!input.value.trim()
+  );
+}
+
+function autoResizeTextarea(textarea){
+  textarea.style.height="auto";
+  textarea.style.height=Math.min(textarea.scrollHeight,105)+"px";
+}
+
+document.getElementById("chatBackButton").addEventListener("click",()=>{
+  document.getElementById("messageInput").value="";
+  autoResizeTextarea(document.getElementById("messageInput"));
+  updateSendButton();
+
+  returnToList();
+});
+
+document.getElementById("chatPersonButton").addEventListener("click",()=>{
+  openContact(currentCharacterId);
+});
+
+document.getElementById("chatInfoButton").addEventListener("click",()=>{
+  openContact(currentCharacterId);
+});
 
 /* =========================================================
    연락처
 ========================================================= */
 
 function openContact(id){
+  const character=getCharacter(id);
 
-  const c=state.characters.find(x=>x.id===id);
-  if(!c)return;
+  if(!character) return;
 
-  document.getElementById("contactBody").innerHTML=`
+  currentCharacterId=id;
 
-    <div class="big-avatar"
-         style="background:${colorFor(c.id)}">
-      ${avatar(c)}
-    </div>
+  setAvatarElement(
+    document.getElementById("contactAvatar"),
+    character
+  );
 
-    <div class="contact-name">
-      ${esc(c.name)}
-    </div>
+  document.getElementById("contactName").textContent=character.name;
+  document.getElementById("contactPhone").textContent=character.phone || "전화번호 없음";
+  document.getElementById("contactPhoneCard").textContent=character.phone || "전화번호 없음";
+  document.getElementById("contactColorCard").textContent=character.bubbleColor;
 
-    <div class="contact-phone">
-      ${esc(c.phone||"번호 없음")}
-    </div>
-
-    <div class="contact-actions">
-
-      <div class="contact-action">
-        <button onclick="closeContact()">💬</button>
-        메시지
-      </div>
-
-      <div class="contact-action">
-        <button>☎</button>
-        전화
-      </div>
-
-      <div class="contact-action">
-        <button>▣</button>
-        영상통화
-      </div>
-
-    </div>
-
-    <div class="info-card">
-
-      <div class="info-row">
-        <div class="info-label">휴대전화</div>
-        <div class="info-value">
-          ${esc(c.phone||"번호 없음")}
-        </div>
-      </div>
-
-    </div>
-  `;
-
-  contactScreen.classList.remove("hidden");
+  showScreen("contactScreen");
 }
 
-function closeContact(){
-  contactScreen.classList.add("hidden");
+document.getElementById("contactBackButton").addEventListener("click",()=>{
+  const chat=document.getElementById("chatScreen");
+
+  document.querySelectorAll(".screen").forEach(s=>{
+    s.classList.remove("active","off-left");
+    s.classList.add("off-right");
+  });
+
+  chat.classList.remove("off-right","off-left");
+  chat.classList.add("active");
+
+  currentScreen="chatScreen";
+  renderChat();
+});
+
+document.getElementById("contactMessageButton").addEventListener("click",()=>{
+  document.querySelectorAll(".screen").forEach(s=>{
+    s.classList.remove("active","off-left");
+    s.classList.add("off-right");
+  });
+
+  const chat=document.getElementById("chatScreen");
+
+  chat.classList.remove("off-right","off-left");
+  chat.classList.add("active");
+
+  currentScreen="chatScreen";
+
+  renderChat();
+
+  requestAnimationFrame(()=>{
+    scrollToBottom(document.getElementById("chatMessages"));
+  });
+});
+
+/* =========================================================
+   필터링 설정
+========================================================= */
+
+function setToggle(element,on){
+  element.classList.toggle("on",!!on);
 }
 
-document.getElementById("contactBack").onclick=closeContact;
+function renderSettings(){
+  setToggle(
+    document.getElementById("spamFilterToggle"),
+    state.filters.spam
+  );
 
+  setToggle(
+    document.getElementById("unknownFilterToggle"),
+    state.filters.unknown
+  );
+
+  setToggle(
+    document.getElementById("smsFilterToggle"),
+    state.filters.sms
+  );
+
+  renderDarkModeToggle();
+}
+
+function toggleFilter(name){
+  state.filters[name]=!state.filters[name];
+  saveState();
+  renderSettings();
+}
+
+document.getElementById("spamFilterToggle").addEventListener("click",()=>{
+  toggleFilter("spam");
+});
+
+document.getElementById("unknownFilterToggle").addEventListener("click",()=>{
+  toggleFilter("unknown");
+});
+
+document.getElementById("smsFilterToggle").addEventListener("click",()=>{
+  toggleFilter("sms");
+});
+
+document.getElementById("settingsBackButton").addEventListener("click",()=>{
+  returnToList();
+});
+
+/* 다크모드 */
+
+function applyDarkMode(){
+  const preference=state.darkMode;
+
+  document.body.classList.remove("force-dark","force-light");
+
+  if(preference==="dark"){
+    document.body.classList.add("force-dark");
+  }else if(preference==="light"){
+    document.body.classList.add("force-light");
+  }
+}
+
+function isDarkMode(){
+  if(state.darkMode==="dark") return true;
+  if(state.darkMode==="light") return false;
+
+  return window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme:dark)").matches;
+}
+
+function renderDarkModeToggle(){
+  setToggle(
+    document.getElementById("darkModeToggle"),
+    isDarkMode()
+  );
+}
+
+document.getElementById("darkModeToggle").addEventListener("click",()=>{
+  state.darkMode=isDarkMode() ? "light" : "dark";
+
+  applyDarkMode();
+  saveState();
+  renderDarkModeToggle();
+});
 
 /* =========================================================
    관리자
 ========================================================= */
 
 function renderAdmin(){
+  renderCharacterList();
+  renderAdminDetail();
+}
 
+function renderCharacterList(){
   const list=document.getElementById("characterList");
 
+  if(!state.characters.length){
+    list.innerHTML=`<div class="empty-admin">캐릭터가 없습니다.</div>`;
+    return;
+  }
+
   list.innerHTML=state.characters.map(c=>`
+    <button
+      class="character-item ${c.id===currentCharacterId ? "selected":""}"
+      data-admin-character="${escapeHTML(c.id)}"
+    >
+      ${avatarHTML(c,"character-avatar")}
 
-    <div class="char
-      ${adminSelected===c.id?"selected":""}"
-      data-char="${c.id}">
-
-      <div class="avatar"
-           style="background:${colorFor(c.id)}">
-        ${avatar(c)}
+      <div class="character-info">
+        <div class="character-name">${escapeHTML(c.name)}</div>
+        <div class="character-phone">${escapeHTML(c.phone || "전화번호 없음")}</div>
       </div>
 
-      <div class="char-info">
-        <div class="char-name">${esc(c.name)}</div>
-        <div class="char-phone">
-          ${esc(c.phone||"")}
-        </div>
-      </div>
-
-      <button class="danger"
-              data-delete="${c.id}">
-        ✕
-      </button>
-
-    </div>
-
+      <div
+        class="color-dot"
+        style="background:${escapeHTML(c.bubbleColor)}"
+        title="${escapeHTML(c.bubbleColor)}"
+      ></div>
+    </button>
   `).join("");
-
-  list.querySelectorAll(".char").forEach(el=>{
-
-    el.onclick=e=>{
-
-      if(e.target.closest("[data-delete]"))return;
-
-      adminSelected=el.dataset.char;
-      renderAdmin();
-      loadCharacterSettings();
-    };
-
-  });
-
-  list.querySelectorAll("[data-delete]").forEach(btn=>{
-
-    btn.onclick=e=>{
-
-      e.stopPropagation();
-
-      const id=btn.dataset.delete;
-
-      if(!confirm("이 캐릭터와 대화를 삭제할까요?"))
-        return;
-
-      state.characters=
-        state.characters.filter(c=>c.id!==id);
-
-      state.messages=
-        state.messages.filter(m=>m.characterId!==id);
-
-      if(adminSelected===id)
-        adminSelected=null;
-
-      save();
-      renderAdmin();
-      renderList();
-
-      document.getElementById("characterSettings")
-        .style.display="none";
-    };
-
-  });
 }
 
-function loadCharacterSettings(){
+function renderAdminDetail(){
+  const area=document.getElementById("adminDetailArea");
+  const character=getCharacter(currentCharacterId);
 
-  const c=state.characters.find(x=>x.id===adminSelected);
+  if(!character){
+    area.innerHTML="";
+    return;
+  }
 
-  if(!c)return;
+  const messages=getMessages(character.id);
 
-  document.getElementById("characterSettings")
-    .style.display="block";
+  area.innerHTML=`
+    <div class="admin-section">
 
-  document.getElementById("settingsTitle").textContent=
-    `${c.name} · 캐릭터 설정`;
+      <div class="admin-section-title">캐릭터 설정</div>
 
-  document.getElementById("characterName").value=c.name;
-  document.getElementById("characterPhone").value=c.phone||"";
+      <div class="admin-detail">
 
-  document.getElementById("bubbleColor").value=
-    c.bubbleColor||"#0a84ff";
+        <div class="admin-detail-title">
+          ${avatarHTML(character,"admin-detail-avatar")}
 
-  renderThread();
-}
+          <div>
+            <div class="admin-detail-name">${escapeHTML(character.name)}</div>
+            <div style="font-size:12px;color:var(--sub)">
+              ${escapeHTML(character.phone || "")}
+            </div>
+          </div>
+        </div>
 
-function renderThread(){
+        <div class="admin-field">
+          <label>이름</label>
+          <input
+            class="admin-input"
+            id="adminName"
+            value="${escapeHTML(character.name)}"
+          >
+        </div>
 
-  if(!adminSelected)return;
+        <div class="admin-field">
+          <label>전화번호</label>
+          <input
+            class="admin-input"
+            id="adminPhone"
+            value="${escapeHTML(character.phone || "")}"
+          >
+        </div>
 
-  const box=document.getElementById("thread");
-  const list=messagesFor(adminSelected);
+        <div class="admin-field">
+          <label>말풍선 색상</label>
 
-  box.innerHTML=list.map(m=>`
+          <div class="color-control">
+            <span>${escapeHTML(character.bubbleColor)}</span>
+            <input
+              type="color"
+              id="adminBubbleColor"
+              value="${escapeHTML(character.bubbleColor)}"
+            >
+          </div>
+        </div>
 
-    <div class="thread-msg ${m.sender}">
+        <div class="admin-field">
+          <label>프로필 사진</label>
 
-      <span class="thread-who">
-        ${m.sender==="them"?"캐릭터":"사용자"}
-      </span>
+          <input
+            type="file"
+            accept="image/*"
+            id="adminPhotoInput"
+            hidden
+          >
 
-      <span class="thread-text">
-        ${esc(m.text)}
-      </span>
+          <button
+            class="admin-button secondary"
+            id="adminPhotoButton"
+          >
+            사진 선택
+          </button>
+        </div>
 
-      <span class="thread-time">
-        ${time(m.ts)}
-      </span>
+        <div class="admin-buttons">
+          <button class="admin-button" id="saveCharacterButton">
+            변경사항 저장
+          </button>
 
-      <button class="thread-del"
-              data-msg="${m.id}">
-        🗑
-      </button>
+          <button class="admin-button ${character.spam ? "secondary":"danger"}" id="spamCharacterButton">
+            ${character.spam ? "스팸에서 복구":"스팸으로 이동"}
+          </button>
 
+          <button class="admin-button danger" id="deleteCharacterButton">
+            캐릭터 삭제
+          </button>
+        </div>
+
+      </div>
     </div>
 
-  `).join("") ||
-  `<div style="padding:10px;color:var(--sub)">
-    메시지가 없습니다.
-  </div>`;
+    <div class="admin-section">
+      <div class="admin-section-title">대화 관리</div>
 
-  box.querySelectorAll("[data-msg]").forEach(btn=>{
+      <div class="admin-detail">
 
-    btn.onclick=()=>{
+        <div class="admin-message-thread">
+          ${
+            messages.length
+              ? messages.map(m=>`
+                <div class="admin-thread-item">
 
-      state.messages=
-        state.messages.filter(
-          m=>m.id!==btn.dataset.msg
-        );
+                  <div class="admin-thread-who ${m.sender==="them" ? "them":""}">
+                    ${m.sender==="them" ? "캐릭터":"나"}
+                  </div>
 
-      save();
-      renderThread();
-      renderList();
+                  <div class="admin-thread-text">
+                    ${escapeHTML(m.text)}
+                  </div>
 
-      if(currentChat===adminSelected)
-        renderMessages();
-    };
+                  <div class="admin-thread-time">
+                    ${escapeHTML(formatDateTimeCompact(m.timestamp))}
+                  </div>
 
-  });
+                  <button
+                    class="admin-thread-delete"
+                    data-delete-message="${escapeHTML(m.id)}"
+                  >
+                    ×
+                  </button>
 
-  box.scrollTop=box.scrollHeight;
+                </div>
+              `).join("")
+              : `<div style="padding:25px;text-align:center;color:var(--sub)">
+                  아직 메시지가 없습니다.
+                 </div>`
+          }
+        </div>
+
+      </div>
+    </div>
+
+    <div class="admin-section">
+      <div class="admin-section-title">캐릭터 메시지 보내기</div>
+
+      <div class="admin-detail">
+
+        <div class="admin-field">
+          <label>메시지</label>
+          <textarea
+            class="admin-textarea"
+            id="adminMessageText"
+            placeholder="캐릭터가 보낼 메시지를 입력하세요."
+          ></textarea>
+        </div>
+
+        <div class="admin-field">
+          <label>날짜 / 시간</label>
+
+          <div class="datetime-grid">
+            <input
+              class="admin-input"
+              type="date"
+              id="adminMessageDate"
+            >
+
+            <input
+              class="admin-input"
+              type="time"
+              id="adminMessageTime"
+            >
+          </div>
+
+          <button class="now-button" id="adminNowButton">
+            지금
+          </button>
+        </div>
+
+        <button
+          class="admin-button full"
+          id="adminSendMessageButton"
+        >
+          메시지 전송
+        </button>
+
+      </div>
+    </div>
+  `;
+
+  setAdminDefaultDateTime();
 }
 
+function formatDateTimeCompact(timestamp){
+  const d=new Date(timestamp);
 
-/* 캐릭터 추가 */
+  return `${d.getMonth()+1}/${d.getDate()} ${formatTime(timestamp)}`;
+}
 
-document.getElementById("addCharacter").onclick=()=>{
+function setAdminDefaultDateTime(){
+  const date=document.getElementById("adminMessageDate");
+  const time=document.getElementById("adminMessageTime");
 
-  const input=document.getElementById("newCharacter");
-  const name=input.value.trim();
+  if(!date || !time) return;
 
-  if(!name)return;
+  const d=new Date();
 
-  const id=uid();
+  date.value=
+    `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 
-  state.characters.push({
-    id,
-    name,
-    phone:"010-0000-0000",
-    active:true,
-    bubbleColor:"#0a84ff"
-  });
+  time.value=
+    `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+}
 
-  input.value="";
-  adminSelected=id;
+document.getElementById("characterList").addEventListener("click",e=>{
+  const row=e.target.closest("[data-admin-character]");
 
-  save();
+  if(!row) return;
+
+  currentCharacterId=row.dataset.adminCharacter;
+
   renderAdmin();
-  renderList();
-  loadCharacterSettings();
-};
+});
 
+document.getElementById("adminDetailArea").addEventListener("click",async e=>{
+  const deleteMessage=e.target.closest("[data-delete-message]");
 
-/* 캐릭터 설정 저장 */
+  if(deleteMessage){
+    const id=deleteMessage.dataset.deleteMessage;
 
-document.getElementById("saveCharacter").onclick=()=>{
+    state.messages=state.messages.filter(m=>m.id!==id);
+    saveState();
 
-  const c=state.characters.find(
-    x=>x.id===adminSelected
-  );
+    renderAdmin();
+    showToast("메시지를 삭제했습니다.");
+    return;
+  }
 
-  if(!c)return;
+  if(e.target.closest("#adminPhotoButton")){
+    document.getElementById("adminPhotoInput")?.click();
+    return;
+  }
 
-  c.name=
-    document.getElementById("characterName")
-      .value.trim()||"이름 없음";
+  if(e.target.closest("#saveCharacterButton")){
+    const c=getCharacter(currentCharacterId);
 
-  c.phone=
-    document.getElementById("characterPhone")
-      .value.trim();
+    if(!c) return;
 
-  c.bubbleColor=
-    document.getElementById("bubbleColor").value;
+    c.name=
+      document.getElementById("adminName").value.trim() ||
+      "새로운 사람";
 
-  const file=
-    document.getElementById("characterPhoto").files[0];
+    c.phone=
+      document.getElementById("adminPhone").value.trim();
 
-  if(file){
+    c.bubbleColor=
+      document.getElementById("adminBubbleColor").value ||
+      "#0a84ff";
 
-    const reader=new FileReader();
+    saveState();
 
-    reader.onload=()=>{
-
-      c.photo=reader.result;
-
-      save();
-      renderAdmin();
-      renderList();
-
-      if(currentChat===c.id)
-        renderChat();
-    };
-
-    reader.readAsDataURL(file);
-
-  }else{
-
-    save();
     renderAdmin();
     renderList();
 
-    if(currentChat===c.id)
+    if(currentScreen==="chatScreen"){
       renderChat();
+    }
+
+    showToast("캐릭터 설정을 저장했습니다.");
+    return;
   }
 
-  alert("캐릭터 설정이 저장되었습니다.");
-};
+  if(e.target.closest("#spamCharacterButton")){
+    const c=getCharacter(currentCharacterId);
 
+    if(!c) return;
 
-/* 관리자 메시지 */
+    c.spam=!c.spam;
 
-document.getElementById("adminSend").onclick=()=>{
+    saveState();
+    renderAdmin();
+    renderList();
 
-  const text=
-    document.getElementById("adminMessage")
-      .value.trim();
+    showToast(c.spam ? "스팸으로 이동했습니다.":"스팸에서 복구했습니다.");
+    return;
+  }
 
-  if(!text||!adminSelected)return;
+  if(e.target.closest("#deleteCharacterButton")){
+    const c=getCharacter(currentCharacterId);
 
-  state.messages.push({
-    id:uid(),
-    characterId:adminSelected,
-    sender:"them",
-    text,
-    ts:Date.now(),
-    read:false
-  });
+    if(!c) return;
 
-  document.getElementById("adminMessage").value="";
-
-  save();
-  renderThread();
-  renderList();
-
-  if(currentChat===adminSelected)
-    renderMessages();
-};
-
-document.getElementById("adminMessage")
-  .addEventListener("keydown",e=>{
-    if(e.key==="Enter"&&!e.shiftKey){
-      e.preventDefault();
-      document.getElementById("adminSend").click();
+    if(!confirm(`"${c.name}" 캐릭터를 삭제할까요?\n대화는 최근 삭제된 항목으로 이동됩니다.`)){
+      return;
     }
-  });
 
+    state.deleted.push({
+      characterId:c.id,
+      deletedAt:Date.now()
+    });
 
-/* =========================================================
-   관리자 / 사용자 전환
-   기존 코드의 우측 상단 관리자/사용자 버튼 대신
-   compose 버튼을 길게 누르면 관리자 열기
-========================================================= */
+    c.active=false;
 
-document.getElementById("composeBtn").onclick=()=>{
-  alert("새 메시지 기능은 데모 버전입니다.");
-};
+    saveState();
 
-let pressTimer;
+    currentCharacterId=null;
+    renderAdmin();
+    renderList();
 
-document.getElementById("composeBtn")
-  .addEventListener("touchstart",()=>{
-    pressTimer=setTimeout(openAdmin,700);
-  });
+    showToast("캐릭터를 삭제했습니다.");
+    return;
+  }
 
-document.getElementById("composeBtn")
-  .addEventListener("touchend",()=>{
-    clearTimeout(pressTimer);
-  });
+  if(e.target.closest("#adminNowButton")){
+    setAdminDefaultDateTime();
+    return;
+  }
 
-function openAdmin(){
-
-  adminScreen.classList.remove("hidden");
-  listScreen.classList.add("left");
-
-  renderAdmin();
-}
-
-document.addEventListener("keydown",e=>{
-  if(e.key==="Escape"){
-    menu.classList.remove("open");
+  if(e.target.closest("#adminSendMessageButton")){
+    sendAdminMessage();
   }
 });
 
+document.getElementById("adminDetailArea").addEventListener("change",async e=>{
+  if(e.target.id==="adminPhotoInput"){
+    const file=e.target.files?.[0];
 
-/* =========================================================
-   초기화
-========================================================= */
+    if(!file) return;
 
-renderProfile();
-renderList();
-renderAdmin();
+    const c=getCharacter(currentCharacterId);
 
-/* 시스템 다크모드 */
-function dark(){
+    if(!c) return;
 
-  document.body.classList.toggle(
-    "dark",
-    matchMedia("(prefers-color-scheme:dark)").matches
-  );
+    try{
+      c.photo=await readImage(file);
+      saveState();
+      renderAdmin();
+      renderList();
+
+      if(currentCharacterId){
+        renderChat();
+      }
+
+      showToast("프로필 사진을 변경했습니다.");
+    }catch{
+      showToast("사진을 불러오지 못했습니다.");
+    }
+  }
+});
+
+document.getElementById("adminDetailArea").addEventListener("keydown",e=>{
+  if(
+    e.target.id==="adminMessageText" &&
+    e.key==="Enter" &&
+    !e.shiftKey
+  ){
+    e.preventDefault();
+    sendAdminMessage();
+  }
+});
+
+function sendAdminMessage(){
+  const character=getCharacter(currentCharacterId);
+
+  if(!character) return;
+
+  const text=document.getElementById("adminMessageText")?.value.trim();
+  const date=document.getElementById("adminMessageDate")?.value;
+  const time=document.getElementById("adminMessageTime")?.value;
+
+  if(!text){
+    showToast("메시지를 입력하세요.");
+    return;
+  }
+
+  if(!date || !time){
+    showToast("날짜와 시간을 입력하세요.");
+    return;
+  }
+
+  const timestamp=Date.parse(`${date}T${time}`);
+
+  if(!Number.isFinite(timestamp)){
+    showToast("날짜 또는 시간이 올바르지 않습니다.");
+    return;
+  }
+
+  state.messages.push({
+    id:uid("m"),
+    characterId:character.id,
+    sender:"them",
+    text,
+    timestamp,
+    read:false
+  });
+
+  character.active=true;
+
+  saveState();
+
+  document.getElementById("adminMessageText").value="";
+
+  renderAdmin();
+  renderList();
+
+  showToast(`${character.name}의 메시지를 추가했습니다.`);
 }
 
-dark();
+/* =========================================================
+   관리자 진입 / 추가
+========================================================= */
 
-matchMedia("(prefers-color-scheme:dark)")
-  .addEventListener("change",dark);
+function openAdmin(){
+  renderAdmin();
+  showScreen("adminScreen");
+}
+
+document.getElementById("adminEntryButton").addEventListener("click",openAdmin);
+
+document.getElementById("adminBackButton").addEventListener("click",()=>{
+  showScreen("settingsScreen");
+  renderSettings();
+});
+
+function showAddForm(){
+  document.getElementById("addCharacterForm").classList.remove("hidden");
+  document.getElementById("showAddCharacterButton").classList.add("hidden");
+  document.getElementById("newCharName").focus();
+}
+
+function hideAddForm(){
+  document.getElementById("addCharacterForm").classList.add("hidden");
+  document.getElementById("showAddCharacterButton").classList.remove("hidden");
+
+  document.getElementById("newCharName").value="";
+  document.getElementById("newCharPhone").value="";
+}
+
+document.getElementById("showAddCharacterButton").addEventListener("click",showAddForm);
+document.getElementById("adminAddTopButton").addEventListener("click",showAddForm);
+document.getElementById("addCharacterCancel").addEventListener("click",hideAddForm);
+
+document.getElementById("addCharacterConfirm").addEventListener("click",()=>{
+  const name=document.getElementById("newCharName").value.trim();
+  const phone=document.getElementById("newCharPhone").value.trim();
+
+  if(!name){
+    showToast("캐릭터 이름을 입력하세요.");
+    return;
+  }
+
+  const character={
+    id:uid("c"),
+    name,
+    phone,
+    photo:"",
+    active:true,
+    spam:false,
+    bubbleColor:DEFAULT_COLORS[
+      state.characters.length % DEFAULT_COLORS.length
+    ]
+  };
+
+  state.characters.push(character);
+  state.conversationMeta[character.id]={
+    pinned:false
+  };
+
+  currentCharacterId=character.id;
+
+  saveState();
+
+  hideAddForm();
+  renderAdmin();
+  renderList();
+
+  showToast("캐릭터를 추가했습니다.");
+});
+
+/* =========================================================
+   최근 삭제
+========================================================= */
+
+function openDeleted(){
+  renderDeleted();
+  showScreen("deletedScreen");
+}
+
+function renderDeleted(){
+  const list=document.getElementById("deletedList");
+
+  const deleted=state.deleted.slice().sort(
+    (a,b)=>(b.deletedAt||0)-(a.deletedAt||0)
+  );
+
+  if(!deleted.length){
+    list.innerHTML=`
+      <div style="
+        padding:65px 25px;
+        text-align:center;
+        color:var(--sub);
+        font-size:15px;
+      ">
+        최근 삭제된 대화가 없습니다.
+      </div>
+    `;
+    return;
+  }
+
+  list.innerHTML=deleted.map(item=>{
+    const c=getCharacter(item.characterId);
+
+    if(!c) return "";
+
+    return `
+      <div class="deleted-row">
+
+        ${avatarHTML(c,"row-avatar")}
+
+        <div class="deleted-row-info">
+          <div class="deleted-row-name">${escapeHTML(c.name)}</div>
+          <div class="deleted-row-time">
+            삭제됨 · ${escapeHTML(formatDateTimeCompact(item.deletedAt))}
+          </div>
+        </div>
+
+        <div class="deleted-buttons">
+          <button data-restore="${escapeHTML(c.id)}">
+            복구
+          </button>
+
+          <button data-permanent="${escapeHTML(c.id)}">
+            삭제
+          </button>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+document.getElementById("deletedList").addEventListener("click",e=>{
+  const restore=e.target.closest("[data-restore]");
+  const permanent=e.target.closest("[data-permanent]");
+
+  if(restore){
+    const id=restore.dataset.restore;
+    const c=getCharacter(id);
+
+    state.deleted=state.deleted.filter(d=>d.characterId!==id);
+
+    if(c){
+      c.active=true;
+    }
+
+    saveState();
+
+    renderDeleted();
+    renderList();
+
+    showToast("대화를 복구했습니다.");
+    return;
+  }
+
+  if(permanent){
+    const id=permanent.dataset.permanent;
+    const c=getCharacter(id);
+
+    if(!confirm(
+      `"${c?.name || "이 대화"}"를 영구적으로 삭제할까요?\n이 작업은 되돌릴 수 없습니다.`
+    )){
+      return;
+    }
+
+    state.deleted=state.deleted.filter(d=>d.characterId!==id);
+    state.messages=state.messages.filter(m=>m.characterId!==id);
+
+    saveState();
+
+    renderDeleted();
+    renderList();
+
+    showToast("영구적으로 삭제했습니다.");
+  }
+});
+
+document.getElementById("deletedBackButton").addEventListener("click",returnToList);
+
+/* =========================================================
+   초기화 / 시스템 다크모드
+========================================================= */
+
+applyDarkMode();
+renderUserProfile();
+renderList();
+
+if(window.matchMedia){
+  window.matchMedia("(prefers-color-scheme:dark)")
+    .addEventListener?.("change",()=>{
+      if(state.darkMode===null || state.darkMode===undefined){
+        applyDarkMode();
+        renderSettings();
+      }
+    });
+}
+
+/* =========================================================
+   전역 ESC / 외부 클릭
+========================================================= */
+
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){
+    closeFilterPopup();
+
+    if(document.getElementById("profileOverlay").classList.contains("open")){
+      closeProfileSheet();
+    }
+  }
+});
+
+document.addEventListener("click",e=>{
+  const popup=document.getElementById("filterPopup");
+  const filterButton=document.getElementById("filterButton");
+
+  if(
+    !popup.classList.contains("hidden") &&
+    !popup.contains(e.target) &&
+    !filterButton.contains(e.target)
+  ){
+    closeFilterPopup();
+  }
+});
+
+/* =========================================================
+   브라우저 뒤로가기
+========================================================= */
+
+window.addEventListener("popstate",()=>{
+  returnToList();
+});
 
 </script>
 </body>
